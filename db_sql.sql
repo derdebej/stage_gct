@@ -20,7 +20,7 @@ CREATE TABLE Consultation (
     FOREIGN KEY (id_responsable) REFERENCES utilisateur(id_utilisateur)
 );
 CREATE TABLE demande_d_achat (
-    id_da INT PRIMARY KEY AUTO_INCREMENT ,
+    id_da INT PRIMARY KEY  ,
     objet VARCHAR(255),
     titre VARCHAR(255),
     demandeur VARCHAR(255),

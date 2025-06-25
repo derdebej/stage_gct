@@ -1,57 +1,66 @@
+
 CREATE TABLE utilisateur (
     id_utilisateur INT PRIMARY KEY AUTO_INCREMENT ,
     nom VARCHAR(255),
     email VARCHAR(255) UNIQUE,
-    role VARCHAR(255),
-    mdp INT
+    role VARCHAR(100),
+    mdp VARCHAR(255)
 );
 CREATE TABLE Article (
     id_article INT PRIMARY KEY AUTO_INCREMENT ,
     designation TEXT,
-    description TEXT
+    description TEXT,
+    pu INT,
+    quantite INT,
+);
+CREATE TABLE Consultation (
+    id_consultation INT PRIMARY KEY AUTO_INCREMENT ,
+    date DATE,
+    id_responsable INT,
+    FOREIGN KEY (id_responsable) REFERENCES utilisateur(id_utilisateur)
 );
 CREATE TABLE demande_d_achat (
     id_da INT PRIMARY KEY AUTO_INCREMENT ,
     objet VARCHAR(255),
     titre VARCHAR(255),
     demandeur VARCHAR(255),
-    id_utilisateur INT,
+    nature ENUM('investissement', 'exploitation'),
+    num_aed VARCHAR(50),
+    etat BOOLEAN DEFAULT FALSE,
     date_creation DATE,
-    FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id_utilisateur)
+    montant_estime DECIMAL(12,2),
+    id_utilisateur INT,
+    id_consultation INT,
+    chemin_da VARCHAR(255),
+    FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id_utilisateur),
+    FOREIGN KEY (id_consultation) REFERENCES Consultation(id_consultation)
 );
 CREATE TABLE Lot (
     id_lot INT PRIMARY KEY AUTO_INCREMENT ,
     id_da INT,
     id_article INT,
-    quantité INT,
     FOREIGN KEY (id_da) REFERENCES demande_d_achat(id_da),
     FOREIGN KEY (id_article) REFERENCES Article(id_article)
-);
-CREATE TABLE Consultation (
-    id_consultation INT PRIMARY KEY AUTO_INCREMENT ,
-    id_da INT,
-    date DATE,
-    id_responsable INT,
-    FOREIGN KEY (id_da) REFERENCES demande_d_achat(id_da),
-    FOREIGN KEY (id_responsable) REFERENCES utilisateur(id_utilisateur)
 );
 CREATE TABLE fournisseur (
     id_fournisseur INT PRIMARY KEY AUTO_INCREMENT ,
     nom VARCHAR(255),
-    contact INT
+    contact VARCHAR(255)
 );
 CREATE TABLE offre (
     id_offre INT PRIMARY KEY AUTO_INCREMENT ,
     id_consultation INT,
     id_fournisseur INT,
     date_d_offre DATE,
+    chemin_document TEXT,
     FOREIGN KEY (id_consultation) REFERENCES Consultation(id_consultation),
     FOREIGN KEY (id_fournisseur) REFERENCES fournisseur(id_fournisseur)
 );
 CREATE TABLE evaluation (
     id_eval INT PRIMARY KEY AUTO_INCREMENT ,
     id_offre INT,
-    note TEXT,
+    chemin_evaluation TEXT,
+    etat BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (id_offre) REFERENCES offre(id_offre)
 );
 CREATE TABLE decision (

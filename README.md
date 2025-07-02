@@ -1,20 +1,28 @@
 # Plateforme - Première étape
 
-Ce projet représente la première étape dans la création d'une plateforme de gestion des demandes d’achats pour une entreprise.
+Ce projet constitue la première phase de développement d'une plateforme de gestion des demandes d’achats pour une entreprise.
 
-## Ce qui a été réalisé dans cette étape :
+## Réalisations à ce jour :
 
-- La conception de la base de données, avec un modèle adapté aux besoins de gestion.
-- La création de la base de données en utilisant SQL, incluant la définition des tables et des relations.
+### Base de données
 
-## Modifications récentes
+- Conception complète du modèle de données en réponse aux besoins fonctionnels.
+- Création de la base de données avec SQL, incluant la définition des tables, relations et contraintes d’intégrité.
+- Ajustements structurels effectués suite aux retours de l’encadrant pour optimiser la cohérence du schéma.
 
-Des ajustements ont été apportés suite aux recommandations de l’encadrant, afin d’améliorer la structure et la cohérence de la base de données.
+### Interface utilisateur
 
-## Objectif
+- Conception de la première page de la plateforme via **Figma**, en tenant compte de l’ergonomie et de l’expérience utilisateur.
+- Implémentation de deux composants **React** réutilisables :
+  - `Header` : barre supérieure avec zone de recherche et profil utilisateur.
+  - `Box` : composant d’affichage d’informations statistiques (valeurs, icône, variation...).
+- Intégration initiale des composants dans `App.jsx` en respectant la structure visuelle définie dans Figma.
 
-L'objectif principal de cette étape est de poser les bases solides pour la gestion des données, afin de faciliter les développements futurs de la plateforme.
+## Objectif de cette étape
+
+Mettre en place les fondations techniques (base de données + première maquette fonctionnelle) pour accélérer les prochaines phases de développement de la plateforme.
 
 ---
 
-*Ce README sera mis à jour au fur et à mesure de l’avancement du projet.*
+*Ce README sera mis à jour en fonction de l’évolution du projet.*
+

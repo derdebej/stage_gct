@@ -11,7 +11,7 @@ const statusStyles: Record<string, string> = {
 };
 const TableDA: React.FC<TableDAProps> = ({ data }) => {
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-6">
+    <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold text-gray-800">
           Demandes d'achats
@@ -46,7 +46,7 @@ const TableDA: React.FC<TableDAProps> = ({ data }) => {
           </thead>
           <tbody>
             {data.map((item, index) => (
-              <tr key={index} className="border-t">
+              <tr key={index} className="border-t hover:bg-gray-50 ">
                 <td className="py-3  px-4 text-sm text-gray-700">{item.id}</td>
                 <td className="py-3  px-4 text-sm text-gray-700">
                   {item.titre}

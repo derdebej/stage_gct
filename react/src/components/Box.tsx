@@ -1,18 +1,17 @@
-import React from 'react'
-import { ArrowUpRight, LineChart ,History} from 'lucide-react';
+import React from "react";
+import { ArrowUpRight, LineChart, History } from "lucide-react";
 
 interface BoxProps {
   titre: string;
   valeur: string;
   icon?: React.ReactNode;
-  variation:string;
+  variation: string;
   variationText: string;
-  
 }
 
-const Box = ({titre,valeur,icon,variation,variationText}:BoxProps) => {
+const Box = ({ titre, valeur, icon, variation, variationText }: BoxProps) => {
   return (
-    <div className='bg-white shadow-md rounded-xl p-5 w-2xs max-w-sm'>
+    <div className="bg-white shadow-sm rounded-xl p-5 w-2xs max-w-sm">
       <div className="flex justify-between items-start">
         <div>
           <p className="text-sm text-gray-500">{titre}</p>
@@ -26,14 +25,13 @@ const Box = ({titre,valeur,icon,variation,variationText}:BoxProps) => {
         <div className="flex items-center gap-1 mt-4">
           <ArrowUpRight className="w-4 h-4 text-green-500" />
           <p className="text-sm">
-            <span className="text-green-600 font-medium">{variation}</span>{' '}
+            <span className="text-green-600 font-medium">{variation}</span>{" "}
             <span className="text-gray-700">{variationText}</span>
           </p>
         </div>
       )}
-      
     </div>
-  )
-}
+  );
+};
 
-export default Box
+export default Box;

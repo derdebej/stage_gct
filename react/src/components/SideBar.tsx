@@ -1,8 +1,22 @@
 import React from "react";
 import logo from "../assets/Groupe_chimique_tunisien.jpg";
-import { LayoutDashboard ,ShoppingCart , PackageSearch , Handshake , NotebookPen , Tags ,Settings , LogOut} from "lucide-react";
+import {
+  LayoutDashboard,
+  ShoppingCart,
+  PackageSearch,
+  Handshake,
+  NotebookPen,
+  Tags,
+  Settings,
+  LogOut,
+} from "lucide-react";
+import { Link, Routes, Route, useLocation } from "react-router-dom";
+import Da from "../pages/Da";
 
 const SideBar = () => {
+  const location = useLocation();
+  const isActive = (path: string) => location.pathname === path;
+
   return (
     <>
       <div className="fixed top-0 lef-0 w-55 h-screen bg-white shadow-sm flex flex-col justify-between rounded-r-3xl py-6 px-4">
@@ -11,16 +25,33 @@ const SideBar = () => {
             <img src={logo} alt="GCT logo" className="h-20 object-contain" />
           </div>
           <nav className="flex flex-col gap-4 pl-2">
-            <button className="flex gap-2 text-sm font-medium text-white bg-blue-900 rounded-lg px-2 py-2 text-left">
-               <LayoutDashboard size={18}/>Tableau de bord
-            </button>
-            <button className="flex gap-2 text-sm  text-gray-700 text-left hover:text-blue-900 hover:bg-gray-100 hover:rounded-lg py-2 px-2 ">
-              <ShoppingCart size={18} /> Demandes d’achats
-            </button>
+            <Link
+              to="/"
+              className={`flex gap-2 text-sm font-medium rounded-lg px-2 py-2 text-left ${
+                isActive("/")
+                  ? "text-white bg-blue-900"
+                  : "text-gray-700 hover:text-blue-900 hover:bg-gray-100"
+              }`}
+            >
+              <LayoutDashboard size={18} />
+              Tableau de bord
+            </Link>
+            <Link
+              to="/da"
+              className={`flex gap-2 text-sm font-medium rounded-lg px-2 py-2 text-left ${
+                isActive("/da")
+                  ? "text-white bg-blue-900"
+                  : "text-gray-700 hover:text-blue-900 hover:bg-gray-100"
+              }`}
+            >
+              <ShoppingCart size={18} />
+              Demandes d’achats
+            </Link>
+
             <button className="flex gap-2 text-sm text-gray-700 text-left hover:text-blue-900 hover:bg-gray-100 hover:rounded-lg py-2 px-2 ">
               <PackageSearch size={18} /> Articles
             </button>
-            <button className="flex gap-2 text-sm text-gray-700 text-left hover:text-blue-900 hover:bg-gray-100 hover:rounded-lg py-2 px-2 ">
+            <button className="flex gap-2 text-sm text-gray-700 text-left hover:text-blue-900 hover:bg-gray-100 hover:rounded-lg py-2 px-2">
               <Tags size={18} /> Offres
             </button>
             <button className="flex gap-2 text-sm text-gray-700 text-left hover:text-blue-900 hover:bg-gray-100 hover:rounded-lg py-2 px-2 ">

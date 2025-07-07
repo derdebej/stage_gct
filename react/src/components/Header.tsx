@@ -2,6 +2,7 @@ import React from "react";
 import { Search, ChevronDown } from "lucide-react";
 // @ts-ignore
 import avatar from "../exemples/nad-blue.png";
+import Card from "./Card";
 
 interface HeaderProps {
   username?: string;
@@ -20,19 +21,8 @@ const Header = ({ username, userrole }: HeaderProps) => {
           className="bg-transparent outline-none w-full text-sm text-gray-700"
         />
       </div>
-      <div className="flex items-center gap-3">
-        <img
-          src={avatar}
-          alt="avatar"
-          className="w-10 h-10 rounded-full object-cover"
-        />
 
-        <div className="text-right">
-          <p className="text-sm font-medium text-gray-800">{username}</p>
-          <p className="text-xs text-gray-500">{userrole}</p>
-        </div>
-        <ChevronDown className="w-4 h-4 text-gray-500" />
-      </div>
+      <Card username="nader ben salah" userrole="Admin" />
     </div>
   );
 };

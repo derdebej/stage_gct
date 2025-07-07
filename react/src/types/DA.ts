@@ -4,5 +4,8 @@ export interface DA {
   date: string;
   lots: number;
   prix: string;
+  Nature: 'Investisement' | 'Exploitation';
+  Demandeur: string;
+  cheminFichier: string;
   statut: 'Traité' | 'En Attente' | 'Non Traité';
 }

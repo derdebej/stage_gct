@@ -11,26 +11,8 @@ const statusStyles: Record<string, string> = {
 };
 const TableDA: React.FC<TableDAProps> = ({ data }) => {
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold text-gray-800">
-          Demandes d'achats
-        </h2>
-        <select className="border rounded-md px-3 py-1 text-sm text-gray-700">
-          <option value="janvier">Janvier</option>
-          <option value="février">Février</option>
-          <option value="mars">Mars</option>
-          <option value="avril">Avril</option>
-          <option value="mai">Mai</option>
-          <option value="juin">Juin</option>
-          <option value="juillet">Juillet</option>
-          <option value="août">Août</option>
-          <option value="septembre">Septembre</option>
-          <option value="octobre">Octobre</option>
-          <option value="novembre">Novembre</option>
-          <option value="décembre">Décembre</option>
-        </select>
-      </div>
+    
+      
 
       <div className="overflow-x-auto">
         <table className="w-full text-left border-separate border-spacing-0">
@@ -74,7 +56,7 @@ const TableDA: React.FC<TableDAProps> = ({ data }) => {
           </tbody>
         </table>
       </div>
-    </div>
+    
   );
 };
 

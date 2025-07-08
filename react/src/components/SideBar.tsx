@@ -63,12 +63,12 @@ const SideBar = () => {
           </nav>
         </div>
         <div className="flex flex-col gap-3 border-t border-gray-300 pt-4">
-          <button className="flex gap-1 text-sm text-gray-700 text-left hover:text-blue-900">
+          <Link to="/parametre" className="flex gap-1 text-sm text-gray-700 text-left hover:text-blue-900">
             <Settings size={16} /> Paramètres
-          </button>
-          <button className="flex gap-1 text-sm text-gray-700 text-left hover:text-blue-900">
+          </Link>
+          <Link to="/login" className="flex gap-1 text-sm text-gray-700 text-left hover:text-blue-900">
             <LogOut size={16} /> Logout
-          </button>
+          </Link>
         </div>
       </div>
     </>

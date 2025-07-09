@@ -48,12 +48,26 @@ const SideBar = () => {
               Demandes d’achats
             </Link>
 
-            <button className="flex gap-2 text-sm text-gray-700 text-left hover:text-blue-900 hover:bg-gray-100 hover:rounded-lg py-2 px-2 ">
+            <Link
+              to="/article"
+              className={`flex gap-2 text-sm font-medium rounded-lg px-2 py-2 text-left ${
+                isActive("/article")
+                  ? "text-white bg-blue-900"
+                  : "text-gray-700 hover:text-blue-900 hover:bg-gray-100"
+              }`}
+            >
               <PackageSearch size={18} /> Articles
-            </button>
-            <button className="flex gap-2 text-sm text-gray-700 text-left hover:text-blue-900 hover:bg-gray-100 hover:rounded-lg py-2 px-2">
+            </Link>
+            <Link
+              to="/offre"
+              className={`flex gap-2 text-sm font-medium rounded-lg px-2 py-2 text-left ${
+                isActive("/offre")
+                  ? "text-white bg-blue-900"
+                  : "text-gray-700 hover:text-blue-900 hover:bg-gray-100"
+              }`}
+            >
               <Tags size={18} /> Offres
-            </button>
+            </Link>
             <button className="flex gap-2 text-sm text-gray-700 text-left hover:text-blue-900 hover:bg-gray-100 hover:rounded-lg py-2 px-2 ">
               <NotebookPen size={18} /> Évaluations
             </button>
@@ -63,10 +77,16 @@ const SideBar = () => {
           </nav>
         </div>
         <div className="flex flex-col gap-3 border-t border-gray-300 pt-4">
-          <Link to="/parametre" className="flex gap-1 text-sm text-gray-700 text-left hover:text-blue-900">
+          <Link
+            to="/parametre"
+            className="flex gap-1 text-sm text-gray-700 text-left hover:text-blue-900"
+          >
             <Settings size={16} /> Paramètres
           </Link>
-          <Link to="/login" className="flex gap-1 text-sm text-gray-700 text-left hover:text-blue-900">
+          <Link
+            to="/login"
+            className="flex gap-1 text-sm text-gray-700 text-left hover:text-blue-900"
+          >
             <LogOut size={16} /> Logout
           </Link>
         </div>

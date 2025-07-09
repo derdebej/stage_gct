@@ -7,7 +7,7 @@ import DaHead from "../components/DaHead";
 function Da() {
   return (
     <>
-      <div className="flex h-screen ">
+      <div className="flex h-screen mb-4">
         <div className="flex-1 px-6 py-6 flex flex-col ">
           <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
             <DaHead />

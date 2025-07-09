@@ -7,7 +7,8 @@ import SideBar from "./components/SideBar";
 import Layout from "./components/Layout";
 import Parametre from "./pages/Parametre";
 import SidebarOnlyLayout from "./components/SideBarOnly";
-
+import Article from "./pages/Article";
+import Offre from "./pages/Offre";
 
 function App() {
   return (
@@ -17,6 +18,8 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
           <Route path="da" element={<Da />} />
+          <Route path="article" element={<Article />} />
+          <Route path="offre" element={<Offre />} />
           
         </Route>
         <Route path="/parametre" element={<SidebarOnlyLayout />} >

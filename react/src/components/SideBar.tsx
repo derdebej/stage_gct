@@ -68,12 +68,20 @@ const SideBar = () => {
             >
               <Tags size={18} /> Offres
             </Link>
-            <button className="flex gap-2 text-sm text-gray-700 text-left hover:text-blue-900 hover:bg-gray-100 hover:rounded-lg py-2 px-2 ">
+            <Link to="/evaluation" className={`flex gap-2 text-sm font-medium rounded-lg px-2 py-2 text-left ${
+                isActive("/evaluation")
+                  ? "text-white bg-blue-900"
+                  : "text-gray-700 hover:text-blue-900 hover:bg-gray-100"
+              }`}>
               <NotebookPen size={18} /> Évaluations
-            </button>
-            <button className="flex gap-2 text-sm text-gray-700 text-left hover:text-blue-900 hover:bg-gray-100 hover:rounded-lg py-2 px-2 ">
+            </Link>
+            <Link to="/commande" className={`flex gap-2 text-sm font-medium rounded-lg px-2 py-2 text-left ${
+                isActive("/commande")
+                  ? "text-white bg-blue-900"
+                  : "text-gray-700 hover:text-blue-900 hover:bg-gray-100"
+              }`}>
               <Handshake size={18} /> Commandes
-            </button>
+            </Link>
           </nav>
         </div>
         <div className="flex flex-col gap-3 border-t border-gray-300 pt-4">

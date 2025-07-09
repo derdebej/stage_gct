@@ -33,8 +33,8 @@ const Offre = () => {
             fournisseur: "TechOne SARL",
             dateSoumission: "2025-07-01",
             montant: 12850.5,
-            delaiLivraison: "30 jours",
-            conditionsPaiement: "50% avance, 50% à livraison",
+            IdConsultation: "309877",
+            CheminOffre: "/offre/offre1.pdf",
             statut: "Acceptée",
           },
           {
@@ -42,8 +42,8 @@ const Offre = () => {
             fournisseur: "TunisiaLogic",
             dateSoumission: "2025-07-01",
             montant: 7900,
-            delaiLivraison: "25 jours",
-            conditionsPaiement: "100% à la livraison",
+            IdConsultation: "259877",
+            CheminOffre: "/oofre/offre2.pdf",
             statut: "En attente",
           },
           {
@@ -51,8 +51,8 @@ const Offre = () => {
             fournisseur: "GlobalFix",
             dateSoumission: "2025-07-01",
             montant: 15500,
-            delaiLivraison: "20 jours",
-            conditionsPaiement: "30% avance",
+            IdConsultation: "209877",
+            CheminOffre: "/offre/offre3.pdf",
             statut: "Rejetée",
           },
         ]}

@@ -3,7 +3,7 @@ export interface OffreType {
   fournisseur: string;
   dateSoumission: string;
   montant: number;
-  delaiLivraison: string;
-  conditionsPaiement: string;
+  IdConsultation: string;
+  CheminOffre: string;
   statut: "Acceptée" | "En attente" | "Rejetée";
 }

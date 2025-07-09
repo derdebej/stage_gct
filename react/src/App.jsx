@@ -9,6 +9,8 @@ import Parametre from "./pages/Parametre";
 import SidebarOnlyLayout from "./components/SideBarOnly";
 import Article from "./pages/Article";
 import Offre from "./pages/Offre";
+import Evaluation from "./pages/Evaluation";
+import Commande from "./pages/Commande";
 
 function App() {
   return (
@@ -20,7 +22,8 @@ function App() {
           <Route path="da" element={<Da />} />
           <Route path="article" element={<Article />} />
           <Route path="offre" element={<Offre />} />
-          
+          <Route path="evaluation" element={<Evaluation />} />
+          <Route path="commande" element={<Commande />} />
         </Route>
         <Route path="/parametre" element={<SidebarOnlyLayout />} >
           <Route index element={<Parametre />} />

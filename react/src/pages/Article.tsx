@@ -17,7 +17,7 @@ const Article = () => {
           <Search className="w-4 h-4 text-gray-500 mr-2" />
           <input
             type="text"
-            placeholder="Rechercher Article par ID , Designation , Description ... , "
+            placeholder="Rechercher par ID , Designation , Description ... , "
             className="bg-transparent outline-none w-full text-sm text-gray-700"
           />
         </div>

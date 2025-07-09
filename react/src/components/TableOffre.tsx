@@ -41,10 +41,10 @@ const TableOffre: React.FC<OffreProps> = ({ data }) => {
                 Montant
               </th>
               <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
-                Délai
+                Id Consultation
               </th>
               <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
-                Paiement
+                Chemin Offre
               </th>
               <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
                 Statut
@@ -70,14 +70,14 @@ const TableOffre: React.FC<OffreProps> = ({ data }) => {
                   {offre.montant.toLocaleString()} dt
                 </td>
                 <td className="text-center py-3 px-4 text-sm text-gray-700">
-                  {offre.delaiLivraison}
+                  {offre.IdConsultation}
                 </td>
                 <td className="text-center py-3 px-4 text-sm text-gray-700">
-                  {offre.conditionsPaiement}
+                  {offre.CheminOffre}
                 </td>
                 <td className="px-4 py-2">
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusStyle(
+                    className={` px-3 py-1 rounded-full text-xs font-semibold ${getStatusStyle(
                       offre.statut
                     )}`}
                   >

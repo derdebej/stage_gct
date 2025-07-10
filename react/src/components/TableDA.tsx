@@ -2,6 +2,8 @@ import React from "react";
 import { DA } from "../types/DA";
 import { Column } from "../types/Column";
 import { Eye, Trash2, Pencil } from "lucide-react";
+import { useState } from "react";
+import DemandeDetailsModal from "./DaDetaills";
 
 interface TableDAProps {
   data: DA[];
@@ -9,6 +11,14 @@ interface TableDAProps {
 }
 
 const TableDA: React.FC<TableDAProps> = ({ data, columns }: TableDAProps) => {
+  const [selectedDemande, setSelectedDemande] = useState<DA | null>(null);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openDetails = (demande: DA) => {
+    setSelectedDemande(demande);
+    setIsModalOpen(true);
+  };
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-center border-separate border-spacing-0 ">
@@ -46,6 +56,7 @@ const TableDA: React.FC<TableDAProps> = ({ data, columns }: TableDAProps) => {
                 className="flex justify-between gap-2 items-center py-3 px-4 "
               >
                 <button
+                  onClick={() => openDetails(row)}
                   className="text-blue-600 hover:text-blue-800"
                   title="Voir"
                 >
@@ -68,6 +79,14 @@ const TableDA: React.FC<TableDAProps> = ({ data, columns }: TableDAProps) => {
           ))}
         </tbody>
       </table>
+      {selectedDemande && (
+  <DemandeDetailsModal
+    isOpen={isModalOpen}
+    onClose={() => setIsModalOpen(false)}
+    demande={selectedDemande}
+  />
+)}
+
     </div>
   );
 };

@@ -1,5 +1,20 @@
-# Vous pouvez consulter le projet sur figma par le lien suivant:
+# Aperçu de la Plateforme
 
-https://www.figma.com/design/pe3oADFJqZiSIiIHcNf32O/Dashboard?node-id=24-81&t=UZw9NyDy3wH8gvKG-1
+Ce dossier contient un **aperçu visuel** de la plateforme à travers des captures d'écran représentatives des différentes pages.
 
+## Captures d’écran disponibles
 
+- Dashboard
+- Liste des demandes d’achats
+- Détail d’une demande
+- Liste des offres
+- Formulaire de connexion
+- Liste des evaluations
+- Liste des commandes
+- Interface de parametre
+
+## Objectif
+
+Donner une vision rapide de l’interface utilisateur et de l’avancement du projet.
+
+> Ces captures évolueront au fur et à mesure du développement de la plateforme.

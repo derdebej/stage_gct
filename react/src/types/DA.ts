@@ -1,3 +1,5 @@
+import { Art } from "./Art";
+
 export interface DA {
   id: string;
   titre: string;
@@ -8,4 +10,5 @@ export interface DA {
   Demandeur: string;
   cheminFichier: string;
   statut: 'Traité' | 'En Attente' | 'Non Traité';
+  Articles: Art [];
 }

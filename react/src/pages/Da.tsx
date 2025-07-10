@@ -62,6 +62,22 @@ function Da() {
                   Demandeur: "Nader Ben Salah",
                   cheminFichier: "chemin/vers/fichier.pdf",
                   statut: "Traité",
+                  Articles: [
+                    {
+                      id: "1",
+                      designation: "Article 1",
+                      description: "Description de l'article 1",
+                      prixUnitaire: "100 dt",
+                      
+                    },
+                    {
+                      id: "2",
+                      designation: "Article 2",
+                      description: "Description de l'article 1",
+                      prixUnitaire: "200 dt",
+                      
+                    },
+                  ],
                 },
                 {
                   id: "1",
@@ -73,6 +89,22 @@ function Da() {
                   Demandeur: "Nader Ben Salah",
                   cheminFichier: "chemin/vers/fichier.pdf",
                   statut: "Traité",
+                  Articles: [
+                    {
+                      id: "1",
+                      designation: "Article 1",
+                      description: "Description de l'article 1",
+                      prixUnitaire: "100 dt",
+                      
+                    },
+                    {
+                      id: "2",
+                      designation: "Article 2",
+                      description: "Description de l'article 1",
+                      prixUnitaire: "200 dt",
+                      
+                    },
+                  ],
                 },
                 {
                   id: "1",
@@ -84,6 +116,22 @@ function Da() {
                   Demandeur: "Nader Ben Salah",
                   cheminFichier: "chemin/vers/fichier.pdf",
                   statut: "En Attente",
+                  Articles: [
+                    {
+                      id: "1",
+                      designation: "Article 1",
+                      description: "Description de l'article 1",
+                      prixUnitaire: "100 dt",
+                      
+                    },
+                    {
+                      id: "2",
+                      designation: "Article 2",
+                      description: "Description de l'article 1",
+                      prixUnitaire: "200 dt",
+                      
+                    },
+                  ],
                 },
                 {
                   id: "1",
@@ -95,6 +143,22 @@ function Da() {
                   Demandeur: "Nader Ben Salah",
                   cheminFichier: "chemin/vers/fichier.pdf",
                   statut: "Non Traité",
+                  Articles: [
+                    {
+                      id: "1",
+                      designation: "Article 1",
+                      description: "Description de l'article 1",
+                      prixUnitaire: "100 dt",
+                      
+                    },
+                    {
+                      id: "2",
+                      designation: "Article 2",
+                      description: "Description de l'article 1",
+                      prixUnitaire: "200 dt",
+                      
+                    },
+                  ],
                 },
                 {
                   id: "1",
@@ -106,6 +170,22 @@ function Da() {
                   Demandeur: "Nader Ben Salah",
                   cheminFichier: "chemin/vers/fichier.pdf",
                   statut: "Traité",
+                  Articles: [
+                    {
+                      id: "1",
+                      designation: "Article 1",
+                      description: "Description de l'article 1",
+                      prixUnitaire: "100 dt",
+                      
+                    },
+                    {
+                      id: "2",
+                      designation: "Article 2",
+                      description: "Description de l'article 1",
+                      prixUnitaire: "200 dt",
+                      
+                    },
+                  ],
                 },
                 {
                   id: "1",
@@ -117,6 +197,22 @@ function Da() {
                   Demandeur: "Nader Ben Salah",
                   cheminFichier: "chemin/vers/fichier.pdf",
                   statut: "Traité",
+                  Articles: [
+                    {
+                      id: "1",
+                      designation: "Article 1",
+                      description: "Description de l'article 1",
+                      prixUnitaire: "100 dt",
+                      
+                    },
+                    {
+                      id: "2",
+                      designation: "Article 2",
+                      description: "Description de l'article 1",
+                      prixUnitaire: "200 dt",
+                      
+                    },
+                  ],
                 },
                 {
                   id: "1",
@@ -128,6 +224,22 @@ function Da() {
                   Demandeur: "Nader Ben Salah",
                   cheminFichier: "chemin/vers/fichier.pdf",
                   statut: "Traité",
+                  Articles: [
+                    {
+                      id: "1",
+                      designation: "Article 1",
+                      description: "Description de l'article 1",
+                      prixUnitaire: "100 dt",
+                      
+                    },
+                    {
+                      id: "2",
+                      designation: "Article 2",
+                      description: "Description de l'article 1",
+                      prixUnitaire: "200 dt",
+                      
+                    },
+                  ],
                 },
                 {
                   id: "1",
@@ -139,6 +251,22 @@ function Da() {
                   Demandeur: "Nader Ben Salah",
                   cheminFichier: "chemin/vers/fichier.pdf",
                   statut: "En Attente",
+                  Articles: [
+                    {
+                      id: "1",
+                      designation: "Article 1",
+                      description: "Description de l'article 1",
+                      prixUnitaire: "100 dt",
+                      
+                    },
+                    {
+                      id: "2",
+                      designation: "Article 2",
+                      description: "Description de l'article 1",
+                      prixUnitaire: "200 dt",
+                      
+                    },
+                  ],
                 },
                 {
                   id: "1",
@@ -150,6 +278,22 @@ function Da() {
                   Demandeur: "Nader Ben Salah",
                   cheminFichier: "chemin/vers/fichier.pdf",
                   statut: "Non Traité",
+                  Articles: [
+                    {
+                      id: "1",
+                      designation: "Article 1",
+                      description: "Description de l'article 1",
+                      prixUnitaire: "100 dt",
+                      
+                    },
+                    {
+                      id: "2",
+                      designation: "Article 2",
+                      description: "Description de l'article 1",
+                      prixUnitaire: "200 dt",
+                      
+                    },
+                  ],
                 },
                 {
                   id: "1",
@@ -161,6 +305,22 @@ function Da() {
                   Demandeur: "Nader Ben Salah",
                   cheminFichier: "chemin/vers/fichier.pdf",
                   statut: "Traité",
+                  Articles: [
+                    {
+                      id: "1",
+                      designation: "Article 1",
+                      description: "Description de l'article 1",
+                      prixUnitaire: "100 dt",
+                      
+                    },
+                    {
+                      id: "2",
+                      designation: "Article 2",
+                      description: "Description de l'article 1",
+                      prixUnitaire: "200 dt",
+                      
+                    },
+                  ],
                 },
               ]}
             />

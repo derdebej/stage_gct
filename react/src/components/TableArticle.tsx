@@ -13,6 +13,8 @@ const TableArticle = ({data}:ArticleProps) => {
         <thead>
           <tr>
             <th className="bg-gray-100 py-3 px-4 text-gray-800 text-sm rounded-l-xl">ID</th>
+            <th className="bg-gray-100 py-3 px-4 text-gray-800 text-sm ">Fournisseur</th>
+            <th className="bg-gray-100 py-3 px-4 text-gray-800 text-sm ">Date Achat</th>
             <th className="bg-gray-100 py-3 px-4 text-gray-800 text-sm ">Designation</th>
             <th className="bg-gray-100 py-3 px-4 text-gray-800 text-sm ">Description</th>
             <th className="bg-gray-100 py-3 px-4 text-gray-800 text-sm ">Prix Unitaire</th>
@@ -23,6 +25,8 @@ const TableArticle = ({data}:ArticleProps) => {
           {data.map((row, idx) => (
             <tr key={idx} className="border-t hover:bg-gray-50 ">
               <td className="text-center py-3 px-4 text-sm text-gray-700 rounded-l-xl">{row.id}</td>
+              <td className="text-center py-3 px-4 text-sm text-gray-700">{row.fournisseur}</td>
+              <td className="text-center py-3 px-4 text-sm text-gray-700">{row.dateAchat}</td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">{row.designation}</td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">{row.description}</td>
               <td className="text-center py-3 px-4 text-sm text-gray-700 rounded-r-xl">{row.prixUnitaire} dt</td>

@@ -5,7 +5,7 @@ import { FilePlus, Search } from "lucide-react";
 const Commande = () => {
   return (
     <>
-    <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
+      <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
         <div className="mb-6 flex justify-between items-center border-b-2 border-gray-200 pb-4">
           <h2 className="text-xl font-bold">Liste des Commandes</h2>
           <div className="flex gap-2">
@@ -23,38 +23,42 @@ const Commande = () => {
             className="bg-transparent outline-none w-full text-sm text-gray-700"
           />
         </div>
-      <TableCommande
-        data={[
-          {
-            id: "OFF20250701-01",
-            fournisseur: "TechOne SARL",
-            dateCommande: "2025-07-01",
-            montant: 12850.5,
-            IdConsultation: "309877",
-            CheminCommande: "/commande/commande1.pdf",
-            statut: "Terminée",
-          },
-          {
-            id: "OFF20250701-02",
-            fournisseur: "TunisiaLogic",
-            dateCommande: "2025-07-01",
-            montant: 7900,
-            IdConsultation: "259877",
-            CheminCommande: "/commande/commande2.pdf",
-            statut: "En cours",
-          },
-          {
-            id: "OFF20250701-03",
-            fournisseur: "GlobalFix",
-            dateCommande: "2025-07-01",
-            montant: 15500,
-            IdConsultation: "209877",
-            CheminCommande: "/commande/commande3.pdf",
-            statut: "Annulée",
-          },
-        ]}
-      />
-    </div>
+        <TableCommande
+          data={[
+            {
+              id: "OFF20250701-01",
+              fournisseur: "TechOne SARL",
+              dateCommande: "2025-07-01",
+              montant: 12850.5,
+              IdConsultation: "309877",
+              CheminCommande: "/commande/commande1.pdf",
+              statut: "Terminée",
+              articles: [],
+            },
+            {
+              id: "OFF20250701-02",
+              fournisseur: "TunisiaLogic",
+              dateCommande: "2025-07-01",
+              montant: 7900,
+              IdConsultation: "259877",
+              CheminCommande: "/commande/commande2.pdf",
+              statut: "En cours",
+              articles: [],
+            },
+            {
+              id: "OFF20250701-03",
+              fournisseur: "GlobalFix",
+              dateCommande: "2025-07-01",
+              montant: 15500,
+              IdConsultation: "209877",
+              CheminCommande: "/commande/commande3.pdf",
+              statut: "Annulée",
+
+              articles: [],
+            },
+          ]}
+        />
+      </div>
     </>
   );
 };

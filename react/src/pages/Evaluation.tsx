@@ -26,6 +26,7 @@ const Evaluation = () => {
         <TableEval data={[
           {
             id: "123",
+            fournisseur: "Fournisseur A",
             IdOffre: "OFF20250701-01",
             date: "2025-07-01",
             montant: 12850.5,
@@ -35,6 +36,7 @@ const Evaluation = () => {
           },
           {
             id: "124",
+            fournisseur: "Fournisseur A",
             IdOffre: "OFF20250701-02",
             date: "2025-07-01",
             montant: 7900,
@@ -44,6 +46,7 @@ const Evaluation = () => {
           },
           {
             id: "125",
+            fournisseur: "Fournisseur A",
             IdOffre: "OFF20250701-03",
             date: "2025-07-01",
             montant: 15500,

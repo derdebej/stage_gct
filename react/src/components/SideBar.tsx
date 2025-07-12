@@ -75,7 +75,7 @@ const SideBar = () => {
               }`}>
               <NotebookPen size={18} /> Évaluations
             </Link>
-            <Link to="/commande" className={`flex gap-2 text-sm font-medium rounded-lg px-2 py-2 text-left ${
+            <Link to="/commandes" className={`flex gap-2 text-sm font-medium rounded-lg px-2 py-2 text-left ${
                 isActive("/commande")
                   ? "text-white bg-blue-900"
                   : "text-gray-700 hover:text-blue-900 hover:bg-gray-100"

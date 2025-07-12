@@ -1,9 +1,40 @@
 import React from "react";
 import { DA } from "../types/DA";
-import { Search ,Info,PlusCircle , FilePlus} from "lucide-react";
+import { Search, Info, PlusCircle, FilePlus } from "lucide-react";
+import { useState } from "react";
+import Consultation from "./Consultation";
+import AjouterDocument from "./AjouterDocument";
 
+interface DaHeadProps {
+  selectedRows: DA[];
+}
 
-const DaHead = () => {
+const DaHead = ({ selectedRows }: DaHeadProps) => {
+  const [isConsultationOpen, setIsConsultationOpen] = useState(false);
+  const [isAjouterDocumentOpen, setIsAjouterDocumentOpen] = useState(false);
+
+  const openAjouterDocument = () => {
+    setIsAjouterDocumentOpen(true);
+  };
+  const closeAjouterDocument = () => {
+    setIsAjouterDocumentOpen(false);
+  };
+
+  const openConsultation = () => {
+    setIsConsultationOpen(true);
+  };
+  const closeConsultation = () => {
+    setIsConsultationOpen(false);
+  };
+  const totalPrice = selectedRows.reduce((sum, row) => {
+    const price = parseFloat(row.montant_estime.replace(" dt", "")) || 0;
+    return sum + price;
+  }, 0);
+
+  const totalLots = selectedRows.reduce((sum, row) => {
+    return sum + row.nbre;
+  }, 0);
+
   return (
     <>
       <div className="flex justify-between items-center pb-6 border-b-2 border-gray-200 mb-4">
@@ -11,13 +42,21 @@ const DaHead = () => {
           Demandes d'achats
         </h2>
         <div className="flex space-x-2">
-          <button className="bg-blue-800 hover:bg-blue-900 text-white px-4 py-2 rounded-md flex items-center gap-1 text-sm">
+          <button
+            onClick={() => openConsultation()}
+            className={`text-white px-4 py-2 rounded-md flex items-center gap-1 text-sm ${
+              selectedRows.length === 0
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-800 hover:bg-blue-900"
+            }`}
+            disabled={selectedRows.length === 0}
+          >
             <PlusCircle className="w-4 h-4" />
-            Créer une Consultation
+            Regrouper en une Consultation
           </button>
-          <button className="bg-blue-800 hover:bg-blue-900 text-white px-4 py-2 rounded-md flex items-center gap-1 text-sm">
+          <button onClick={()=>openAjouterDocument()} className="bg-blue-800 hover:bg-blue-900 text-white px-4 py-2 rounded-md flex items-center gap-1 text-sm">
             <FilePlus className="w-4 h-4" />
-            Ajouter un document
+            Ajouter une Demande d'Achat
           </button>
         </div>
       </div>
@@ -52,7 +91,17 @@ const DaHead = () => {
           </select>
         </div>
       </div>
-
+      <Consultation
+        totalPrice={totalPrice}
+        totalLots={totalLots}
+        isOpen={isConsultationOpen}
+        onClose={closeConsultation}
+        selectedRows={selectedRows}
+      />
+      
+      <AjouterDocument
+        isOpen={isAjouterDocumentOpen}
+        onClose={closeAjouterDocument}/>
     </>
   );
 };

@@ -1,14 +1,18 @@
 import { Art } from "./Art";
 
 export interface DA {
-  id: string;
+  id_da: number;
+  objet: string;
   titre: string;
-  date: string;
-  lots: number;
-  prix: string;
-  Nature: 'Investisement' | 'Exploitation';
-  Demandeur: string;
-  cheminFichier: string;
+  demandeur: string;
+  nature: 'investissement' | 'exploitation';
+  num_aed: string;
   statut: 'Traité' | 'En Attente' | 'Non Traité';
-  Articles: Art [];
+  date_creation: string; // or Date, depending on how you use it
+  montant_estime: string;
+  id_utilisateur: number;
+  id_consultation: number;
+  chemin_da: string;
+  nbre: number;
+  Articles: Art[];
 }

@@ -4,32 +4,70 @@ import { Column } from "../types/Column";
 import { Eye, Trash2, Pencil } from "lucide-react";
 import { useState } from "react";
 import DemandeDetailsModal from "./DaDetaills";
+import { useEffect } from "react";
 
 interface TableDAProps {
-  data: DA[];
   columns: Column<DA>[];
+  onSelectionChange?: (selected: DA[]) => void;
+  selectedRows?: DA[];
 }
 
-const TableDA: React.FC<TableDAProps> = ({ data, columns }: TableDAProps) => {
+const TableDA: React.FC<TableDAProps> = ({
+  columns,
+  onSelectionChange,
+  selectedRows = [],
+}: TableDAProps) => {
   const [selectedDemande, setSelectedDemande] = useState<DA | null>(null);
-
+  //const [selectedRows, setSelectedRows] = useState<DA[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [demandes, setDemandes] = useState<DA[]>([]);
+
+  useEffect(() => {
+    fetch("http://localhost:3001/api/demandes")
+      .then((res) => res.json())
+      .then((data) => setDemandes(data))
+      .catch((err) => console.error(err));
+  }, []);
 
   const openDetails = (demande: DA) => {
     setSelectedDemande(demande);
     setIsModalOpen(true);
+  };
+  const toggleSelection = (demande: DA, isChecked: boolean) => {
+    if (!onSelectionChange) return;
+
+    let updatedSelection: DA[];
+
+    if (isChecked) {
+      updatedSelection = selectedRows.some(
+        (d) => Number(d.id_da) === Number(demande.id_da)
+      )
+        ? selectedRows
+        : [...selectedRows, demande];
+    } else {
+      updatedSelection = selectedRows.filter(
+        (d) => Number(d.id_da) !== Number(demande.id_da)
+      );
+    }
+
+    onSelectionChange(updatedSelection);
+  };
+
+  const isRowSelected = (demande: DA) => {
+    return selectedRows.some((d) => Number(d.id_da) === Number(demande.id_da));
   };
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-center border-separate border-spacing-0 ">
         <thead>
           <tr>
+            <th className="bg-gray-100 py-3 px-4 text-sm text-gray-800 rounded-l-xl"></th>
             {columns.map((col, index) => (
               <th
                 key={col.key}
-                className={`bg-gray-100 py-3 px-4 text-sm text-gray-800 ${
-                  index === 0 ? "rounded-l-xl" : ""
-                }
+                className={`bg-gray-100 py-3 px-4 text-sm text-gray-800 
+                  
+                
           `}
               >
                 {col.header}
@@ -41,14 +79,33 @@ const TableDA: React.FC<TableDAProps> = ({ data, columns }: TableDAProps) => {
           </tr>
         </thead>
         <tbody>
-          {data.map((row, idx) => (
+          {demandes.map((row, idx) => (
             <tr key={idx} className="border-t hover:bg-gray-50 ">
+              <td className="py-3 px-4">
+                <input
+                  type="checkbox"
+                  checked={isRowSelected(row)}
+                  onChange={(e) => toggleSelection(row, e.target.checked)}
+                  className="form-checkbox h-4 w-4 text-blue-600"
+                />
+              </td>
               {columns.map((col) => (
                 <td
                   key={col.key as string}
                   className="text-center py-3  px-4 text-sm text-gray-700"
                 >
-                  {col.render ? col.render(row[col.key], row) : row[col.key]}
+                  {(() => {
+                    const value = col.render
+                      ? col.render(row[col.key], row)
+                      : row[col.key];
+                    if (Array.isArray(value)) {
+                      // Map Art[] to ReactNode[]
+                      return value.map((item, i) => (
+                        <span key={i}>{String(item)}</span>
+                      ));
+                    }
+                    return value;
+                  })()}
                 </td>
               ))}
               <td
@@ -80,13 +137,12 @@ const TableDA: React.FC<TableDAProps> = ({ data, columns }: TableDAProps) => {
         </tbody>
       </table>
       {selectedDemande && (
-  <DemandeDetailsModal
-    isOpen={isModalOpen}
-    onClose={() => setIsModalOpen(false)}
-    demande={selectedDemande}
-  />
-)}
-
+        <DemandeDetailsModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          demande={selectedDemande}
+        />
+      )}
     </div>
   );
 };

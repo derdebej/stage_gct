@@ -23,7 +23,7 @@ function App() {
           <Route path="article" element={<Article />} />
           <Route path="offre" element={<Offre />} />
           <Route path="evaluation" element={<Evaluation />} />
-          <Route path="commande" element={<Commande />} />
+          <Route path="commandes" element={<Commande />} />
         </Route>
         <Route path="/parametre" element={<SidebarOnlyLayout />} >
           <Route index element={<Parametre />} />

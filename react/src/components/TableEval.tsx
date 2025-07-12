@@ -19,6 +19,9 @@ const TableEval = ({ data }: TableEvalProps) => {
               Id Offre
             </th>
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
+              Fournisseur
+            </th>
+            <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
               Date
             </th>
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
@@ -46,6 +49,9 @@ const TableEval = ({ data }: TableEvalProps) => {
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
                 {evalItem.IdOffre}
+              </td>
+              <td className="text-center py-3 px-4 text-sm text-gray-700">
+                {evalItem.fournisseur}
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
                 {evalItem.date}

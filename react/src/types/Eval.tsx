@@ -1,10 +1,10 @@
 export interface Eval {
-  id: string;
-  IdOffre: string;
-  fournisseur: string;
+  id_eval: string;
+  id_offre: string;
+  id_fournisseur: string;
   date: string;
   montant: number;
-  IdConsultation: string;
-  CheminEvaluation: string;
-  statut: "Conforme" | "Non Conforme";
+  id_consultation: string;
+  chemin_evaluation: string;
+  conformite: "Conforme" | "Non Conforme";
 }

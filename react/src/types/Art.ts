@@ -1,8 +1,8 @@
 export interface Art {
-  id: string;
-  fournisseur: string;
-  dateAchat: string;
+  id_article: string;
+  id_fournisseur: string;
+  date_achat: string;
   designation: string;
   description: string;
-  prixUnitaire: string;
+  pu: number;
 }

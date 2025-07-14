@@ -37,7 +37,6 @@ const TableDA: React.FC<TableDAProps> = ({
     if (!onSelectionChange) return;
 
     let updatedSelection: DA[];
-
     if (isChecked) {
       updatedSelection = selectedRows.some(
         (d) => Number(d.id_da) === Number(demande.id_da)

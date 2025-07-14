@@ -4,6 +4,11 @@ import SideBar from "../components/SideBar";
 import Header from "../components/Header";
 
 const Layout: React.FC = () => {
+  const userString = localStorage.getItem("user");
+  const user = userString ? JSON.parse(userString) : null;
+  const username = user?.nom;
+  const userrole = user?.role;
+
   return (
     <div className="flex min-h-screen">
       <div className="w-60 fixed h-screen z-10">
@@ -11,7 +16,7 @@ const Layout: React.FC = () => {
       </div>
 
       <div className="flex-1 ml-60 bg-transparent min-h-screen px-6 py-6">
-        <Header username="Nader Ben Salah" userrole="Admin" />
+        <Header username={username} userrole={userrole} />
 
         <div className="mt-6">
           <Outlet />

@@ -1,12 +1,19 @@
 import React from 'react'
 import { Art } from '../types/Art'
 import { Eye, Trash2, Pencil } from 'lucide-react'
+import {useEffect, useState } from 'react'
 
-interface ArticleProps {
-  data: Art []
-}
 
-const TableArticle = ({data}:ArticleProps) => {
+
+
+const TableArticle = () => {
+  const [articles, setArticles] = useState<Art[]>([]);
+  useEffect(() => {
+    fetch("http://localhost:3001/api/articles")
+      .then((res) => res.json())
+      .then((data) => setArticles(data))
+      .catch((err) => console.error(err));
+  }, []);
   return (
     
       <table className="w-full text-center border-separate border-spacing-0 ">
@@ -22,14 +29,14 @@ const TableArticle = ({data}:ArticleProps) => {
           </tr>
         </thead>
         <tbody>
-          {data.map((row, idx) => (
+          {articles.map((row, idx) => (
             <tr key={idx} className="border-t hover:bg-gray-50 ">
-              <td className="text-center py-3 px-4 text-sm text-gray-700 rounded-l-xl">{row.id}</td>
-              <td className="text-center py-3 px-4 text-sm text-gray-700">{row.fournisseur}</td>
-              <td className="text-center py-3 px-4 text-sm text-gray-700">{row.dateAchat}</td>
+              <td className="text-center py-3 px-4 text-sm text-gray-700 rounded-l-xl">{row.id_article}</td>
+              <td className="text-center py-3 px-4 text-sm text-gray-700">{row.id_fournisseur}</td>
+              <td className="text-center py-3 px-4 text-sm text-gray-700">{row.date_achat}</td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">{row.designation}</td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">{row.description}</td>
-              <td className="text-center py-3 px-4 text-sm text-gray-700 rounded-r-xl">{row.prixUnitaire} dt</td>
+              <td className="text-center py-3 px-4 text-sm text-gray-700 rounded-r-xl">{row.pu} dt</td>
               <td
                 key={idx}
                 className="flex justify-between items-center py-3 px-4 "

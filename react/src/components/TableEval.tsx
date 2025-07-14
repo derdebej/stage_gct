@@ -1,12 +1,21 @@
 import React from "react";
 import { Eval } from "../types/Eval";
 import { Eye, Pencil, Trash2 } from "lucide-react";
+import { useState, useEffect } from "react";
 
-interface TableEvalProps {
-  data: Eval[];
-}
 
-const TableEval = ({ data }: TableEvalProps) => {
+
+const TableEval = () => {
+  const [data,setData] = useState<Eval[]>([]);
+  useEffect(() => {
+    fetch("http://localhost:3001/api/evaluation")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("DATA FROM API:", data);
+        setData(data);
+      })
+      .catch((err) => console.error(err));
+  }, []);
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full text-left border-separate border-spacing-y-2">
@@ -43,37 +52,37 @@ const TableEval = ({ data }: TableEvalProps) => {
         </thead>
         <tbody>
           {data.map((evalItem) => (
-            <tr key={evalItem.id} className="bg-white rounded hover:bg-gray-50">
+            <tr key={evalItem.id_eval} className="bg-white rounded hover:bg-gray-50">
               <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {evalItem.id}
+                {evalItem.id_eval}
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {evalItem.IdOffre}
+                {evalItem.id_offre}
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {evalItem.fournisseur}
+                {evalItem.id_fournisseur}
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
                 {evalItem.date}
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {evalItem.montant.toLocaleString()} dt
+                {evalItem.montant} dt
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {evalItem.IdConsultation}
+                {evalItem.id_consultation}
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {evalItem.CheminEvaluation}
+                {evalItem.chemin_evaluation}
               </td>
               <td className="px-4 py-2">
                 <span
                   className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                    evalItem.statut === "Conforme"
+                    evalItem.conformite === "Conforme"
                       ? "bg-green-100 text-green-800"
                       : "bg-red-100 text-red-800"
                   }`}
                 >
-                  {evalItem.statut}
+                  {evalItem.conformite}
                 </span>
               </td>
               <td className="px-4 py-2 flex gap-2 justify-center">

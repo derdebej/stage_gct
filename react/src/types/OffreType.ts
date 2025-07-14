@@ -1,9 +1,9 @@
 export interface OffreType {
-  id: string;
-  fournisseur: string;
-  dateSoumission: string;
+  id_offre: string;
+  id_fournisseur: string;
+  date_d_offre: string;
   montant: number;
-  IdConsultation: string;
-  CheminOffre: string;
+  id_consultation: string;
+  chemin_document: string;
   statut: "Acceptée" | "En attente" | "Rejetée";
 }

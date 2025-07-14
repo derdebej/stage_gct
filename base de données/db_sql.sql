@@ -110,3 +110,14 @@ ALTER TABLE bon_commande ADD CONSTRAINT fk_bc_fournisseur FOREIGN KEY (id_fourni
 ALTER TABLE bon_commande ADD CONSTRAINT fk_bc_decision FOREIGN KEY (id_decision) REFERENCES decision(id_decision);
 ALTER TABLE avis_reception ADD CONSTRAINT fk_ar_bc FOREIGN KEY (id_bc) REFERENCES bon_commande(id_bc);
 ALTER TABLE bon_sortie ADD CONSTRAINT fk_bs_ar FOREIGN KEY (id_ar) REFERENCES avis_reception(id_ar);
+
+-- Adding new columns to the article table
+ALTER TABLE article
+ADD COLUMN id_fournisseur integer,
+ADD COLUMN date_achat date;
+-- Adding foreign key constraint to the article table
+ALTER TABLE article
+ADD CONSTRAINT fk_fournisseur
+FOREIGN KEY (id_fournisseur)
+REFERENCES fournisseur (id_fournisseur);
+

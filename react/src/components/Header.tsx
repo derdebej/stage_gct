@@ -22,7 +22,7 @@ const Header = ({ username, userrole }: HeaderProps) => {
         />
       </div>
 
-      <Card username="nader ben salah" userrole="Admin" />
+      <Card username={username} userrole={userrole} />
     </div>
   );
 };

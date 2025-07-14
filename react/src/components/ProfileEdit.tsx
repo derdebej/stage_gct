@@ -1,8 +1,15 @@
-import React from "react";
+import React, { use } from "react";
 import { Camera } from "lucide-react";
+// @ts-ignore
 import avatar from "../exemples/nad-blue.png";
 
 const ProfileEdit = () => {
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const username = user?.nom;
+  const userrole = user?.role;
+  const userEmail = user?.email;
+  const userBirthDate = user?.date_naissance;
+
   return (
     <div className="px-10 w-5xl max-w-md mx-auto bg-white p-8 rounded-2xl shadow-sm mt-10">
       <h2 className="text-center text-2xl font-semibold mb-6">
@@ -27,7 +34,7 @@ const ProfileEdit = () => {
           </label>
           <input
             type="text"
-            defaultValue="Nader Ben Salah"
+            defaultValue={username}
             className="mt-1 w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-blue-200"
           />
         </div>
@@ -38,7 +45,7 @@ const ProfileEdit = () => {
           </label>
           <input
             type="email"
-            defaultValue="*****@gmail.com"
+            defaultValue={userEmail}
             className="mt-1 w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-blue-200"
           />
         </div>
@@ -60,7 +67,7 @@ const ProfileEdit = () => {
           </label>
           <input
             type="date"
-            defaultValue="2003-08-19"
+            defaultValue={userBirthDate}
             className="mt-1 w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-blue-200"
           />
         </div>

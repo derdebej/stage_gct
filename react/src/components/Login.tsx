@@ -1,10 +1,12 @@
 import React from "react";
+import { useAuth } from "../context/AuthContext";
 // @ts-ignore
 import logo from "../assets/Groupe_chimique_tunisien.jpg";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -34,7 +36,7 @@ const Login = () => {
       }
 
       // Success
-      localStorage.setItem("user", JSON.stringify(data.user));
+      login(data.user);
 
       navigate("/");
     } catch (err) {

@@ -1,4 +1,5 @@
 import React from "react";
+// @ts-ignore
 import logo from "../assets/Groupe_chimique_tunisien.jpg";
 import {
   LayoutDashboard,
@@ -12,10 +13,20 @@ import {
 } from "lucide-react";
 import { Link, Routes, Route, useLocation } from "react-router-dom";
 import Da from "../pages/Da";
+import { useContext } from "react";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const SideBar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { logout, isAuthenticated, loading } = useAuth();
   const isActive = (path: string) => location.pathname === path;
+  const handleLogout = () => {
+    logout();
+    
+  };
+
 
   return (
     <>
@@ -68,18 +79,24 @@ const SideBar = () => {
             >
               <Tags size={18} /> Offres
             </Link>
-            <Link to="/evaluation" className={`flex gap-2 text-sm font-medium rounded-lg px-2 py-2 text-left ${
+            <Link
+              to="/evaluation"
+              className={`flex gap-2 text-sm font-medium rounded-lg px-2 py-2 text-left ${
                 isActive("/evaluation")
                   ? "text-white bg-blue-900"
                   : "text-gray-700 hover:text-blue-900 hover:bg-gray-100"
-              }`}>
+              }`}
+            >
               <NotebookPen size={18} /> Évaluations
             </Link>
-            <Link to="/commandes" className={`flex gap-2 text-sm font-medium rounded-lg px-2 py-2 text-left ${
+            <Link
+              to="/commandes"
+              className={`flex gap-2 text-sm font-medium rounded-lg px-2 py-2 text-left ${
                 isActive("/commande")
                   ? "text-white bg-blue-900"
                   : "text-gray-700 hover:text-blue-900 hover:bg-gray-100"
-              }`}>
+              }`}
+            >
               <Handshake size={18} /> Commandes
             </Link>
           </nav>
@@ -91,12 +108,12 @@ const SideBar = () => {
           >
             <Settings size={16} /> Paramètres
           </Link>
-          <Link
-            to="/login"
+          <button
+            onClick={handleLogout}
             className="flex gap-1 text-sm text-gray-700 text-left hover:text-blue-900"
           >
             <LogOut size={16} /> Logout
-          </Link>
+          </button>
         </div>
       </div>
     </>

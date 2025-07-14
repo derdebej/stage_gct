@@ -1,9 +1,12 @@
 import React from "react";
 import { ChevronDown } from "lucide-react";
+// @ts-ignore
 import avatar from "../exemples/nad-blue.png";
 import { useState, useRef, useEffect } from "react";
 import { Settings, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 interface CardProps {
   username?: string;
@@ -11,6 +14,13 @@ interface CardProps {
 }
 
 const Card = ({ username, userrole }: CardProps) => {
+  const { logout, isAuthenticated, loading } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    
+  };
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
@@ -62,15 +72,15 @@ const Card = ({ username, userrole }: CardProps) => {
           >
             <Settings size={18} className="mt-0.5" /> Settings
           </Link>
-          <Link
-            to="/login"
+          <button
             className="flex gap-2 text-md px-4 py-2 cursor-pointer hover:bg-gray-100 text-gray-700"
             onClick={() => {
               setOpen(false);
+              handleLogout();
             }}
           >
             <LogOut size={18} className="mt-0.5" /> Logout
-          </Link>
+          </button>
         </div>
       )}
     </div>

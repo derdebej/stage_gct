@@ -5,13 +5,17 @@ import logo from "../assets/Groupe_chimique_tunisien.jpg";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Login = () => {
+const Login = ({setInscription}) => {
+  
+
+
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
@@ -89,13 +93,13 @@ const Login = () => {
         <button
           onClick={handleLogin}
           type="submit"
-          className="w-full bg-blue-800 text-white font-semibold py-2 rounded-md hover:bg-blue-900 transition"
+          className="w-full cursor-pointer bg-blue-800 text-white font-semibold py-2 rounded-md hover:bg-blue-900 transition"
         >
           Se connecter
         </button>
         <div className="text-center text-sm text-gray-500 mt-4">
           Vous n’avez pas de compte ?{" "}
-          <span className="font-bold text-black">Inscrivez-vous</span>
+          <button onClick={()=>setInscription(true)} className="font-bold text-black cursor-pointer">Inscrivez-vous</button>
         </div>
       </form>
     </div>

@@ -1,7 +1,6 @@
 import React, { use } from "react";
 import { Camera } from "lucide-react";
-// @ts-ignore
-import avatar from "../exemples/nad-blue.png";
+
 
 const ProfileEdit = () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -16,16 +15,7 @@ const ProfileEdit = () => {
         Modifier le Profil
       </h2>
 
-      <div className="relative w-32 h-32 mx-auto mb-6">
-        <img
-          src={avatar}
-          alt="Profile"
-          className="rounded-full object-cover w-full h-full"
-        />
-        <div className="absolute bottom-1 right-1 bg-gray-100 p-2 rounded-full shadow-md cursor-pointer">
-          <Camera size={16} className="text-gray-600" />
-        </div>
-      </div>
+      
 
       <form className="space-y-4">
         <div>
@@ -56,7 +46,7 @@ const ProfileEdit = () => {
           </label>
           <input
             type="password"
-            defaultValue="************"
+            placeholder="Entrer votre nouveau mot de passe"
             className="mt-1 w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-blue-200"
           />
         </div>

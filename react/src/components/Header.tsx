@@ -1,7 +1,5 @@
 import React from "react";
 import { Search, ChevronDown } from "lucide-react";
-// @ts-ignore
-import avatar from "../exemples/nad-blue.png";
 import Card from "./Card";
 
 interface HeaderProps {

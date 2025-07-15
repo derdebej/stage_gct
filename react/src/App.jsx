@@ -16,33 +16,36 @@ import { AuthProvider } from "./context/AuthContext.jsx";
 
 function App() {
   return (
-    
     <Router>
-      
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <Layout />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<Dashboard />} />
-            <Route path="da" element={<Da />} />
-            <Route path="article" element={<Article />} />
-            <Route path="offre" element={<Offre />} />
-            <Route path="evaluation" element={<Evaluation />} />
-            <Route path="commandes" element={<Commande />} />
-          </Route>
-          <Route path="/parametre" element={<SidebarOnlyLayout />}>
-            <Route index element={<Parametre />} />
-          </Route>
-        </Routes>
-      
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Dashboard />} />
+          <Route path="da" element={<Da />} />
+          <Route path="article" element={<Article />} />
+          <Route path="offre" element={<Offre />} />
+          <Route path="evaluation" element={<Evaluation />} />
+          <Route path="commandes" element={<Commande />} />
+        </Route>
+        <Route
+          path="/parametre"
+          element={
+            <ProtectedRoute>
+              <SidebarOnlyLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Parametre />} />
+        </Route>
+      </Routes>
     </Router>
-
   );
 }
 

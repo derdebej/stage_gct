@@ -1,7 +1,6 @@
 import React from "react";
 import { ChevronDown } from "lucide-react";
-// @ts-ignore
-import avatar from "../exemples/nad-blue.png";
+
 import { useState, useRef, useEffect } from "react";
 import { Settings, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -36,14 +35,9 @@ const Card = ({ username, userrole }: CardProps) => {
   return (
     <div className="relative">
       <div className="flex items-center gap-3">
-        <img
-          src={avatar}
-          alt="avatar"
-          className="w-10 h-10 rounded-full object-cover"
-        />
         <div className="text-right">
-          <p className="text-sm font-medium text-gray-800">{username}</p>
-          <p className="text-xs text-gray-500">{userrole}</p>
+          <p className="text-lg font-bold text-gray-800"><span className="text-lg text-blue-800">Bonjour, </span>{username}</p>
+         
         </div>
         <div
           onClick={() => setOpen(!open)}

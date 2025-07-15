@@ -2,6 +2,7 @@ import React from "react";
 import TableArticle from "../components/TableArticle";
 import { Search, FilePlus } from "lucide-react";
 
+
 const Article = () => {
   return (
     <>
@@ -23,137 +24,9 @@ const Article = () => {
         </div>
 
         <TableArticle
-          data={[
-            {
-              id: "123",
-              fournisseur: "Fournisseur A",
-              dateAchat: "2023-10-01",
-              designation: "ddd",
-              description: "ffff",
-              prixUnitaire: "123",
-            },
-            {
-              id: "123",
-              fournisseur: "Fournisseur B",
-              dateAchat: "2023-10-02",
-              designation: "ddd",
-              description: "ffff",
-              prixUnitaire: "123",
-            },
-            {
-              id: "123",
-              fournisseur: "Fournisseur C",
-              dateAchat: "2023-10-03",
-              designation: "ddd",
-              description: "ffff",
-              prixUnitaire: "123",
-            },
-            {
-              id: "123",
-              fournisseur: "Fournisseur C",
-              dateAchat: "2023-10-03",
-              designation: "ddd",
-              description: "ffff",
-              prixUnitaire: "123",
-            },
-            {
-              id: "123",
-              fournisseur: "Fournisseur C",
-              dateAchat: "2023-10-03",
-              designation: "ddd",
-              description: "ffff",
-              prixUnitaire: "123",
-            },
-            {
-              id: "123",
-              fournisseur: "Fournisseur C",
-              dateAchat: "2023-10-03",
-              designation: "ddd",
-              description: "ffff",
-              prixUnitaire: "123",
-            },
-            {
-              id: "123",
-              fournisseur: "Fournisseur C",
-              dateAchat: "2023-10-03",
-              designation: "ddd",
-              description: "ffff",
-              prixUnitaire: "123",
-            },
-            {
-              id: "123",
-              fournisseur: "Fournisseur C",
-              dateAchat: "2023-10-03",
-              designation: "ddd",
-              description: "ffff",
-              prixUnitaire: "123",
-            },
-            {
-              id: "123",
-              fournisseur: "Fournisseur C",
-              dateAchat: "2023-10-03",
-              designation: "ddd",
-              description: "ffff",
-              prixUnitaire: "123",
-            },
-            {
-              id: "123",
-              fournisseur: "Fournisseur C",
-              dateAchat: "2023-10-03",
-              designation: "ddd",
-              description: "ffff",
-              prixUnitaire: "123",
-            },
-            {
-              id: "123",
-              fournisseur: "Fournisseur C",
-              dateAchat: "2023-10-03",
-              designation: "ddd",
-              description: "ffff",
-              prixUnitaire: "123",
-            },
-            {
-              id: "123",
-              fournisseur: "Fournisseur C",
-              dateAchat: "2023-10-03",
-              designation: "ddd",
-              description: "ffff",
-              prixUnitaire: "123",
-            },
-            {
-              id: "123",
-              fournisseur: "Fournisseur C",
-              dateAchat: "2023-10-03",
-              designation: "ddd",
-              description: "ffff",
-              prixUnitaire: "123",
-            },
-            {
-              id: "123",
-              fournisseur: "Fournisseur C",
-              dateAchat: "2023-10-03",
-              designation: "ddd",
-              description: "ffff",
-              prixUnitaire: "123",
-            },
-            {
-              id: "123",
-              fournisseur: "Fournisseur C",
-              dateAchat: "2023-10-03",
-              designation: "ddd",
-              description: "ffff",
-              prixUnitaire: "123",
-            },
-            {
-              id: "123",
-              fournisseur: "Fournisseur C",
-              dateAchat: "2023-10-03",
-              designation: "ddd",
-              description: "ffff",
-              prixUnitaire: "123",
-            },
-          ]}
+          
         />
+       
       </div>
     </>
   );

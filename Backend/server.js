@@ -5,6 +5,7 @@ import articlesRoutes from './routes/articles.js';
 import evaluationRoutes from './routes/evaluation.js';
 import offreRoutes from './routes/offre.js';
 import loginRoutes from './routes/login.js';
+import inscriptionRoutes from './routes/inscription.js';
 
 const app = express();
 app.use(cors());
@@ -15,7 +16,7 @@ app.use('/api/articles', articlesRoutes);
 app.use('/api/evaluation', evaluationRoutes);
 app.use('/api/offre', offreRoutes);
 app.use('/api/login', loginRoutes);
-
+app.use('/api/inscription', inscriptionRoutes);
 
 
 app.listen(3001, () => {

@@ -7,7 +7,8 @@ const ProfileEdit = () => {
   const username = user?.nom;
   const userrole = user?.role;
   const userEmail = user?.email;
-  const userBirthDate = user?.date_naissance;
+  const userBirthDate = user?.date_de_naissance;
+  console.log("User data:", user);
 
   return (
     <div className="px-10 w-5xl max-w-md mx-auto bg-white p-8 rounded-2xl shadow-sm mt-10">

@@ -1,5 +1,6 @@
 import React from "react";
 import { X } from "lucide-react";
+import { useState } from "react";
 
 
 interface AjouterDocumentProps {
@@ -8,8 +9,35 @@ interface AjouterDocumentProps {
 }
 
 const AjouterDocument = ({ isOpen, onClose }: AjouterDocumentProps) => {
+  const [numero, setNumero] = useState(null);
+  const [demandeur, setDemandeur] = useState(null);
+
   
   if (!isOpen) return null;
+    const handleFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    console.log("Fichier sélectionné :", file.name);
+
+    // Envoie le fichier au backend
+    const formData = new FormData();
+    formData.append("pdf", file);
+
+    try {
+      const res = await fetch("http://localhost:3001/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      console.log("Réponse du backend:", data);
+      setNumero(data.numero);
+      setDemandeur(data.demandeur);
+    } catch (err) {
+      console.error("Erreur upload:", err);
+    }
+  };
+
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -33,12 +61,7 @@ const AjouterDocument = ({ isOpen, onClose }: AjouterDocumentProps) => {
           <input
             type="file"
             className="hidden"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) {
-                console.log("Fichier sélectionné :", file.name);
-              }
-            }}
+            onChange={handleFileChange}
           />
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -56,8 +79,19 @@ const AjouterDocument = ({ isOpen, onClose }: AjouterDocumentProps) => {
           </svg>
           Ajouter un document
         </label>
+         {numero && (
+          <div className="mt-4 text-green-700 font-semibold">
+            Numéro extrait : {numero}
+          </div>
+        )}
+        {demandeur && (
+          <div className="mt-2 text-green-700 font-semibold">
+            Demandeur extrait : {demandeur}
+          </div>
+        )}
         
       </div>
+     
     </div>
   );
 };

@@ -16,11 +16,13 @@ const AjouterDocument = ({ isOpen, onClose }: AjouterDocumentProps) => {
   const [date, setDate] = useState(null);
   const [fileName, setFileName] = useState("");
   interface Article {
-    position_and_code: string;
+    position: string;
+    code: string;
     designation: string;
     quantity: string;
     unit_price: string;
-  }
+    detail: string;
+  }  
 
   const [articles, setArticles] = useState<Article[]>([]);
 
@@ -165,8 +167,8 @@ const AjouterDocument = ({ isOpen, onClose }: AjouterDocumentProps) => {
             <ul className="list-disc pl-5 space-y-1">
               {articles.map((article, index) => (
                 <li key={index} className="text-gray-700">
-                  {article.position_and_code} - {article.designation} -{" "}
-                  {article.quantity} - {article.unit_price}
+                  {article.position} - {article.code}- {article.designation} -{" "}
+                  {article.quantity} - {article.unit_price}  {" - "+article.detail}
                 </li>
               ))}
             </ul>

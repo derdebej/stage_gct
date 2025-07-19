@@ -67,7 +67,7 @@ const Inscription = ({ setInscription }) => {
               type="text"
               onChange={(e) => setNomPrenom(e.target.value)}
               placeholder="Entrer votre nom et prénom"
-              className="mt-1 w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-blue-900"
+              className={`mt-1 w-full border rounded-md p-2 focus:outline-none focus:ring focus:ring-blue-900 ${error ? "border-red-500" : "border-gray-300"}`}
             />
           </div>
 
@@ -79,7 +79,7 @@ const Inscription = ({ setInscription }) => {
               type="email"
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Entrer votre email"
-              className="mt-1 w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-blue-900"
+              className={`mt-1 w-full border  rounded-md p-2 focus:outline-none focus:ring focus:ring-blue-900 ${error ? "border-red-500" : "border-gray-300"}`}
             />
           </div>
 
@@ -91,7 +91,7 @@ const Inscription = ({ setInscription }) => {
               type="password"
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Entrer votre mot de passe"
-              className="mt-1 w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-blue-900"
+              className={`mt-1 w-full border  rounded-md p-2 focus:outline-none focus:ring focus:ring-blue-900 ${error ? "border-red-500" : "border-gray-300"}`}
             />
           </div>
           <div>
@@ -102,9 +102,12 @@ const Inscription = ({ setInscription }) => {
               type="date"
               onChange={(e) => setDateNaissance(e.target.value)}
               value={dateNaissance}
-              className="mt-1 w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-blue-900"
+              className={`mt-1 w-full border  rounded-md p-2 focus:outline-none focus:ring focus:ring-blue-900 ${error ? "border-red-500" : "border-gray-300"}`}
             />
           </div>
+          {error && (
+            <div className="text-red-600 text-sm text-left mt-2">{error}</div>
+          )}
 
           <div className="text-center text-sm text-gray-500 mt-4">
             Vous avez déja un compte ?{" "}

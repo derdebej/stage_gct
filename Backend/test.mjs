@@ -1,11 +1,11 @@
-    import fs from 'fs';
-    import pdfParse from 'pdf-parse';
+import fs from 'fs';
+import pdfParse from 'pdf-parse';
 
-    const path = "C:/Users/nader/Downloads/Requisition_Demandedachatnumrique.pdf";
-    function hasValidHeader(text) {
-        const headerRegex = /Groupe Chimique Tunisien\s+AMMUsine:\s+N°:\s+.+?\s+Date:\s+\d{2}-\d{2}-\d{4}\s+DEMANDE D'ACHAT/i;
-    return headerRegex.test(text);
-    }
+const path = "C:/Users/nader/Downloads/DA Serveur de stockage NAS.pdf";
+function hasValidHeader(text) {
+  return /Groupe Chimique Tunisien/i.test(text) && /Demande d['’]achat/i.test(text);
+}
+
 
     try {
         const dataBuffer = fs.readFileSync(path);
@@ -76,6 +76,8 @@
             const lines = text.split('\n').map(line => line.trim()).filter(Boolean);
             const articles = [];
             let currentArticle = null;
+
+            
 
             const qtyRegex = /^(\d+)\s+UTND\s+([\d\s,]+)\s+\/\s+U([\d\s,]+)/;
             const categoryCodeLineRegex = /^\d{5}$/; // e.g., 90001
@@ -175,7 +177,7 @@
         console.log("Extracted demandeur:", demandeur);
         console.log("Extracted date:", date);
         console.log("Extracted titre:", titre);
-        //console.log("text:", data.text);
+        console.log("text:", data.text);
         //console.log("Extracted data:",data.text);
         // Usage example
         const Rawarticles = extractArticles(data.text);

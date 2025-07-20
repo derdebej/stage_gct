@@ -1,7 +1,8 @@
 import React from "react";
-import { X } from "lucide-react";
+import { Divide, X } from "lucide-react";
 import { useState, useEffect } from "react";
-import { Shredder, PlusCircle ,CheckCheck} from "lucide-react";
+import { Shredder, PlusCircle, CheckCheck } from "lucide-react";
+import { error } from "console";
 
 interface AjouterDocumentProps {
   isOpen: boolean;
@@ -15,6 +16,13 @@ const AjouterDocument = ({ isOpen, onClose }: AjouterDocumentProps) => {
   const [titre, setTitre] = useState(null);
   const [date, setDate] = useState(null);
   const [fileName, setFileName] = useState("");
+  const [coutTotale, setCoutTotale] = useState(null);
+  const [errorMsg, setErrorMsg] = useState("")
+  const [type, setType] = useState("")
+  const [codeInvest,setCodeInvest] = useState("")
+  const [numAED , setNumAED] = useState("")
+  const [objet,setObjet] = useState("")
+
   interface Article {
     position: string;
     code: string;
@@ -22,7 +30,7 @@ const AjouterDocument = ({ isOpen, onClose }: AjouterDocumentProps) => {
     quantity: string;
     unit_price: string;
     detail: string;
-  }  
+  }
 
   const [articles, setArticles] = useState<Article[]>([]);
 
@@ -34,6 +42,13 @@ const AjouterDocument = ({ isOpen, onClose }: AjouterDocumentProps) => {
     setTitre(null);
     setDate(null);
     setArticles([]);
+    setCoutTotale(null);
+    setErrorMsg("")
+    setType("")
+    setObjet("")
+    setNumAED("")
+    setCodeInvest("")
+
   };
   useEffect(() => {
     return () => {
@@ -62,7 +77,6 @@ const AjouterDocument = ({ isOpen, onClose }: AjouterDocumentProps) => {
       const result = await res.json();
       console.log("Données enregistrées avec succès :", result);
 
-      
       resetStates();
       onClose();
     } catch (error) {
@@ -77,7 +91,7 @@ const AjouterDocument = ({ isOpen, onClose }: AjouterDocumentProps) => {
     console.log("Fichier sélectionné :", file.name);
     setIsDataLoaded(true);
     setFileName(file.name);
-   
+
     const formData = new FormData();
     formData.append("pdf", file);
 
@@ -86,15 +100,27 @@ const AjouterDocument = ({ isOpen, onClose }: AjouterDocumentProps) => {
         method: "POST",
         body: formData,
       });
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Erreur inconnue lors de l'upload.");
+        }
+
       const data = await res.json();
       console.log("Réponse du backend:", data);
       setNumero(data.numero);
       setDemandeur(data.demandeur);
       setTitre(data.titre);
       setDate(data.date);
-      setArticles(data.articles);
+      setArticles(Array.isArray(data.articles) ? data.articles : []);
+      setCoutTotale(data.coutTotale);
+      setType(data.type)
+      setObjet(data.objet)
+      setNumAED(data.numeroAED)
+      setCodeInvest(data.codeInvest)
+
     } catch (err) {
       console.error("Erreur upload:", err);
+      setErrorMsg(err.message || "Erreur inattendue.");
     }
   };
 
@@ -132,6 +158,9 @@ const AjouterDocument = ({ isOpen, onClose }: AjouterDocumentProps) => {
             </label>
           </>
         )}
+        {errorMsg && (
+          <div className="text-red-600 font-medium mt-4">⚠️ {errorMsg}</div>
+        )}
         {numero && (
           <div className="mt-4 text-blue-900 font-semibold">
             Numéro extrait : <span className="text-gray-700"> {numero}</span>
@@ -153,12 +182,40 @@ const AjouterDocument = ({ isOpen, onClose }: AjouterDocumentProps) => {
             Date extraite : <span className="text-gray-700">{date}</span>
           </div>
         )}
-        {fileName && (
+        {numero && fileName && (
           <div className="mt-2 text-blue-900 font-semibold">
             Chemin de demande d'achat:
             <span className="text-gray-700"> /Demande d'achat/{fileName}</span>
           </div>
         )}
+        {type && (
+          <div className="mt-2 text-blue-900 font-semibold">
+            Nature : <span className="text-gray-700">{type}</span>
+          </div>
+        )}
+        {objet && (
+          <div className="mt-2 text-blue-900 font-semibold">
+            Objet : <span className="text-gray-700">{objet}</span>
+          </div>
+        )}
+        {numAED && (
+          <div className="mt-2 text-blue-900 font-semibold">
+            N° AED : <span className="text-gray-700">{numAED}</span>
+          </div>
+        )}
+        {codeInvest && (
+          <div className="mt-2 text-blue-900 font-semibold">
+            Code d'investisement : <span className="text-gray-700">{codeInvest}</span>
+          </div>
+        )}
+        {coutTotale && (
+          <div className="mt-2 text-blue-900 font-semibold">
+            {" "}
+            le montant totale est :{" "}
+            <span className="text-gray-700">{coutTotale} dt</span>
+          </div>
+        )}
+
         {articles.length > 0 && (
           <div className="mt-4">
             <h3 className="text-lg font-semibold text-blue-900 mb-2">
@@ -168,30 +225,33 @@ const AjouterDocument = ({ isOpen, onClose }: AjouterDocumentProps) => {
               {articles.map((article, index) => (
                 <li key={index} className="text-gray-700">
                   {article.position} - {article.code}- {article.designation} -{" "}
-                  {article.quantity} - {article.unit_price}  {" - "+article.detail}
+                  {article.quantity} - {article.unit_price}{" "}
+                  {" - " + article.detail}
                 </li>
               ))}
             </ul>
           </div>
         )}
-        {isDataLoaded && (<div className="mt-4 flex justify-between">
-          <button 
-          onClick={() => {
-            
-            resetStates();
-          }}
-          className="bg-blue-800 hover:bg-blue-900 text-white px-4 py-2 rounded-md flex items-center gap-2 text-md cursor-pointer mt-4">
-            <Shredder />
-            Supprimer le fichier
-          </button>
-        <button onClick={handleConfirm} className="bg-blue-800 hover:bg-blue-900 text-white px-4 py-2 rounded-md flex items-center gap-2 text-md cursor-pointer mt-4">
-          <CheckCheck />
-          Confirmer
-        </button>
-        </div>
-      )
-        
-        }
+        {isDataLoaded && (
+          <div className="mt-4 flex justify-between">
+            <button
+              onClick={() => {
+                resetStates();
+              }}
+              className="bg-blue-800 hover:bg-blue-900 text-white px-4 py-2 rounded-md flex items-center gap-2 text-md cursor-pointer mt-4"
+            >
+              <Shredder />
+              Supprimer le fichier
+            </button>
+            {!errorMsg && <button
+              onClick={handleConfirm}
+              className="bg-blue-800 hover:bg-blue-900 text-white px-4 py-2 rounded-md flex items-center gap-2 text-md cursor-pointer mt-4"
+            >
+              <CheckCheck />
+              Confirmer
+            </button>}
+          </div>
+        )}
       </div>
     </div>
   );

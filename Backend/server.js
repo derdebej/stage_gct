@@ -25,8 +25,8 @@ app.post('/upload', upload.single('pdf'), async (req, res) => {
         const result = await parsePDF(req.file.path);
         res.json(result);
     } catch (err) {
-        console.error("Erreur:", err);
-        res.status(500).send("Erreur pendant le parsing du PDF");
+      console.error("Erreur upload:", err.message);
+      res.status(400).json({ message: err.message || "Erreur lors de l'analyse du fichier PDF." });
     }
 });
 app.post("/enregistrer-demande", async (req, res) => {

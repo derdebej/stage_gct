@@ -9,12 +9,16 @@ import inscriptionRoutes from './routes/inscription.js';
 import multer from 'multer';
 import { parsePDF } from './parser.js';
 import db from './db.js';
+import { deleteDemandeDA } from './routes/DeleteDa.js';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-
+function convertFrToISO(frDateStr) {
+  const [day, month, year] = frDateStr.split("/"); // "16/04/2024"
+  return `${year}-${month}-${day}`; // → "2024-04-16"
+}
 const upload = multer({ dest: 'uploads/' }); 
 
 app.post('/upload', upload.single('pdf'), async (req, res) => {
@@ -31,14 +35,16 @@ app.post('/upload', upload.single('pdf'), async (req, res) => {
 });
 app.post("/enregistrer-demande", async (req, res) => {
 
-  const { numero, demandeur, titre, date, articles } = req.body;
+  const { numero, demandeur , date, titre ,articles , coutTotale , type , numeroAED , objet, userid, fileName} = req.body;
   //console.log("Données reçues :", req.body);
-
+  const etat = "en_attente";
+  const isodate = convertFrToISO(date);
+  const chemin_document = "/Demande d'achat/" + fileName;
   try {
     
     const result = await db.query(
-      "INSERT INTO demande_d_achat (nom, demandeur, titre, date_creation) VALUES ($1, $2, $3, $4)",
-      [numero, demandeur, titre, date]
+      "INSERT INTO demande_d_achat (id_da, demandeur, titre, date, etat, montant, nature, objet, numaed, id_utilisateur, chemin_document) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",  
+      [numero, demandeur, titre, isodate, etat, coutTotale, type, objet, numeroAED, userid, chemin_document]
     );
     console.log("✅ Demande d'achat insérée avec succès");
     
@@ -46,8 +52,8 @@ app.post("/enregistrer-demande", async (req, res) => {
     
     for (const article of articles) {
       await db.query(
-        "INSERT INTO article (id_da, position_code, designation, quantite, pu) VALUES ($1, $2, $3, $4, $5)",
-        [numero, article.position_and_code, article.designation, parseInt(article.quantity), parseFloat(article.unit_price.replace(",", ".")) ]
+        "INSERT INTO article (id_da, id_article, designation, description, quantite, prix_unitaire) VALUES ($1, $2, $3, $4, $5, $6)",
+        [numero, article.code, article.designation, article.detail, parseInt(article.quantity), parseFloat(article.unit_price.replace(",", ".")) ]
       );
     }
 
@@ -59,6 +65,7 @@ app.post("/enregistrer-demande", async (req, res) => {
 });
 
 app.use('/api/demandes', demandesRoutes);
+app.delete("/api/demande/:id", deleteDemandeDA);
 app.use('/api/articles', articlesRoutes);
 app.use('/api/evaluation', evaluationRoutes);
 app.use('/api/offre', offreRoutes);

@@ -2,7 +2,7 @@ import React from "react";
 import { Divide, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Shredder, PlusCircle, CheckCheck } from "lucide-react";
-import { error } from "console";
+
 
 interface AjouterDocumentProps {
   isOpen: boolean;
@@ -10,6 +10,10 @@ interface AjouterDocumentProps {
 }
 
 const AjouterDocument = ({ isOpen, onClose }: AjouterDocumentProps) => {
+  const userString = localStorage.getItem("user");
+  const user = userString ? JSON.parse(userString) : null;
+  const userid = user?.id_utilisateur;
+
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [numero, setNumero] = useState(null);
   const [demandeur, setDemandeur] = useState(null);
@@ -69,8 +73,13 @@ const AjouterDocument = ({ isOpen, onClose }: AjouterDocumentProps) => {
           demandeur,
           titre,
           date,
-          fileName,
           articles,
+          numAED,
+          objet,
+          type,
+          coutTotale,
+          userid,
+          fileName
         }),
       });
 

@@ -5,6 +5,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 const { Pool } = pg;
 
+console.log(process.env.DB_NAME)
+
 const pool = new Pool({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,

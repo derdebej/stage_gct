@@ -52,8 +52,8 @@ const Consultation = ({
               {selectedRows.map((row) => (
                 <tr key={row.id_da} className="border-b  border-gray-200">
                   <td className="py-2 px-4 text-gray-700">{row.titre}</td>
-                  <td className="py-2 px-4 text-gray-700">{row.montant_estime} dt</td>
-                  <td className="py-2 px-4 text-gray-700">{row.nbre}</td>
+                  <td className="py-2 px-4 text-gray-700">{row.montant} dt</td>
+                  <td className="py-2 px-4 text-gray-700"></td>
                 </tr>
               ))}
               <tr>

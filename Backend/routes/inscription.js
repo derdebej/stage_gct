@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.post("/", (req, res) => {
   const { nomPrenom, email, password ,dateNaissance} = req.body;
-  const role = "admin"; 
+   
   console.log("Received:", { nomPrenom, email, password ,dateNaissance});
 
 
@@ -13,8 +13,8 @@ router.post("/", (req, res) => {
   }
 
   db.query(
-    "INSERT INTO utilisateur (nom, email, role , mdp ,date_de_naissance) VALUES ($1, $2, $3, $4, $5)",
-    [nomPrenom, email, role, password, dateNaissance],
+    "INSERT INTO utilisateur (nom, email, mot_de_passe ,date_de_naissance) VALUES ($1, $2, $3, $4)",
+    [nomPrenom, email, password, dateNaissance],
     (err, result) => {
       if (err) {
         console.error("DB Insert Error:", err);

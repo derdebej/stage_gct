@@ -31,12 +31,12 @@ const TableArticle = () => {
         <tbody>
           {articles.map((row, idx) => (
             <tr key={idx} className="border-t hover:bg-gray-50 ">
-              <td className="text-center py-3 px-4 text-sm text-gray-700 rounded-l-xl">{row.id_article}</td>
-              <td className="text-center py-3 px-4 text-sm text-gray-700">{row.id_fournisseur}</td>
-              <td className="text-center py-3 px-4 text-sm text-gray-700">{row.date_achat}</td>
-              <td className="text-center py-3 px-4 text-sm text-gray-700">{row.designation}</td>
-              <td className="text-center py-3 px-4 text-sm text-gray-700">{row.description}</td>
-              <td className="text-center py-3 px-4 text-sm text-gray-700 rounded-r-xl">{row.pu} dt</td>
+              <td className="text-left py-3 px-4 text-sm text-gray-700 rounded-l-xl">{row.id_article}</td>
+              <td className="text-left py-3 px-4 text-sm text-gray-700">{row.id_fournisseur}</td>
+              <td className="text-left py-3 px-4 text-sm text-gray-700">{row.date_achat}</td>
+              <td className="text-left py-3 px-4 text-sm text-gray-700">{row.designation}</td>
+              <td className="text-left py-3 px-4 text-sm text-gray-700">{row.description || "Sans description"}</td>
+              <td className="text-left py-3 px-4 text-sm text-gray-700 rounded-r-xl">{row.prix_unitaire} dt</td>
               <td
                 key={idx}
                 className="flex justify-between items-center py-3 px-4 "

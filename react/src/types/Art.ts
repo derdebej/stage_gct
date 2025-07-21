@@ -4,5 +4,5 @@ export interface Art {
   date_achat: string;
   designation: string;
   description: string;
-  pu: number;
+  prix_unitaire: number;
 }

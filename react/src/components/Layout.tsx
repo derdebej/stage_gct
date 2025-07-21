@@ -7,7 +7,7 @@ const Layout: React.FC = () => {
   const userString = localStorage.getItem("user");
   const user = userString ? JSON.parse(userString) : null;
   const username = user?.nom;
-  const userrole = user?.role;
+  const userrole = "Admin";
 
   return (
     <div className="flex min-h-screen">

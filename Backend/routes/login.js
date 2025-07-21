@@ -9,7 +9,7 @@ router.post("/", async (req, res) => {
 
   try {
     const result = await pool.query(
-      "SELECT * FROM utilisateur WHERE email = $1 AND mdp = $2",
+      "SELECT * FROM utilisateur WHERE email = $1 AND mot_de_passe = $2",
       [email, password]
     );
 

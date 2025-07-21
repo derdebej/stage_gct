@@ -60,12 +60,17 @@ function Dashboard() {
                   columns={[
                     { header: "ID", key: "id_da" },
                     { header: "Titre", key: "titre" },
-                    { header: "Date", key: "date_creation" },
-                    { header: "Lots", key: "nbre" },
-                    { header: "Prix", key: "montant_estime" },
+                    { header: "Date", key: "date" },
+                    {
+                      header: "Montant",
+                      key: "montant",
+                      render: (value: string) => {
+                        return value ? `${value} dt` : "N/A";
+                      },
+                    },
                     {
                       header: "Status",
-                      key: "statut",
+                      key: "etat",
                       render: (value: string) => {
                         let colorClass = "";
                         switch (value) {
@@ -73,7 +78,7 @@ function Dashboard() {
                             colorClass =
                               "text-xs font-semibold px-3 py-1 bg-green-100 text-green-800";
                             break;
-                          case "En Attente":
+                          case "en_attente":
                             colorClass =
                               "text-xs font-semibold px-3 py-1 bg-yellow-100 text-yellow-800";
                             break;
@@ -96,7 +101,6 @@ function Dashboard() {
                       },
                     },
                   ]}
-                  
                 />
               </div>
             </div>

@@ -1,20 +1,22 @@
-import db from "../db";
-import express from "express";
+// controllers/DeleteDa.js
+import pool from "../db.js";
 
-const router = express.Router()
+export const deleteDemandeDA = async (req, res) => {
+  try {
+    const { id } = req.params;
 
-router.post("/",(req,body) => {
-  const {id_da} = req.body
+    // 1. Delete all lots related to this demande
+    await pool.query("DELETE FROM lot WHERE id_da = $1", [id]);
 
-  db.query(
-    "DELETE FROM demande_d_achat WHERE id_da = ($1)"
-    [id_da],
-    (err,result) => {
-      if (err) {
-        console.log("DB error: ",err)
-        return res.status(500).json({ message: "Erreur" });
-      }
-      return res.json({ message: "Demande d'achat supprimée avec succès." });
-    }
-  );
-})
+    // 2. Delete all articles related to this demande
+    await pool.query("DELETE FROM article WHERE id_da = $1", [id]);
+
+    // 3. Delete the demande_d_achat itself
+    await pool.query("DELETE FROM demande_d_achat WHERE id_da = $1", [id]);
+
+    res.status(200).json({ message: "Demande d'achat et éléments associés supprimés." });
+  } catch (error) {
+    console.error("Erreur lors de la suppression :", error);
+    res.status(500).json({ error: "Erreur serveur lors de la suppression" });
+  }
+};

@@ -5,6 +5,7 @@ import { Eye, Trash2, Pencil } from "lucide-react";
 import { useState } from "react";
 import DemandeDetailsModal from "./DaDetaills";
 import { useEffect } from "react";
+import ConfirmModal from "./ConfirmModal";
 
 interface TableDAProps {
   columns: Column<DA>[];
@@ -21,6 +22,23 @@ const TableDA: React.FC<TableDAProps> = ({
   //const [selectedRows, setSelectedRows] = useState<DA[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [demandes, setDemandes] = useState<DA[]>([]);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState("");
+
+  // services/deleteDA.ts
+  const openConfirm = (id) => {
+    setDeleteId(id);
+    setConfirmOpen(true);
+  };
+  const handleCancelDelete = () => {
+    setConfirmOpen(false);
+    setDeleteId("");
+  };
+  const handleConfirmDelete = () => {
+    handleDelete(deleteId);
+    setConfirmOpen(false);
+    setDeleteId("");
+  };
 
   useEffect(() => {
     fetch("http://localhost:3001/api/demandes")
@@ -28,6 +46,21 @@ const TableDA: React.FC<TableDAProps> = ({
       .then((data) => setDemandes(data))
       .catch((err) => console.error(err));
   }, []);
+  const handleDelete = async (id_da:string) => {
+    try {
+      const response = await fetch(`http://localhost:3001/api/demande/${id_da}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        setDemandes((prev) => prev.filter((d) => String(d.id_da) !== id_da));
+      } 
+      
+    } catch (error) {
+      console.error("Erreur lors de la suppression :", error);
+    }
+  };
+  
 
   const openDetails = (demande: DA) => {
     setSelectedDemande(demande);
@@ -39,13 +72,13 @@ const TableDA: React.FC<TableDAProps> = ({
     let updatedSelection: DA[];
     if (isChecked) {
       updatedSelection = selectedRows.some(
-        (d) => Number(d.id_da) === Number(demande.id_da)
+        (d) => String(d.id_da) === String(demande.id_da)
       )
         ? selectedRows
         : [...selectedRows, demande];
     } else {
       updatedSelection = selectedRows.filter(
-        (d) => Number(d.id_da) !== Number(demande.id_da)
+        (d) => String(d.id_da) !== String(demande.id_da)
       );
     }
 
@@ -53,7 +86,7 @@ const TableDA: React.FC<TableDAProps> = ({
   };
 
   const isRowSelected = (demande: DA) => {
-    return selectedRows.some((d) => Number(d.id_da) === Number(demande.id_da));
+    return selectedRows.some((d) => String(d.id_da) === String(demande.id_da));
   };
   return (
     <div className="overflow-x-auto">
@@ -103,6 +136,12 @@ const TableDA: React.FC<TableDAProps> = ({
                         <span key={i}>{String(item)}</span>
                       ));
                     }
+                    if (
+                      typeof value === "string" &&
+                      !isNaN(Date.parse(value))
+                    ) {
+                      return new Date(value).toLocaleDateString("fr-FR");
+                    }
                     return value;
                   })()}
                 </td>
@@ -125,6 +164,7 @@ const TableDA: React.FC<TableDAProps> = ({
                   <Pencil size={16} />
                 </button>
                 <button
+                  onClick={()=>openConfirm(row.id_da)}
                   className="text-red-600 hover:text-red-800"
                   title="Supprimer"
                 >
@@ -135,6 +175,7 @@ const TableDA: React.FC<TableDAProps> = ({
           ))}
         </tbody>
       </table>
+      {confirmOpen && <ConfirmModal isOpen={confirmOpen} message={<><p className="text-xl mb-4 border-b-1 pb-4 border-b-gray-300">Êtes-vous sûr de supprimer cette demande ?</p> <p className="text-sm text-gray-500">Notez que les articles et les lots liées a cette demande vont etre supprimées</p></>} onConfirm={handleConfirmDelete} onCancel={handleCancelDelete}/>}
       {selectedDemande && (
         <DemandeDetailsModal
           isOpen={isModalOpen}

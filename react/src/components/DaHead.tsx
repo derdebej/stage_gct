@@ -27,13 +27,13 @@ const DaHead = ({ selectedRows }: DaHeadProps) => {
     setIsConsultationOpen(false);
   };
   const totalPrice = selectedRows.reduce((sum, row) => {
-    const price = parseFloat(row.montant_estime.replace(" dt", "")) || 0;
+    const price = parseFloat(row.montant) || 0;
     return sum + price;
   }, 0);
-
+/*
   const totalLots = selectedRows.reduce((sum, row) => {
     return sum + row.nbre;
-  }, 0);
+  }, 0);*/
 
   return (
     <>
@@ -93,7 +93,7 @@ const DaHead = ({ selectedRows }: DaHeadProps) => {
       </div>
       <Consultation
         totalPrice={totalPrice}
-        totalLots={totalLots}
+        totalLots={/*totalLots*/10}
         isOpen={isConsultationOpen}
         onClose={closeConsultation}
         selectedRows={selectedRows}

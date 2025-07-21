@@ -53,13 +53,13 @@ export async function parsePDF(filePath) {
     const type = /Code de l'investissement/i.test(data.text) &&
                /N° AED/i.test(data.text) &&
                /Objet/i.test(data.text)
-               ? "investissement"
-               : "exploitation";
+               ? "Investissement"
+               : "Exploitation";
     let codeInvest = null;
     let numeroAED = null;
     let objet = null;
 
-    if (type === "investissement") {
+    if (type === "Investissement") {
         codeInvest = data.text.match(/Code de l'investissement\s*:\s*(.+)/i)?.[1]?.trim() || null;
         numeroAED = extractFullAED(data.text)
         objet = data.text.match(/Objet\s*:\s*(.+)/i)?.[1]?.trim() || null;
@@ -71,7 +71,7 @@ export async function parsePDF(filePath) {
     console.log(objet)
 
     const numero = data.text.match(/N°:\s*([A-Z0-9]+)/i)?.[1];
-    const date = data.text.match(/Date:\s*(\d{2}[\/-]\d{2}[\/-]\d{4})/i)?.[1];
+    const date = data.text.match(/Date:\s*(\d{2}[\/-]\d{2}[\/-]\d{4})/i)?.[1].replace(/-/g, '/');
     const demandeur = data.text.match(/Demandeur:\s*([A-Z\s]+)\r?\n/)?.[1]?.trim();
     const titre = data.text.match(/Titre:\s*(.+)/i)?.[1]?.trim();
     const regex = /^Co[uû]t total estim[ée]/i;
@@ -181,7 +181,7 @@ export async function parsePDF(filePath) {
     const articles = deduplicateArticles(Rawarticles[0]);
     
 
-    
+    console.log("la date est :",date)
     
 
 

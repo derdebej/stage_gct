@@ -21,20 +21,19 @@ function Da() {
               columns={[
                 { header: "ID", key: "id_da" },
                 { header: "Titre", key: "titre" },
-                { header: "Date", key: "date_creation" },
-                { header: "Nombre des Lots", key: "nbre" },
-                { header: "Montant", key: "montant_estime", 
+                { header: "Date", key: "date" },
+                { header: "Montant", key: "montant", 
                   render: (value: string) => {
                     return value ? `${value} dt` : "N/A";
                   }
                  },
                 { header: "Nature", key: "nature" },
                 { header: "Demandeur", key: "demandeur" },
-                { header: "Chemin Fichier", key: "chemin_da" },
+                { header: "Chemin Fichier", key: "chemin_document" },
 
                 {
                   header: "Status",
-                  key: "statut",
+                  key: "etat",
                   render: (value: string) => {
                     let colorClass = "";
                     switch (value) {
@@ -42,7 +41,7 @@ function Da() {
                         colorClass =
                           "text-xs font-semibold px-3 py-1 bg-green-100 text-green-800 whitespace-nowrap";
                         break;
-                      case "En Attente":
+                      case "en_attente":
                         colorClass =
                           "text-xs font-semibold px-3 py-1 bg-yellow-100 text-yellow-800 whitespace-nowrap";
                         break;

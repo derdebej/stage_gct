@@ -212,11 +212,6 @@ const AjouterDocument = ({ isOpen, onClose }: AjouterDocumentProps) => {
             N° AED : <span className="text-gray-700">{numAED}</span>
           </div>
         )}
-        {codeInvest && (
-          <div className="mt-2 text-blue-900 font-semibold">
-            Code d'investisement : <span className="text-gray-700">{codeInvest}</span>
-          </div>
-        )}
         {coutTotale && (
           <div className="mt-2 text-blue-900 font-semibold">
             {" "}

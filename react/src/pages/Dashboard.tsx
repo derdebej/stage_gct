@@ -5,8 +5,19 @@ import Box from "../components/box";
 import { LineChart } from "lucide-react";
 import TableDA from "../components/TableDA";
 import DaHeadDashboard from "../components/DaHeadDashboard";
+import { useEffect, useState} from "react";
+import { DA } from "../types/DA";
+
+
 
 function Dashboard() {
+  const [data, setData] = useState<DA[]>([]);
+    useEffect(() => {
+      fetch("http://localhost:3001/api/demandes")
+        .then((res) => res.json())
+        .then((data) => setData(data))
+        .catch((err) => console.error(err));
+    }, []);
   return (
     <>
       <div className="flex h-screen ">
@@ -57,6 +68,7 @@ function Dashboard() {
               <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
                 <DaHeadDashboard />
                 <TableDA
+                  data = {data}
                   columns={[
                     { header: "ID", key: "id_da" },
                     { header: "Titre", key: "titre" },

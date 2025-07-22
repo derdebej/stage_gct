@@ -5,28 +5,72 @@ import Header from "../components/Header";
 import DaHead from "../components/DaHead";
 import { DA } from "../types/DA";
 import { useState } from "react";
+import { useEffect } from "react";
 
 function Da() {
   const [selectedRows, setSelectedRows] = useState<DA[]>([]);
+  const [filteredDAs, setFilteredDAs] = useState([]);
+  const [search, setSearch] = useState("");
+  const [etat, setEtat] = useState("");
+  const [year, setYear] = useState("");
+  const [month, setMonth] = useState("");
+  const [day, setDay] = useState("");
+  const handleDeleteFromParent = (id_da: string) => {
+    setFilteredDAs((prev) =>
+      // @ts-ignore
+      prev.filter((da) => String(da.id_da) !== String(id_da))
+    );
+  };
+  useEffect(() => {
+    const fetchDemandes = async () => {
+      let url = `http://localhost:3001/api/search?q=${search}`;
+      if (etat) url += `&etat=${etat}`;
+      if (year) url += `&year=${year}`;
+      if (month) url += `&month=${month}`;
+      if (day) url += `&day=${day}`;
+
+      const res = await fetch(url);
+      const data = await res.json();
+      setFilteredDAs(data);
+    };
+
+    fetchDemandes();
+  }, [search, etat, year, month, day]);
+
   return (
     <>
-
       <div className="flex h-screen mb-4 ">
         <div className="flex-1 px-6 py-6 flex flex-col ">
           <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
-            <DaHead selectedRows={selectedRows}/>
+            <DaHead
+              selectedRows={selectedRows}
+              search={search}
+              setSearch={setSearch}
+              etat={etat}
+              setEtat={setEtat}
+              year={year}
+              setYear={setYear}
+              month={month}
+              setMonth={setMonth}
+              day={day}
+              setDay={setDay}
+            />
             <TableDA
+              onDelete={handleDeleteFromParent}
+              data={filteredDAs}
               onSelectionChange={setSelectedRows}
               selectedRows={selectedRows}
               columns={[
                 { header: "ID", key: "id_da" },
                 { header: "Titre", key: "titre" },
                 { header: "Date", key: "date" },
-                { header: "Montant", key: "montant", 
+                {
+                  header: "Montant",
+                  key: "montant",
                   render: (value: string) => {
                     return value ? `${value} dt` : "N/A";
-                  }
-                 },
+                  },
+                },
                 { header: "Nature", key: "nature" },
                 { header: "Demandeur", key: "demandeur" },
                 { header: "Chemin Fichier", key: "chemin_document" },
@@ -64,7 +108,6 @@ function Da() {
                   },
                 },
               ]}
-             
             />
           </div>
         </div>

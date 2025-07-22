@@ -10,6 +10,7 @@ import multer from 'multer';
 import { parsePDF } from './parser.js';
 import db from './db.js';
 import { deleteDemandeDA } from './routes/DeleteDa.js';
+import searchRoutes from './routes/Search.js';
 
 const app = express();
 app.use(cors());
@@ -35,7 +36,7 @@ app.post('/upload', upload.single('pdf'), async (req, res) => {
 });
 app.post("/enregistrer-demande", async (req, res) => {
 
-  const { numero, demandeur , date, titre ,articles , coutTotale , type , numeroAED , objet, userid, fileName} = req.body;
+  const { numero, demandeur , date, titre ,articles , coutTotale , type , numAED , objet, userid, fileName} = req.body;
   //console.log("Données reçues :", req.body);
   const etat = "en_attente";
   const isodate = convertFrToISO(date);
@@ -44,7 +45,7 @@ app.post("/enregistrer-demande", async (req, res) => {
     
     const result = await db.query(
       "INSERT INTO demande_d_achat (id_da, demandeur, titre, date, etat, montant, nature, objet, numaed, id_utilisateur, chemin_document) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",  
-      [numero, demandeur, titre, isodate, etat, coutTotale, type, objet, numeroAED, userid, chemin_document]
+      [numero, demandeur, titre, isodate, etat, coutTotale, type, objet, numAED, userid, chemin_document]
     );
     console.log("✅ Demande d'achat insérée avec succès");
     
@@ -64,6 +65,7 @@ app.post("/enregistrer-demande", async (req, res) => {
   }
 });
 
+app.use('/api/search', searchRoutes); 
 app.use('/api/demandes', demandesRoutes);
 app.delete("/api/demande/:id", deleteDemandeDA);
 app.use('/api/articles', articlesRoutes);

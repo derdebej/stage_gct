@@ -20,11 +20,10 @@ const TableArticle = () => {
         <thead>
           <tr>
             <th className="bg-gray-100 py-3 px-4 text-gray-800 text-sm rounded-l-xl">ID</th>
-            <th className="bg-gray-100 py-3 px-4 text-gray-800 text-sm ">Fournisseur</th>
-            <th className="bg-gray-100 py-3 px-4 text-gray-800 text-sm ">Date Achat</th>
             <th className="bg-gray-100 py-3 px-4 text-gray-800 text-sm ">Designation</th>
             <th className="bg-gray-100 py-3 px-4 text-gray-800 text-sm ">Description</th>
             <th className="bg-gray-100 py-3 px-4 text-gray-800 text-sm ">Prix Unitaire</th>
+            <th className="bg-gray-100 py-3 px-4 text-gray-800 text-sm ">Quantité</th>
             <th className="bg-gray-100 py-3 px-4 text-gray-800 text-sm rounded-r-xl">Action</th>
           </tr>
         </thead>
@@ -32,11 +31,10 @@ const TableArticle = () => {
           {articles.map((row, idx) => (
             <tr key={idx} className="border-t hover:bg-gray-50 ">
               <td className="text-left py-3 px-4 text-sm text-gray-700 rounded-l-xl">{row.id_article}</td>
-              <td className="text-left py-3 px-4 text-sm text-gray-700">{row.id_fournisseur}</td>
-              <td className="text-left py-3 px-4 text-sm text-gray-700">{row.date_achat}</td>
               <td className="text-left py-3 px-4 text-sm text-gray-700">{row.designation}</td>
               <td className="text-left py-3 px-4 text-sm text-gray-700">{row.description || "Sans description"}</td>
               <td className="text-left py-3 px-4 text-sm text-gray-700 rounded-r-xl">{row.prix_unitaire} dt</td>
+              <td className="text-left py-3 px-4 text-sm text-gray-700">{row.quantite}</td>
               <td
                 key={idx}
                 className="flex justify-between items-center py-3 px-4 "

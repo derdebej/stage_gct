@@ -11,17 +11,21 @@ interface TableDAProps {
   columns: Column<DA>[];
   onSelectionChange?: (selected: DA[]) => void;
   selectedRows?: DA[];
+  data:DA[];
+  onDelete?: (id_da: string) => void;
 }
 
 const TableDA: React.FC<TableDAProps> = ({
   columns,
   onSelectionChange,
   selectedRows = [],
+  data,
+  onDelete
 }: TableDAProps) => {
   const [selectedDemande, setSelectedDemande] = useState<DA | null>(null);
   //const [selectedRows, setSelectedRows] = useState<DA[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [demandes, setDemandes] = useState<DA[]>([]);
+  //const [demandes, setDemandes] = useState<DA[]>([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteId, setDeleteId] = useState("");
 
@@ -39,13 +43,9 @@ const TableDA: React.FC<TableDAProps> = ({
     setConfirmOpen(false);
     setDeleteId("");
   };
+ 
 
-  useEffect(() => {
-    fetch("http://localhost:3001/api/demandes")
-      .then((res) => res.json())
-      .then((data) => setDemandes(data))
-      .catch((err) => console.error(err));
-  }, []);
+
   const handleDelete = async (id_da:string) => {
     try {
       const response = await fetch(`http://localhost:3001/api/demande/${id_da}`, {
@@ -53,7 +53,7 @@ const TableDA: React.FC<TableDAProps> = ({
       });
 
       if (response.ok) {
-        setDemandes((prev) => prev.filter((d) => String(d.id_da) !== id_da));
+        onDelete?.(id_da);
       } 
       
     } catch (error) {
@@ -111,7 +111,7 @@ const TableDA: React.FC<TableDAProps> = ({
           </tr>
         </thead>
         <tbody>
-          {demandes.map((row, idx) => (
+          {data.map((row, idx) => (
             <tr key={idx} className="border-t hover:bg-gray-50 ">
               <td className="py-3 px-4">
                 <input

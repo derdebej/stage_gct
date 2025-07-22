@@ -33,28 +33,34 @@ const DemandeDetailsModal: React.FC<Props> = ({ isOpen, onClose, demande }) => {
             <strong>Titre :</strong> {demande.titre}
           </div>
           <div>
-            <strong>Date :</strong> {demande.date_creation}
-          </div>
-          <div>
-            <strong>Nombre de lots :</strong> {demande.nbre}
-          </div>
-          <div>
-            <strong>Prix estimé :</strong> {demande.montant_estime}
+            <strong>Date :</strong> {new Date(demande.date).toLocaleDateString("fr-FR")}
           </div>
           <div>
             <strong>Nature :</strong> {demande.nature}
           </div>
           <div>
+            <strong>Prix estimé :</strong> {demande.montant}
+          </div>
+          <div>
+            <strong>Nature :</strong> {demande.nature}
+          </div>
+          <div>
+            {demande.numaed && <><strong>N° AED :</strong> {demande.numaed}</>}
+          </div>
+          <div>
+            {demande.objet && <><strong>Objet :</strong> {demande.objet}</>}
+          </div>
+          <div>
             <strong>Demandeur :</strong> {demande.demandeur}
           </div>
           <div>
-            <strong>Statut :</strong> {demande.statut}
+            <strong>Statut :</strong> {demande.etat}
           </div>
-          {demande.chemin_da && (
+          {demande.chemin_document && (
             <div>
               <strong>Fichier :</strong>{" "}
               <a
-                href={demande.chemin_da}
+                href={demande.chemin_document}
                 className="text-blue-600 underline"
                 target="_blank"
               >

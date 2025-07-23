@@ -13,6 +13,7 @@ import Evaluation from "./pages/Evaluation";
 import Commande from "./pages/Commande";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext.jsx";
+import Consultation from "./pages/Consultation";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         >
           <Route index element={<Dashboard />} />
           <Route path="da" element={<Da />} />
+          <Route path="consultation" element={<Consultation />} />
           <Route path="article" element={<Article />} />
           <Route path="offre" element={<Offre />} />
           <Route path="evaluation" element={<Evaluation />} />

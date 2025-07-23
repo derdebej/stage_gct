@@ -1,9 +1,11 @@
 import React from "react";
 import TableArticle from "../components/TableArticle";
 import { Search, FilePlus } from "lucide-react";
+import { useState } from "react";
 
 
 const Article = () => {
+  const [search, setSearch] = useState("")
   return (
     <>
       <div className="bg-white rounded-2xl shadow-sm p-6 mb-4">
@@ -18,12 +20,14 @@ const Article = () => {
           <Search className="w-4 h-4 text-gray-500 mr-2" />
           <input
             type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="Rechercher par ID , Designation , Description ... , "
             className="bg-transparent outline-none w-full text-sm text-gray-700"
           />
         </div>
 
-        <TableArticle
+        <TableArticle search={search}
           
         />
        

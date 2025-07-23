@@ -31,7 +31,9 @@ CREATE TABLE demande_d_achat (
 -- ========================
 CREATE TABLE lot (
     id_lot BIGSERIAL PRIMARY KEY,
-    id_da BIGINT NOT NULL REFERENCES demande_d_achat(id_da)
+    id_da BIGINT NOT NULL REFERENCES demande_d_achat(id_da),
+    id_consultation BIGINT NOT NULL REFERENCES consultation(id_consultation)
+
 );
 
 -- ========================
@@ -52,7 +54,6 @@ CREATE TABLE article (
 -- ========================
 CREATE TABLE consultation (
     id_consultation BIGSERIAL PRIMARY KEY,
-    id_lot BIGINT NOT NULL REFERENCES lot(id_lot),
     id_utilisateur BIGINT NOT NULL REFERENCES utilisateur(id_utilisateur),
     date_creation DATE NOT NULL,
     nombre_des_lots BIGINT

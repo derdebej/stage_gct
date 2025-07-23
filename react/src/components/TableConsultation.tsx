@@ -1,41 +1,30 @@
-import React from "react";
-import { Art } from "../types/Art";
-import { Eye, Trash2, Pencil } from "lucide-react";
-import { useEffect, useState } from "react";
+import React from 'react'
+import { useState, useEffect} from 'react'
+import { consultationType } from '../types/consultationType'
+import { Eye, Pencil, Trash2 } from 'lucide-react'
 
-const TableArticle = ({search}) => {
-  const [articles, setArticles] = useState<Art[]>([]);
+const TableConsultation = () => {
+  const [consultation, setConsultation] = useState<consultationType[]>([])
   useEffect(() => {
-    const url = search
-      ? `http://localhost:3001/api/articles?search=${encodeURIComponent(search)}`
-      : "http://localhost:3001/api/articles";
-
-    fetch(url)
-      .then((res) => res.json())
-      .then((data) => setArticles(data))
-      .catch((err) => console.error(err));
-  }, [search]);
+      fetch("http://localhost:3001/api/consultation")
+        .then((res) => res.json())
+        .then((data) => setConsultation(data))
+        .catch((err) => console.error(err));
+      console.log(consultation)
+    }, []);
   return (
-    <table className="w-full text-center border-separate border-spacing-0 ">
+    <>
+      <table className="w-full text-center border-separate border-spacing-0 ">
       <thead>
         <tr>
           <th className="bg-gray-100 py-3 px-4 text-gray-800 text-sm rounded-l-xl">
             ID
           </th>
           <th className="bg-gray-100 py-3 px-4 text-gray-800 text-sm ">
-            ID DA
+            Date De Création
           </th>
           <th className="bg-gray-100 py-3 px-4 text-gray-800 text-sm ">
-            Designation
-          </th>
-          <th className="bg-gray-100 py-3 px-4 text-gray-800 text-sm ">
-            Description
-          </th>
-          <th className="bg-gray-100 py-3 px-4 text-gray-800 text-sm ">
-            Prix Unitaire
-          </th>
-          <th className="bg-gray-100 py-3 px-4 text-gray-800 text-sm ">
-            Quantité
+            Nombre de Lots
           </th>
           <th className="bg-gray-100 py-3 px-4 text-gray-800 text-sm rounded-r-xl">
             Action
@@ -43,25 +32,17 @@ const TableArticle = ({search}) => {
         </tr>
       </thead>
       <tbody>
-        {articles.map((row, idx) => (
+        {consultation.map((row, idx) => (
           <tr key={idx} className="border-t hover:bg-gray-50 ">
             <td className="text-left py-3 px-4 text-sm text-gray-700 rounded-l-xl">
-              {row.id_article}
+              {row.id_consultation}
             </td>
             <td className="text-left py-3 px-4 text-sm text-gray-700">
-              {row.id_da}
+              {row.date_creation}
             </td>
+            
             <td className="text-left py-3 px-4 text-sm text-gray-700">
-              {row.designation}
-            </td>
-            <td className="text-left py-3 px-4 text-sm text-gray-700">
-              {row.description || "Sans description"}
-            </td>
-            <td className="text-left py-3 px-4 text-sm text-gray-700 rounded-r-xl">
-              {row.prix_unitaire} dt
-            </td>
-            <td className="text-left py-3 px-4 text-sm text-gray-700">
-              {row.quantite}
+              
             </td>
             <td
               key={idx}
@@ -90,7 +71,8 @@ const TableArticle = ({search}) => {
         ))}
       </tbody>
     </table>
-  );
-};
+    </>
+  )
+}
 
-export default TableArticle;
+export default TableConsultation

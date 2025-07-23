@@ -11,6 +11,7 @@ import { parsePDF } from './parser.js';
 import db from './db.js';
 import { deleteDemandeDA } from './routes/DeleteDa.js';
 import searchRoutes from './routes/Search.js';
+import consultationRoutes from './routes/Consultation.js';
 
 const app = express();
 app.use(cors());
@@ -65,6 +66,7 @@ app.post("/enregistrer-demande", async (req, res) => {
   }
 });
 
+app.use('./api/consultation', consultationRoutes);
 app.use('/api/search', searchRoutes); 
 app.use('/api/demandes', demandesRoutes);
 app.delete("/api/demande/:id", deleteDemandeDA);

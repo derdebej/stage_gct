@@ -10,6 +10,7 @@ import {
   Tags,
   Settings,
   LogOut,
+  File,
 } from "lucide-react";
 import { Link, Routes, Route, useLocation } from "react-router-dom";
 import Da from "../pages/Da";
@@ -24,9 +25,7 @@ const SideBar = () => {
   const isActive = (path: string) => location.pathname === path;
   const handleLogout = () => {
     logout();
-    
   };
-
 
   return (
     <>
@@ -57,6 +56,17 @@ const SideBar = () => {
             >
               <ShoppingCart size={18} />
               Demandes d’achats
+            </Link>
+            <Link
+              to="/consultation"
+              className={`flex gap-2 text-sm font-medium rounded-lg px-2 py-2 text-left ${
+                isActive("/consultation")
+                  ? "text-white bg-blue-900"
+                  : "text-gray-700 hover:text-blue-900 hover:bg-gray-100"
+              }`}
+            >
+              <File size={18}/>
+              Consultation
             </Link>
 
             <Link

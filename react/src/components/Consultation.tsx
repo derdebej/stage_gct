@@ -1,6 +1,7 @@
 import React from "react";
 import { X } from "lucide-react";
 import { DA } from "../types/DA";
+import { useState } from "react";
 
 interface ConsultationProps {
   totalPrice: number;
@@ -18,6 +19,7 @@ const Consultation = ({
   selectedRows,
 }: ConsultationProps) => {
   if (!isOpen) return null;
+  const [error, setError] = useState("")
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -43,9 +45,6 @@ const Consultation = ({
               <tr>
                 <th className="py-2 px-4 text-left text-gray-600">Titre</th>
                 <th className="py-2 px-4 text-left text-gray-600">Montant</th>
-                <th className="py-2 px-4 text-left text-gray-600">
-                  Nombre de lots
-                </th>
               </tr>
             </thead>
             <tbody>
@@ -53,7 +52,6 @@ const Consultation = ({
                 <tr key={row.id_da} className="border-b  border-gray-200">
                   <td className="py-2 px-4 text-gray-700">{row.titre}</td>
                   <td className="py-2 px-4 text-gray-700">{row.montant} dt</td>
-                  <td className="py-2 px-4 text-gray-700"></td>
                 </tr>
               ))}
               <tr>
@@ -61,21 +59,19 @@ const Consultation = ({
                 <td className="py-2 px-4 text-gray-700 font-semibold border-b  border-gray-200">
                   Montant Total
                 </td>
-                <td className="py-2 px-4 text-gray-700 font-semibold border-b border-gray-200">
-                  Nombre Total de Lots
-                </td>
               </tr>
               <tr>
                 <td></td>
                 <td className="py-2 px-4 text-gray-700 border-b border-gray-200 ">
                   {totalPrice} dt
                 </td>
-                <td className="py-2 px-4 text-gray-700 border-b border-gray-200">
-                  {totalLots}
-                </td>
               </tr>
             </tbody>
           </table>
+          <div>ID Consultation:</div>
+          <input placeholder="id consultation" className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900 ${
+              error ? "border-red-500" : "border-gray-300"
+            }`}/>
           <div className=" flex justify-between mt-6 text-right">
             <button 
               onClick={onClose}

@@ -6,7 +6,7 @@ import { Eye, Pencil, Trash2 } from 'lucide-react'
 const TableConsultation = () => {
   const [consultation, setConsultation] = useState<consultationType[]>([])
   useEffect(() => {
-      fetch("http://localhost:3001/api/consultation")
+      fetch("http://localhost:3001/api/consultations")
         .then((res) => res.json())
         .then((data) => setConsultation(data))
         .catch((err) => console.error(err));
@@ -34,15 +34,15 @@ const TableConsultation = () => {
       <tbody>
         {consultation.map((row, idx) => (
           <tr key={idx} className="border-t hover:bg-gray-50 ">
-            <td className="text-left py-3 px-4 text-sm text-gray-700 rounded-l-xl">
+            <td className="text-center py-3 px-4 text-sm text-gray-700  rounded-l-xl">
               {row.id_consultation}
             </td>
-            <td className="text-left py-3 px-4 text-sm text-gray-700">
-              {row.date_creation}
+            <td className="text-center py-3 px-4 text-sm text-gray-700 ">
+              {new Date(row.date_creation).toLocaleDateString("fr-FR")}
             </td>
             
-            <td className="text-left py-3 px-4 text-sm text-gray-700">
-              
+            <td className="text-center py-3 px-4 text-sm text-gray-700 ">
+              {row.nombre_des_lots}
             </td>
             <td
               key={idx}

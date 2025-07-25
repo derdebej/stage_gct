@@ -44,7 +44,7 @@ function extractFullAED(text) {
 export async function parsePDF(filePath) {
     const dataBuffer = fs.readFileSync(filePath);
     const data = await pdfParse(dataBuffer);
-    //console.log("text" , data.text) 
+    console.log("text" , data.text) 
 
     if (!hasValidHeader(data.text)) {
         throw new Error("En-tête invalide - ce n'est pas un format de demande d'achat valide.");

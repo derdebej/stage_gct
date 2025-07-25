@@ -11,7 +11,8 @@ import { parsePDF } from './parser.js';
 import db from './db.js';
 import { deleteDemandeDA } from './routes/DeleteDa.js';
 import searchRoutes from './routes/Search.js';
-import consultationRoutes from './routes/Consultation.js';
+import consultationRoutes from './routes/consultation.js';
+import enrigistrerConsultationRoutes from './routes/enrigistrerConsultation.js'
 
 const app = express();
 app.use(cors());
@@ -65,8 +66,8 @@ app.post("/enregistrer-demande", async (req, res) => {
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
-
-app.use('./api/consultation', consultationRoutes);
+app.use('/api/enrigistrer-consultation', enrigistrerConsultationRoutes);
+app.use('/api/consultations', consultationRoutes);
 app.use('/api/search', searchRoutes); 
 app.use('/api/demandes', demandesRoutes);
 app.delete("/api/demande/:id", deleteDemandeDA);

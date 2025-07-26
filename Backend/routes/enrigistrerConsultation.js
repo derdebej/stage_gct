@@ -28,6 +28,13 @@ router.post('/', async (req, res) => {
         VALUES ($1, $2, $3)
       `;
       await client.query(lotInsert, [id_consultation*10+lot.id_lot, lot.id_da, id_consultation]);
+      const updateEtat = `
+        UPDATE demande_d_achat
+        SET etat = 'En Cours'
+        WHERE id_da = $1
+      `;
+      await client.query(updateEtat, [lot.id_da]);
+      
     }
 
     await client.query('COMMIT');

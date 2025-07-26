@@ -13,6 +13,9 @@ import { deleteDemandeDA } from './routes/DeleteDa.js';
 import searchRoutes from './routes/Search.js';
 import consultationRoutes from './routes/consultation.js';
 import enrigistrerConsultationRoutes from './routes/enrigistrerConsultation.js'
+import updateProfileRoute from "./routes/updateProfile.js";
+import consultationDetailsRoute from './routes/consultationDetails.js';
+import deleteConsultationRoute from './routes/deleteConsultation.js';
 
 const app = express();
 app.use(cors());
@@ -40,7 +43,7 @@ app.post("/enregistrer-demande", async (req, res) => {
 
   const { numero, demandeur , date, titre ,articles , coutTotale , type , numAED , objet, userid, fileName} = req.body;
   //console.log("Données reçues :", req.body);
-  const etat = "en_attente";
+  const etat = "Non Traitée";
   const isodate = convertFrToISO(date);
   const chemin_document = "/Demande d'achat/" + fileName;
   try {
@@ -66,6 +69,9 @@ app.post("/enregistrer-demande", async (req, res) => {
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
+app.use(deleteConsultationRoute);
+app.use(consultationDetailsRoute);
+app.use(updateProfileRoute);
 app.use('/api/enrigistrer-consultation', enrigistrerConsultationRoutes);
 app.use('/api/consultations', consultationRoutes);
 app.use('/api/search', searchRoutes); 

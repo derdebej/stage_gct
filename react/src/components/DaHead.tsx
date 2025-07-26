@@ -7,7 +7,9 @@ import AjouterDocument from "./AjouterDocument";
 import DateFilter from "./DateFilter";
 
 interface DaHeadProps {
+  onRefresh;
   selectedRows: DA[];
+  setSelectedRows;
   search: string;
   setSearch: (val: string) => void;
   etat: string;
@@ -21,6 +23,8 @@ interface DaHeadProps {
 }
 
 const DaHead = ({
+  onRefresh,
+  setSelectedRows,
   selectedRows,
   search,
   setSearch,
@@ -120,14 +124,17 @@ const DaHead = ({
         </div>
       </div>
       <Consultation
+        onRefresh={onRefresh}
         totalPrice={totalPrice}
         totalLots={/*totalLots*/ 10}
         isOpen={isConsultationOpen}
         onClose={closeConsultation}
         selectedRows={selectedRows}
+        setSelectedRows={setSelectedRows}
       />
 
       <AjouterDocument
+        onRefresh={onRefresh}
         isOpen={isAjouterDocumentOpen}
         onClose={closeAjouterDocument}
       />

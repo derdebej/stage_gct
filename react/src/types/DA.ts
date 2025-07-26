@@ -7,7 +7,7 @@ export interface DA {
   demandeur: string;
   nature: 'Investissement' | 'Exploitation';
   numaed: string;
-  etat: 'Traité' | 'En Attente' | 'Non Traité';
+  etat: 'Traitée' | 'En Attente' | 'Non Traitée';
   date: string; 
   montant: string;
   id_utilisateur: number;

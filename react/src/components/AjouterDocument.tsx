@@ -5,11 +5,12 @@ import { Shredder, PlusCircle, CheckCheck } from "lucide-react";
 
 
 interface AjouterDocumentProps {
+  onRefresh;
   isOpen: boolean;
   onClose: () => void;
 }
 
-const AjouterDocument = ({ isOpen, onClose }: AjouterDocumentProps) => {
+const AjouterDocument = ({ isOpen, onClose ,onRefresh}: AjouterDocumentProps) => {
   const userString = localStorage.getItem("user");
   const user = userString ? JSON.parse(userString) : null;
   const userid = user?.id_utilisateur;
@@ -52,6 +53,7 @@ const AjouterDocument = ({ isOpen, onClose }: AjouterDocumentProps) => {
     setObjet("")
     setNumAED("")
     setCodeInvest("")
+    onRefresh()
 
   };
   useEffect(() => {

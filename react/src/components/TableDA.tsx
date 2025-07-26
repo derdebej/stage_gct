@@ -118,6 +118,7 @@ const TableDA: React.FC<TableDAProps> = ({
                   type="checkbox"
                   checked={isRowSelected(row)}
                   onChange={(e) => toggleSelection(row, e.target.checked)}
+                  disabled={row.etat !== 'Non Traitée'}
                   className="form-checkbox h-4 w-4 text-blue-600"
                 />
               </td>

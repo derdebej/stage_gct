@@ -21,19 +21,18 @@ function Da() {
       prev.filter((da) => String(da.id_da) !== String(id_da))
     );
   };
+  const fetchDemandes = async () => {
+    let url = `http://localhost:3001/api/search?q=${search}`;
+    if (etat) url += `&etat=${etat}`;
+    if (year) url += `&year=${year}`;
+    if (month) url += `&month=${month}`;
+    if (day) url += `&day=${day}`;
+
+    const res = await fetch(url);
+    const data = await res.json();
+    setFilteredDAs(data);
+  };
   useEffect(() => {
-    const fetchDemandes = async () => {
-      let url = `http://localhost:3001/api/search?q=${search}`;
-      if (etat) url += `&etat=${etat}`;
-      if (year) url += `&year=${year}`;
-      if (month) url += `&month=${month}`;
-      if (day) url += `&day=${day}`;
-
-      const res = await fetch(url);
-      const data = await res.json();
-      setFilteredDAs(data);
-    };
-
     fetchDemandes();
   }, [search, etat, year, month, day]);
 
@@ -43,6 +42,8 @@ function Da() {
         <div className="flex-1 px-6 py-6 flex flex-col ">
           <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
             <DaHead
+              onRefresh={fetchDemandes}
+              setSelectedRows={setSelectedRows}
               selectedRows={selectedRows}
               search={search}
               setSearch={setSearch}
@@ -81,15 +82,15 @@ function Da() {
                   render: (value: string) => {
                     let colorClass = "";
                     switch (value) {
-                      case "Traité":
+                      case "Traitée":
                         colorClass =
                           "text-xs font-semibold px-3 py-1 bg-green-100 text-green-800 whitespace-nowrap";
                         break;
-                      case "en_attente":
+                      case "En Cours":
                         colorClass =
                           "text-xs font-semibold px-3 py-1 bg-yellow-100 text-yellow-800 whitespace-nowrap";
                         break;
-                      case "Non Traité":
+                      case "Non Traitée":
                         colorClass =
                           "text-xs font-semibold px-3 py-1 bg-red-100 text-red-800 whitespace-nowrap";
                         break;

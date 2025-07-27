@@ -5,19 +5,39 @@ import Box from "../components/box";
 import { LineChart } from "lucide-react";
 import TableDA from "../components/TableDA";
 import DaHeadDashboard from "../components/DaHeadDashboard";
-import { useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { DA } from "../types/DA";
-
-
 
 function Dashboard() {
   const [data, setData] = useState<DA[]>([]);
-    useEffect(() => {
-      fetch("http://localhost:3001/api/demandes")
-        .then((res) => res.json())
-        .then((data) => setData(data))
-        .catch((err) => console.error(err));
-    }, []);
+  const [month, setMonth] = useState<string>("");
+  const [page, setPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const limit = 10;
+
+  const fetchData = async () => {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+    });
+
+    if (month) params.append("month", month);
+
+    try {
+      const res = await fetch(
+        `http://localhost:3001/api/demandes?${params.toString()}`
+      );
+      const result = await res.json();
+      setData(result.data);
+      setTotalPages(result.totalPages);
+    } catch (err) {
+      console.error("Fetch error:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [page, month]);
   return (
     <>
       <div className="flex h-screen ">
@@ -66,9 +86,16 @@ function Dashboard() {
             </div>
             <div className="mt-6">
               <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
-                <DaHeadDashboard />
+                <DaHeadDashboard
+                  setPage={setPage}
+                  month={month}
+                  setMonth={setMonth}
+                />
                 <TableDA
-                  data = {data}
+                  setPage={setPage}
+                  page={page}
+                  totalPages={totalPages}
+                  data={data}
                   columns={[
                     { header: "ID", key: "id_da" },
                     { header: "Titre", key: "titre" },
@@ -86,15 +113,15 @@ function Dashboard() {
                       render: (value: string) => {
                         let colorClass = "";
                         switch (value) {
-                          case "Traité":
+                          case "Traitée":
                             colorClass =
                               "text-xs font-semibold px-3 py-1 bg-green-100 text-green-800";
                             break;
-                          case "en_attente":
+                          case "En Cours":
                             colorClass =
                               "text-xs font-semibold px-3 py-1 bg-yellow-100 text-yellow-800";
                             break;
-                          case "Non Traité":
+                          case "Non Traitée":
                             colorClass =
                               "text-xs font-semibold px-3 py-1 bg-red-100 text-red-800";
                             break;

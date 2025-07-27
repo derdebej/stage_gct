@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { consultationType } from "../types/consultationType";
-import { Eye, Pencil, Trash2 } from "lucide-react";
+import { Eye, Pencil, Trash2, ArrowBigLeft, ArrowBigRight } from "lucide-react";
 import ConsultationDetails from "./ConsultationDetails";
 import { DA } from "../types/DA";
 import { Lot } from "../types/Lot";
@@ -17,14 +17,25 @@ const TableConsultation = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteId, setDeleteId] = useState("");
+  const [consultations, setConsultations] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 10;
 
-  // Fetch consultations on mount
   useEffect(() => {
-    fetch("http://localhost:3001/api/consultations")
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+    });
+
+    fetch(`http://localhost:3001/api/consultations?${params.toString()}`)
       .then((res) => res.json())
-      .then((data) => setConsultation(data))
+      .then((data) => {
+        setConsultation(data.data);
+        setTotalPages(data.totalPages);
+      })
       .catch((err) => console.error(err));
-  }, []);
+  }, [page]);
   const openConfirm = (id) => {
     setDeleteId(id);
     setConfirmOpen(true);
@@ -39,7 +50,6 @@ const TableConsultation = () => {
     setDeleteId("");
   };
   const handleDeleteConsultation = async (id_consultation: string) => {
-
     try {
       const res = await fetch(
         `http://localhost:3001/api/consultation/${id_consultation}`,
@@ -123,7 +133,7 @@ const TableConsultation = () => {
                   <Pencil size={16} />
                 </button>
                 <button
-                  onClick={()=>openConfirm(row.id_consultation)}
+                  onClick={() => openConfirm(row.id_consultation)}
                   className="text-red-600 hover:text-red-800"
                   title="Supprimer"
                 >
@@ -134,7 +144,43 @@ const TableConsultation = () => {
           ))}
         </tbody>
       </table>
-      {confirmOpen && <ConfirmModal isOpen={confirmOpen} message={<><p className="text-xl mb-4 border-b-1 pb-4 border-b-gray-300">Êtes-vous sûr de supprimer cette Consultation ?</p> <p className="text-sm text-gray-500">Notez que les lots liées a cette consultation vont etre supprimées</p></>} onConfirm={handleConfirmDelete} onCancel={handleCancelDelete}/>}
+      {confirmOpen && (
+        <ConfirmModal
+          isOpen={confirmOpen}
+          message={
+            <>
+              <p className="text-xl mb-4 border-b-1 pb-4 border-b-gray-300">
+                Êtes-vous sûr de supprimer cette Consultation ?
+              </p>{" "}
+              <p className="text-sm text-gray-500">
+                Notez que les lots liées a cette consultation vont etre
+                supprimées
+              </p>
+            </>
+          }
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+        />
+      )}
+      <div className="flex items-center gap-4 bg-gray-200 rounded-xl py-2 px-4 w-max mt-4 text-gray-800">
+        <button
+          onClick={() => setPage((p) => Math.max(p - 1, 1))}
+          disabled={page === 1}
+          className="cursor-pointer flex hover:bg-gray-100 bg-white py-1 px-2 rounded-lg"
+        >
+          <ArrowBigLeft /> Precedent
+        </button>
+        <span className="bg-white py-1 px-2 rounded-lg">
+          Page {page} / {totalPages}
+        </span>
+        <button
+          onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+          disabled={page === totalPages}
+          className="cursor-pointer flex hover:bg-gray-100 bg-white py-1 px-2 rounded-lg"
+        >
+          Suivant <ArrowBigRight />
+        </button>
+      </div>
       <ConsultationDetails
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}

@@ -15,6 +15,10 @@ function Da() {
   const [year, setYear] = useState("");
   const [month, setMonth] = useState("");
   const [day, setDay] = useState("");
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+
   const handleDeleteFromParent = (id_da: string) => {
     setFilteredDAs((prev) =>
       // @ts-ignore
@@ -22,19 +26,31 @@ function Da() {
     );
   };
   const fetchDemandes = async () => {
-    let url = `http://localhost:3001/api/search?q=${search}`;
-    if (etat) url += `&etat=${etat}`;
-    if (year) url += `&year=${year}`;
-    if (month) url += `&month=${month}`;
-    if (day) url += `&day=${day}`;
+    const params = new URLSearchParams({
+      q: search,
+      page: page.toString(),
+      limit: limit.toString(),
+    });
 
-    const res = await fetch(url);
-    const data = await res.json();
-    setFilteredDAs(data);
+    if (etat) params.append("etat", etat);
+    if (year) params.append("year", year);
+    if (month) params.append("month", month);
+    if (day) params.append("day", day);
+
+    const url = `http://localhost:3001/api/demandes?${params.toString()}`;
+
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+      setFilteredDAs(data.data); 
+      setTotalPages(data.totalPages); 
+    } catch (err) {
+      console.error("Erreur lors du fetch:", err);
+    }
   };
   useEffect(() => {
     fetchDemandes();
-  }, [search, etat, year, month, day]);
+  }, [search, etat, year, month, day, page]);
 
   return (
     <>
@@ -57,6 +73,9 @@ function Da() {
               setDay={setDay}
             />
             <TableDA
+              totalPages={totalPages}
+              setPage={setPage}
+              page={page}
               onDelete={handleDeleteFromParent}
               data={filteredDAs}
               onSelectionChange={setSelectedRows}

@@ -3,9 +3,14 @@ import TableArticle from "../components/TableArticle";
 import { Search, FilePlus } from "lucide-react";
 import { useState } from "react";
 
-
 const Article = () => {
-  const [search, setSearch] = useState("")
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const limit = 10;
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+    setPage(1); // reset page on new search
+  };
   return (
     <>
       <div className="bg-white rounded-2xl shadow-sm p-6 mb-4">
@@ -21,16 +26,19 @@ const Article = () => {
           <input
             type="text"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={handleSearchChange}
             placeholder="Rechercher par ID , Designation , Description ... , "
             className="bg-transparent outline-none w-full text-sm text-gray-700"
           />
         </div>
 
-        <TableArticle search={search}
-          
+        <TableArticle
+          page={page}
+          setPage={setPage}
+          search={search}
+          limit={limit}
         />
-       
+        
       </div>
     </>
   );

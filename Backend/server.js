@@ -11,7 +11,7 @@ import { parsePDF } from './parser.js';
 import db from './db.js';
 import { deleteDemandeDA } from './routes/DeleteDa.js';
 import searchRoutes from './routes/Search.js';
-import consultationRoutes from './routes/consultation.js';
+import consultationRoutes from './routes/consultations.js';
 import enrigistrerConsultationRoutes from './routes/enrigistrerConsultation.js'
 import updateProfileRoute from "./routes/updateProfile.js";
 import consultationDetailsRoute from './routes/consultationDetails.js';

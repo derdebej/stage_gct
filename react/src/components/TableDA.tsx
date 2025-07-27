@@ -6,21 +6,28 @@ import { useState } from "react";
 import DemandeDetailsModal from "./DaDetaills";
 import { useEffect } from "react";
 import ConfirmModal from "./ConfirmModal";
+import { ArrowBigLeft, ArrowBigRight } from "lucide-react";
 
 interface TableDAProps {
   columns: Column<DA>[];
   onSelectionChange?: (selected: DA[]) => void;
   selectedRows?: DA[];
-  data:DA[];
+  data: DA[];
   onDelete?: (id_da: string) => void;
+  page: number;
+  totalPages: number;
+  setPage;
 }
 
 const TableDA: React.FC<TableDAProps> = ({
+  setPage,
+  totalPages,
+  page,
   columns,
   onSelectionChange,
   selectedRows = [],
   data,
-  onDelete
+  onDelete,
 }: TableDAProps) => {
   const [selectedDemande, setSelectedDemande] = useState<DA | null>(null);
   //const [selectedRows, setSelectedRows] = useState<DA[]>([]);
@@ -43,24 +50,23 @@ const TableDA: React.FC<TableDAProps> = ({
     setConfirmOpen(false);
     setDeleteId("");
   };
- 
 
-
-  const handleDelete = async (id_da:string) => {
+  const handleDelete = async (id_da: string) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/demande/${id_da}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `http://localhost:3001/api/demande/${id_da}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (response.ok) {
         onDelete?.(id_da);
-      } 
-      
+      }
     } catch (error) {
       console.error("Erreur lors de la suppression :", error);
     }
   };
-  
 
   const openDetails = (demande: DA) => {
     setSelectedDemande(demande);
@@ -118,7 +124,7 @@ const TableDA: React.FC<TableDAProps> = ({
                   type="checkbox"
                   checked={isRowSelected(row)}
                   onChange={(e) => toggleSelection(row, e.target.checked)}
-                  disabled={row.etat !== 'Non Traitée'}
+                  disabled={row.etat !== "Non Traitée"}
                   className="form-checkbox h-4 w-4 text-blue-600"
                 />
               </td>
@@ -165,7 +171,7 @@ const TableDA: React.FC<TableDAProps> = ({
                   <Pencil size={16} />
                 </button>
                 <button
-                  onClick={()=>openConfirm(row.id_da)}
+                  onClick={() => openConfirm(row.id_da)}
                   className="text-red-600 hover:text-red-800"
                   title="Supprimer"
                 >
@@ -176,7 +182,24 @@ const TableDA: React.FC<TableDAProps> = ({
           ))}
         </tbody>
       </table>
-      {confirmOpen && <ConfirmModal isOpen={confirmOpen} message={<><p className="text-xl mb-4 border-b-1 pb-4 border-b-gray-300">Êtes-vous sûr de supprimer cette demande ?</p> <p className="text-sm text-gray-500">Notez que les articles et les lots liées a cette demande vont etre supprimées</p></>} onConfirm={handleConfirmDelete} onCancel={handleCancelDelete}/>}
+      {confirmOpen && (
+        <ConfirmModal
+          isOpen={confirmOpen}
+          message={
+            <>
+              <p className="text-xl mb-4 border-b-1 pb-4 border-b-gray-300">
+                Êtes-vous sûr de supprimer cette demande ?
+              </p>{" "}
+              <p className="text-sm text-gray-500">
+                Notez que les articles et les lots liées a cette demande vont
+                etre supprimées
+              </p>
+            </>
+          }
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+        />
+      )}
       {selectedDemande && (
         <DemandeDetailsModal
           isOpen={isModalOpen}
@@ -184,6 +207,25 @@ const TableDA: React.FC<TableDAProps> = ({
           demande={selectedDemande}
         />
       )}
+      <div className="flex items-center gap-4 bg-gray-200 rounded-xl py-2 px-4 w-max mt-4 text-gray-800">
+        <button
+          onClick={() => setPage((p) => Math.max(p - 1, 1))}
+          disabled={page === 1}
+          className="cursor-pointer flex hover:bg-gray-100 bg-white py-1 px-2 rounded-lg"
+        >
+          <ArrowBigLeft /> Precedent
+        </button>
+        <span className="bg-white py-1 px-2 rounded-lg">
+          Page {page} / {totalPages}
+        </span>
+        <button
+          onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+          disabled={page === totalPages}
+          className="cursor-pointer flex hover:bg-gray-100 bg-white py-1 px-2 rounded-lg"
+        >
+          Suivant <ArrowBigRight />
+        </button>
+      </div>
     </div>
   );
 };

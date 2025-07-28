@@ -16,6 +16,8 @@ import enrigistrerConsultationRoutes from './routes/enrigistrerConsultation.js'
 import updateProfileRoute from "./routes/updateProfile.js";
 import consultationDetailsRoute from './routes/consultationDetails.js';
 import deleteConsultationRoute from './routes/deleteConsultation.js';
+import fournisseursRoute from './routes/fournisseurs.js'
+import ajouterFournisseuRoute from './routes/ajouterFournisseur.js'
 
 const app = express();
 app.use(cors());
@@ -69,6 +71,8 @@ app.post("/enregistrer-demande", async (req, res) => {
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
+app.use('/api/ajouter-fournisseur', ajouterFournisseuRoute)
+app.use('/api/fournisseurs', fournisseursRoute)
 app.use(deleteConsultationRoute);
 app.use(consultationDetailsRoute);
 app.use(updateProfileRoute);

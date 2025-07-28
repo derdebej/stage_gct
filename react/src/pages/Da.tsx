@@ -73,6 +73,7 @@ function Da() {
               setDay={setDay}
             />
             <TableDA
+              onUpdate={fetchDemandes}
               totalPages={totalPages}
               setPage={setPage}
               page={page}

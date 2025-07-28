@@ -6,7 +6,8 @@ import { useState } from "react";
 import DemandeDetailsModal from "./DaDetaills";
 import { useEffect } from "react";
 import ConfirmModal from "./ConfirmModal";
-import { ArrowBigLeft, ArrowBigRight } from "lucide-react";
+import { ArrowBigLeft, ArrowBigRight, X, CircleCheckBig } from "lucide-react";
+import ModifyDemandeAchat from "./ModifyDaModal";
 
 interface TableDAProps {
   columns: Column<DA>[];
@@ -17,9 +18,11 @@ interface TableDAProps {
   page: number;
   totalPages: number;
   setPage;
+  onUpdate;
 }
 
 const TableDA: React.FC<TableDAProps> = ({
+  onUpdate,
   setPage,
   totalPages,
   page,
@@ -35,6 +38,7 @@ const TableDA: React.FC<TableDAProps> = ({
   //const [demandes, setDemandes] = useState<DA[]>([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteId, setDeleteId] = useState("");
+  const [IsEditOpen, setIsEditOpen] = useState(false);
 
   // services/deleteDA.ts
   const openConfirm = (id) => {
@@ -49,6 +53,39 @@ const TableDA: React.FC<TableDAProps> = ({
     handleDelete(deleteId);
     setConfirmOpen(false);
     setDeleteId("");
+  };
+  const handleSubmitUpdate = async (updatedData: DA) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3001/api/update-demande-achat/${updatedData.id_da}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedData),
+        }
+      );
+
+      if (!response.ok) throw new Error("Erreur lors de la mise à jour !");
+      setIsEditOpen(false);
+
+      setMessage("Demande d'achat mise à jour avec succès !");
+      setMessageType("success");
+      setTimeout(() => {
+        setMessage("");
+        setMessageType("");
+        onUpdate();
+      }, 2000);
+    } catch (err) {
+      console.error(err);
+      setMessage("Échec de la mise à jour.");
+      setMessageType("error");
+      setTimeout(() => {
+        setMessage("");
+        setMessageType("");
+      }, 2000);
+    }
   };
 
   const handleDelete = async (id_da: string) => {
@@ -94,8 +131,22 @@ const TableDA: React.FC<TableDAProps> = ({
   const isRowSelected = (demande: DA) => {
     return selectedRows.some((d) => String(d.id_da) === String(demande.id_da));
   };
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState<"success" | "error" | "">("");
   return (
     <div className="overflow-x-auto">
+      {message && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="flex items-center gap-2 bg-white text-xl text-gray-600 rounded-xl py-10 px-15">
+            {message}{" "}
+            {messageType == "success" ? (
+              <CircleCheckBig size={30} />
+            ) : (
+              <X size={30} />
+            )}
+          </div>
+        </div>
+      )}
       <table className="w-full text-center border-separate border-spacing-0 ">
         <thead>
           <tr>
@@ -165,6 +216,10 @@ const TableDA: React.FC<TableDAProps> = ({
                   <Eye size={16} />
                 </button>
                 <button
+                  onClick={() => {
+                    setSelectedDemande(row);
+                    setIsEditOpen(true);
+                  }}
                   className="text-gray-600 hover:text-gray-800"
                   title="Modifier"
                 >
@@ -226,6 +281,13 @@ const TableDA: React.FC<TableDAProps> = ({
           Suivant <ArrowBigRight />
         </button>
       </div>
+      {IsEditOpen && selectedDemande && (
+        <ModifyDemandeAchat
+          onClose={() => setIsEditOpen(false)}
+          onSubmit={handleSubmitUpdate}
+          initialData={selectedDemande}
+        />
+      )}
     </div>
   );
 };

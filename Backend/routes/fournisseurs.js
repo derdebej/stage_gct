@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
   try {
     const results = await pool.query(
       `SELECT * FROM fournisseur
-       WHERE CAST(id_fournisseur AS TEXT) ILIKE $1 OR nom ILIKE $1 OR email ILIKE $1`,
+       WHERE CAST(id_fournisseur AS TEXT) ILIKE $1 OR nom ILIKE $1 OR email ILIKE $1 OR num_tel ILIKE $1`,
       [`%${search}%`]
     );
     res.json(results.rows);

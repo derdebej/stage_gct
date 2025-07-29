@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import path from "path";
 import demandesRoutes from './routes/demandes.js';
 import articlesRoutes from './routes/articles.js';
 import evaluationRoutes from './routes/evaluation.js';
@@ -97,7 +98,7 @@ app.use('/api/evaluation', evaluationRoutes);
 app.use('/api/offre', offreRoutes);
 app.use('/api/login', loginRoutes);
 app.use('/api/inscription', inscriptionRoutes);
-
+app.use('/pdfs', express.static('C:/Users/nader/Downloads'));
 
 app.listen(3001, () => {
   console.log('Serveur backend Node.js démarré sur http://localhost:3001');

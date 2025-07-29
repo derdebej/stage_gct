@@ -26,7 +26,6 @@ const ModifyConsultation = ({
   const [linkedDAs, setLinkedDAs] = useState<DA[]>([]);
   const [removedDAs, setRemovedDAs] = useState<DA[]>([]);
   const [addedDas, setAddedDas] = useState<AddedDa[]>([]);
-  const [addedLots, setAddedLots] = useState<Lot[]>([]);
   const allLinkedDAs = [...linkedDAs, ...addedDas.map((entry) => entry.da)];
   const displayedLots = [
     ...relatedLots.filter(

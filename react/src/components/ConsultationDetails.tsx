@@ -50,7 +50,7 @@ const ConsultationDetails: React.FC<Props> = ({
         <h3 className="font-bold text-lg text-blue-800 border-b pb-2 mt-6">
           Demande d'Achat liée
         </h3>
-        <div className="max-h-40 overflow-y-auto pr-2 ">
+        <div className="max-h-46 overflow-y-auto pr-2 ">
           {relatedDemandes &&
             relatedDemandes.map((relatedDemande, index) => (
               <div key={index} className="mt-6">
@@ -77,11 +77,11 @@ const ConsultationDetails: React.FC<Props> = ({
             ))}
         </div>
 
+        <h3 className="mt-6 font-bold text-lg text-blue-800 border-b pb-2">
+          Lots associés
+        </h3>
         {relatedLots.length > 0 && (
           <>
-            <h3 className="mt-6 font-bold text-lg text-blue-800 border-b pb-2">
-              Lots associés
-            </h3>
             <ul className="list-disc pl-5 text-sm mt-2 space-y-1">
               {relatedLots.map((lot, index) => (
                 <li key={index}>

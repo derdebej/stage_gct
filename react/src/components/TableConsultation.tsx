@@ -5,6 +5,7 @@ import ConsultationDetails from "./ConsultationDetails";
 import { DA } from "../types/DA";
 import { Lot } from "../types/Lot";
 import ConfirmModal from "./ConfirmModal";
+import ModifyConsultation from "./ModifyConsModal";
 
 const TableConsultation = () => {
   const [consultation, setConsultation] = useState<consultationType[]>([]);
@@ -21,6 +22,11 @@ const TableConsultation = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const limit = 10;
+
+  const [isModifyOpen, setIsModifyOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState<"success" | "error" | "">("");
+  
 
   useEffect(() => {
     const params = new URLSearchParams({
@@ -67,6 +73,22 @@ const TableConsultation = () => {
       }
     } catch (err) {
       console.error("Erreur réseau:", err);
+    }
+  };
+
+  const openModify = async (consult: consultationType) => {
+    setSelectedConsultation(consult);
+    setIsModifyOpen(true);
+
+    try {
+      const res = await fetch(
+        `http://localhost:3001/api/consultation-details/${consult.id_consultation}`
+      );
+      const data = await res.json();
+      setRelatedDA(data.demandes);
+      setLots(data.lots);
+    } catch (error) {
+      console.error("Erreur lors du chargement des détails :", error);
     }
   };
   // Handle "Voir" click
@@ -127,6 +149,7 @@ const TableConsultation = () => {
                   <Eye size={16} />
                 </button>
                 <button
+                  onClick={() => openModify(row)}
                   className="text-gray-600 hover:text-gray-800"
                   title="Modifier"
                 >
@@ -188,6 +211,14 @@ const TableConsultation = () => {
         relatedDemandes={relatedDA}
         relatedLots={lots}
       />
+      {isModifyOpen && (
+        <ModifyConsultation
+          onClose={() => setIsModifyOpen(false)}
+          initialData={selectedConsultation}
+          relatedDA={relatedDA}
+          relatedLots={lots}
+        />
+      )}
     </>
   );
 };

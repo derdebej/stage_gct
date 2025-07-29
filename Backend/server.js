@@ -19,6 +19,10 @@ import deleteConsultationRoute from './routes/deleteConsultation.js';
 import fournisseursRoute from './routes/fournisseurs.js'
 import ajouterFournisseuRoute from './routes/ajouterFournisseur.js'
 import updateDaRoute from './routes/updateDa.js'
+import DaNonTraiteeRoute from './routes/DaNonTraitée.js'
+import removeDaConsRoute from './routes/removeDaCons.js'
+import ajouterLotRoute from'./routes/ajouterLot.js'
+import updateConsRoute from './routes/updateCons.js'
 
 const app = express();
 app.use(cors());
@@ -72,6 +76,11 @@ app.post("/enregistrer-demande", async (req, res) => {
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
+app.use(updateConsRoute);
+app.use(ajouterLotRoute);
+app.use(updateDaRoute);
+app.use("/api", removeDaConsRoute)
+app.use("/api", DaNonTraiteeRoute);
 app.use(updateDaRoute);
 app.use('/api/ajouter-fournisseur', ajouterFournisseuRoute)
 app.use('/api/fournisseurs', fournisseursRoute)

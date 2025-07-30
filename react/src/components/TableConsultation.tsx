@@ -6,8 +6,11 @@ import { DA } from "../types/DA";
 import { Lot } from "../types/Lot";
 import ConfirmModal from "./ConfirmModal";
 import ModifyConsultation from "./ModifyConsModal";
+type Props = {
+  openConsultation?: consultationType | null;
+};
 
-const TableConsultation = () => {
+const TableConsultation: React.FC<Props> = ({ openConsultation }) => {
   const [consultation, setConsultation] = useState<consultationType[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedConsultation, setSelectedConsultation] =
@@ -26,7 +29,6 @@ const TableConsultation = () => {
   const [isModifyOpen, setIsModifyOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"success" | "error" | "">("");
-  
 
   useEffect(() => {
     const params = new URLSearchParams({
@@ -42,6 +44,12 @@ const TableConsultation = () => {
       })
       .catch((err) => console.error(err));
   }, [page]);
+  useEffect(() => {
+    if (openConsultation) {
+      openDetails(openConsultation);
+    }
+  }, [openConsultation]);
+
   const openConfirm = (id) => {
     setDeleteId(id);
     setConfirmOpen(true);

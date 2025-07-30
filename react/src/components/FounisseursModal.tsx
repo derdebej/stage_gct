@@ -2,11 +2,24 @@ import React, { useState, useEffect } from "react";
 import { X, Search, FileUser } from "lucide-react";
 import { Fournisseur } from "../types/fournisseur";
 import AjouterFournisseurModal from "./AjouterFournisseurModal";
+import { Dispatch, SetStateAction } from "react";
 
-const FounisseursModal = ({ setIsModalOpen }) => {
+type Props = {
+  setIsModalOpen: Dispatch<SetStateAction<boolean>>;
+  setSelectedFournisseur?: Dispatch<SetStateAction<Fournisseur | null>>;
+};
+
+const FounisseursModal = ({
+  setIsModalOpen,
+  setSelectedFournisseur,
+}: Props) => {
   const [isAjouterOpen, setIsAjouterOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [fournisseurs, setFournisseurs] = useState<Fournisseur[]>([]);
+  const handleSelect = (fournisseur: Fournisseur) => {
+    setSelectedFournisseur?.(fournisseur);
+    setIsModalOpen(false);
+  };
   const handleFournisseurAdded = (newF) => {
     setFournisseurs((prev) => [...prev, newF]);
   };
@@ -57,14 +70,16 @@ const FounisseursModal = ({ setIsModalOpen }) => {
           {fournisseurs.length > 0 ? (
             fournisseurs.map((fournisseur) => (
               <div
+                onClick={() => handleSelect(fournisseur)}
                 key={fournisseur.id_fournisseur}
-                className="p-2 border-b border-gray-100 hover:bg-gray-50"
+                className="p-2 border-b border-gray-100 hover:bg-gray-50 hover:cursor-pointer"
               >
                 <p className="text-sm font-semibold text-gray-800">
                   {fournisseur.nom}
                 </p>
                 <p className="text-xs text-gray-500">
-                  ID: {fournisseur.id_fournisseur} • Email: {fournisseur.email} • Numero tel: {fournisseur.num_tel}
+                  ID: {fournisseur.id_fournisseur} • Email: {fournisseur.email}{" "}
+                  • Numero tel: {fournisseur.num_tel}
                 </p>
               </div>
             ))
@@ -72,10 +87,13 @@ const FounisseursModal = ({ setIsModalOpen }) => {
             <p className="text-sm text-center text-gray-500">Aucun résultat</p>
           )}
         </div>
-        <button onClick={() => setIsAjouterOpen(true)} className="bg-blue-800 hover:bg-blue-900 text-white px-4 py-2 rounded-md flex items-center gap-1 text-xl mt-5">
-            <FileUser size={20} />
-            Ajouter un fournisseur
-          </button>
+        <button
+          onClick={() => setIsAjouterOpen(true)}
+          className="bg-blue-800 hover:bg-blue-900 text-white px-4 py-2 rounded-md flex items-center gap-1 text-xl mt-5"
+        >
+          <FileUser size={20} />
+          Ajouter un fournisseur
+        </button>
       </div>
       {isAjouterOpen && (
         <AjouterFournisseurModal

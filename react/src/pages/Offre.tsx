@@ -2,15 +2,20 @@ import React, { useState } from "react";
 import TableOffre from "../components/TableOffre";
 import { Search, FilePlus, List } from "lucide-react";
 import FounisseursModal from "../components/FounisseursModal";
+import AjouterOffre from "../components/AjouterOffre";
 
 const Offre = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAjouterOpen, setIsAjouterOpen] = useState(false);
   return (
     <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
       <div className="mb-6 flex justify-between items-center border-b-2 border-gray-200 pb-4">
         <h2 className="text-xl font-bold ">Liste des Offres</h2>
         <div className="flex gap-2">
-          <button className="bg-blue-800 hover:bg-blue-900 text-white px-4 py-2 rounded-md flex items-center gap-1 text-sm">
+          <button
+            onClick={() => setIsAjouterOpen(true)}
+            className="bg-blue-800 hover:bg-blue-900 text-white px-4 py-2 rounded-md flex items-center gap-1 text-sm"
+          >
             <FilePlus className="w-4 h-4" />
             Ajouter une Offre
           </button>
@@ -32,7 +37,8 @@ const Offre = () => {
         />
       </div>
       <TableOffre />
-      {isModalOpen && <FounisseursModal setIsModalOpen={setIsModalOpen}/>}
+      {isModalOpen && <FounisseursModal setIsModalOpen={setIsModalOpen} />}
+      {isAjouterOpen && <AjouterOffre onClose={()=>setIsAjouterOpen(false)} />}
     </div>
   );
 };

@@ -16,6 +16,11 @@ router.post("/api/lots", async (req, res) => {
        VALUES ($1, $2, $3)`,
       [id_lot, id_consultation, id_da]
     );
+    await db.query(
+      `UPDATE demande_d_achat SET etat = $1 WHERE id_da = $2`,
+      ["En Cours", id_da]
+    );
+
 
     res.status(201).json({ success: true });
   } catch (err) {

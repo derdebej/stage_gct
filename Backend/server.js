@@ -24,6 +24,8 @@ import DaNonTraiteeRoute from './routes/DaNonTraitée.js'
 import removeDaConsRoute from './routes/removeDaCons.js'
 import ajouterLotRoute from'./routes/ajouterLot.js'
 import updateConsRoute from './routes/updateCons.js'
+import DaRelatedRoute from './routes/DaRelated.js' 
+import LotOffreRoute from './routes/LotOffre.js'
 
 const app = express();
 app.use(cors());
@@ -77,6 +79,8 @@ app.post("/enregistrer-demande", async (req, res) => {
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
+app.use("/api/LotsOffre", LotOffreRoute);
+app.use(DaRelatedRoute);
 app.use(updateConsRoute);
 app.use(ajouterLotRoute);
 app.use(updateDaRoute);

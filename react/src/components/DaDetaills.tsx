@@ -1,7 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
-import { DA } from "../types/DA";
 import { Document, Page, pdfjs } from "react-pdf";
+import { Link } from "react-router-dom";
+import { DA } from "../types/DA";
+import { Lot } from "../types/Lot";
+import { consultationType } from "../types/consultationType";
+
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
 
@@ -14,89 +18,171 @@ type Props = {
 };
 
 const DemandeDetailsModal: React.FC<Props> = ({ isOpen, onClose, demande }) => {
-  const testPath = "http://localhost:3001/pdfs/DA%20091260.pdf";
+  const [relatedLot, setRelatedLot] = useState<Lot | null>(null);
+  const [relatedConsultation, setRelatedConsultation] =
+    useState<consultationType | null>(null);
+
+  useEffect(() => {
+    const fetchRelatedData = async () => {
+      if (!demande || demande.etat === "Non Traitée") return;
+
+      try {
+        const res = await fetch("http://localhost:3001/api/demande-related", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: demande.id_da }),
+        });
+
+        if (!res.ok) throw new Error("Erreur lors de la récupération");
+
+        const data = await res.json();
+        setRelatedLot(data.lot);
+        setRelatedConsultation(data.consultation);
+      } catch (err) {
+        console.error("Erreur dans fetch:", err);
+      }
+    };
+
+    fetchRelatedData();
+  }, [demande]);
+
   if (!isOpen || !demande) return null;
 
+  const {
+    id_da,
+    titre,
+    date,
+    nature,
+    montant,
+    numaed,
+    objet,
+    demandeur,
+    etat,
+    chemin_document,
+  } = demande;
+
+  const pdfPath = "http://localhost:3001/pdfs/DA%20091260.pdf";
+
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-lg w-full max-w-2xl p-6 relative">
+    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl p-6 relative overflow-y-auto max-h-[90vh]">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
         >
-          <X size={20} />
+          <X size={22} />
         </button>
 
-        <h2 className="text-2xl font-bold mb-4 pb-4 text-blue-900 text-center border-b-1 border-gray-200">
-          Détails de la demande
+        <h2 className="text-2xl font-semibold text-blue-900 text-center border-b pb-4 mb-4">
+          Détails de la Demande d'Achat
         </h2>
-        <div className="flex items-center justify-between">
-          <div >
-            <div className="space-y-2 text-sm">
-              <div>
-                <strong>ID :</strong> {demande.id_da}
-              </div>
-              <div>
-                <strong>Titre :</strong> {demande.titre}
-              </div>
-              <div>
-                <strong>Date :</strong>{" "}
-                {new Date(demande.date).toLocaleDateString("fr-FR")}
-              </div>
-              <div>
-                <strong>Nature :</strong> {demande.nature}
-              </div>
-              <div>
-                <strong>Prix estimé :</strong> {demande.montant}
-              </div>
-              <div>
-                <strong>Nature :</strong> {demande.nature}
-              </div>
-              <div>
-                {demande.numaed && (
-                  <>
-                    <strong>N° AED :</strong> {demande.numaed}
-                  </>
+
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Details Section */}
+          <div className="flex-1 space-y-2 text-sm">
+            <p>
+              <strong className="text-blue-900">ID :</strong> {id_da}
+            </p>
+            <p>
+              <strong className="text-blue-900">Titre :</strong> {titre}
+            </p>
+            <p>
+              <strong className="text-blue-900">Date :</strong>{" "}
+              {new Date(date).toLocaleDateString("fr-FR")}
+            </p>
+            <p>
+              <strong className="text-blue-900">Nature :</strong> {nature}
+            </p>
+            <p>
+              <strong className="text-blue-900">Prix estimé :</strong> {montant}
+            </p>
+            {numaed && (
+              <p>
+                <strong className="text-blue-900">N° AED :</strong> {numaed}
+              </p>
+            )}
+            {objet && (
+              <p>
+                <strong className="text-blue-900">Objet :</strong> {objet}
+              </p>
+            )}
+            <p>
+              <strong className="text-blue-900">Demandeur :</strong> {demandeur}
+            </p>
+            <p>
+              <strong className="text-blue-900">Statut :</strong> {etat}
+            </p>
+
+            {etat !== "Non Traitée" && (
+              <>
+                {/* Consultation in card format */}
+                {relatedConsultation && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3 mb-2">
+                    <div className="relative bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-900">
+                      <p>
+                        <span className="font-semibold">ID Consultation:</span>{" "}
+                        {relatedConsultation.id_consultation}
+                      </p>
+                      <p>
+                        <span className="font-semibold">Date Création:</span>{" "}
+                        {new Date(
+                          relatedConsultation.date_creation
+                        ).toLocaleDateString("fr-FR")}
+                      </p>
+                      <p>
+                        <span className="font-semibold">Nombre de Lots:</span>{" "}
+                        {relatedConsultation.nombre_des_lots}
+                      </p>
+                      <Link
+                        to="/consultation"
+                        state={{ consultation: relatedConsultation }}
+                        className=" text-blue-600 text-xs underline"
+                      >
+                        Voir plus
+                      </Link>
+                    </div>
+                  </div>
                 )}
-              </div>
-              <div>
-                {demande.objet && (
-                  <>
-                    <strong>Objet :</strong> {demande.objet}
-                  </>
+
+                {/* Lot card */}
+                {relatedLot && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 mb-2">
+                    <div className="relative bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-900">
+                      <p>
+                        <span className="font-semibold">ID Lot:</span>{" "}
+                        {relatedLot.id_lot}
+                      </p>
+                      <p>
+                        <span className="font-semibold">ID DA:</span>{" "}
+                        {relatedLot.id_da}
+                      </p>
+                      <p>
+                        <span className="font-semibold">Consultation:</span>{" "}
+                        {relatedLot.id_consultation}
+                      </p>
+                    </div>
+                  </div>
                 )}
-              </div>
-              <div>
-                <strong>Demandeur :</strong> {demande.demandeur}
-              </div>
-              <div>
-                <strong>Statut :</strong> {demande.etat}
-              </div>
-            </div>
+              </>
+            )}
           </div>
-          {demande.chemin_document && (
-            <div>
-              <strong>Fichier :</strong>{" "}
-              <div className="mt-2 border p-2 rounded bg-gray-50">
-                <Document
-                  file={testPath}
-                  onLoadError={(err) =>
-                    console.error("Erreur de chargement PDF:", err)
-                  }
-                  onLoadSuccess={({ numPages }) =>
-                    console.log(`Loaded PDF with ${numPages} pages`)
-                  }
-                  loading={<p>Chargement du document PDF...</p>}
-                  noData={<p>Aucun document disponible.</p>}
-                >
-                  <Page pageNumber={1} scale={0.5} />
-                </Document>
-              </div>
+
+          {/* PDF Viewer */}
+          {chemin_document && (
+            <div className="flex-1 border p-3 rounded-md bg-gray-50">
+              <Document
+                file={pdfPath}
+                onLoadError={(err) => console.error("Erreur PDF:", err)}
+                loading={<p>Chargement du document PDF...</p>}
+                noData={<p>Aucun document disponible.</p>}
+              >
+                <Page pageNumber={1} scale={0.6} />
+              </Document>
               <a
-                href={testPath}
-                className="text-blue-600 underline mt-2 inline-block"
+                href={pdfPath}
                 target="_blank"
                 rel="noopener noreferrer"
+                className="block mt-3 text-blue-600 text-sm underline"
               >
                 Ouvrir dans un nouvel onglet
               </a>
@@ -107,7 +193,7 @@ const DemandeDetailsModal: React.FC<Props> = ({ isOpen, onClose, demande }) => {
         <div className="mt-6 text-right">
           <button
             onClick={onClose}
-            className="px-4 py-2  text-white rounded-md bg-blue-800 hover:bg-blue-900"
+            className="bg-blue-800 text-white px-5 py-2 rounded-md hover:bg-blue-900 transition"
           >
             Fermer
           </button>

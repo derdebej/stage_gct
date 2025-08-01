@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { X, Search, CheckCircle, Circle } from "lucide-react";
 import { Lot } from "../types/Lot";
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 
 interface LotModalProps {
   setIsModalOpen: (open: boolean) => void;
@@ -22,7 +24,7 @@ const LotModal: React.FC<LotModalProps> = ({
     const fetchLots = async () => {
       try {
         const res = await fetch(
-          `http://localhost:3001/api/LotsOffre?search=${encodeURIComponent(search)}`
+          `${baseUrl}/api/LotsOffre?search=${encodeURIComponent(search)}`
         );
         const data: Lot[] = await res.json();
 

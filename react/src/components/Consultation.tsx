@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { X, CircleCheckBig } from "lucide-react";
 import { DA } from "../types/DA";
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
+
 
 interface ConsultationProps {
   totalPrice: number;
@@ -42,7 +45,7 @@ const Consultation = ({
 
     try {
       const res = await fetch(
-        "http://localhost:3001/api/enrigistrer-consultation",
+        `${baseUrl}/api/enrigistrer-consultation`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

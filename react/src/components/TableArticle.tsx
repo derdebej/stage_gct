@@ -2,6 +2,8 @@ import React from "react";
 import { Art } from "../types/Art";
 import { Eye, Trash2, Pencil, ArrowBigLeft, ArrowBigRight } from "lucide-react";
 import { useEffect, useState } from "react";
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 
 const TableArticle = ({ page, setPage, search, limit }) => {
   const [articles, setArticles] = useState<Art[]>([]);
@@ -14,7 +16,7 @@ const TableArticle = ({ page, setPage, search, limit }) => {
       ...(search && { search }),
     });
 
-    fetch(`http://localhost:3001/api/articles?${params.toString()}`)
+    fetch(`${baseUrl}/api/articles?${params.toString()}`)
       .then((res) => res.json())
       .then((data) => {
         setArticles(data.data);

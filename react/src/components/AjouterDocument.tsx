@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { X, PlusCircle, Shredder, CheckCheck } from "lucide-react";
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
+
 
 interface AjouterDocumentProps {
   onRefresh: () => void;
@@ -68,7 +71,7 @@ const AjouterDocument = ({
 
   const handleConfirm = async () => {
     try {
-      const res = await fetch("http://localhost:3001/enregistrer-demande", {
+      const res = await fetch(`${baseUrl}/enregistrer-demande`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -98,7 +101,7 @@ const AjouterDocument = ({
     formData.append("pdf", file);
 
     try {
-      const res = await fetch("http://localhost:3001/upload", {
+      const res = await fetch(`${baseUrl}/upload`, {
         method: "POST",
         body: formData,
       });

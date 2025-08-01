@@ -6,6 +6,7 @@ import DaHead from "../components/DaHead";
 import { DA } from "../types/DA";
 import { useState } from "react";
 import { useEffect } from "react";
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 function Da() {
   const [selectedRows, setSelectedRows] = useState<DA[]>([]);
@@ -37,7 +38,7 @@ function Da() {
     if (month) params.append("month", month);
     if (day) params.append("day", day);
 
-    const url = `http://localhost:3001/api/demandes?${params.toString()}`;
+    const url = `${baseUrl}/api/demandes?${params.toString()}`;
 
     try {
       const res = await fetch(url);

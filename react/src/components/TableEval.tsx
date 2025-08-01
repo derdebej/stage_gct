@@ -2,13 +2,15 @@ import React from "react";
 import { Eval } from "../types/Eval";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 
 
 
 const TableEval = () => {
   const [data,setData] = useState<Eval[]>([]);
   useEffect(() => {
-    fetch("http://localhost:3001/api/evaluation")
+    fetch(`${baseUrl}/api/evaluation`)
       .then((res) => res.json())
       .then((data) => {
         setData(data);

@@ -23,38 +23,7 @@ const Evaluation = () => {
             className="bg-transparent outline-none w-full text-sm text-gray-700"
           />
         </div>
-        <TableEval data={[
-          {
-            id: "123",
-            fournisseur: "Fournisseur A",
-            IdOffre: "OFF20250701-01",
-            date: "2025-07-01",
-            montant: 12850.5,
-            IdConsultation: "309877",
-            CheminEvaluation: "/evaluation/eval1.pdf",
-            statut: "Conforme",
-          },
-          {
-            id: "124",
-            fournisseur: "Fournisseur A",
-            IdOffre: "OFF20250701-02",
-            date: "2025-07-01",
-            montant: 7900,
-            IdConsultation: "259877",
-            CheminEvaluation: "/evaluation/eval2.pdf",
-            statut: "Non Conforme",
-          },
-          {
-            id: "125",
-            fournisseur: "Fournisseur A",
-            IdOffre: "OFF20250701-03",
-            date: "2025-07-01",
-            montant: 15500,
-            IdConsultation: "209877",
-            CheminEvaluation: "/evaluation/eval3.pdf",
-            statut: "Conforme",
-          } 
-        ]} />
+        <TableEval  />
       </div>
     </>
   );

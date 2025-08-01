@@ -6,6 +6,9 @@ import { DA } from "../types/DA";
 import { Lot } from "../types/Lot";
 import ConfirmModal from "./ConfirmModal";
 import ModifyConsultation from "./ModifyConsModal";
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
+
 type Props = {
   openConsultation?: consultationType | null;
 };
@@ -36,7 +39,7 @@ const TableConsultation: React.FC<Props> = ({ openConsultation }) => {
       limit: limit.toString(),
     });
 
-    fetch(`http://localhost:3001/api/consultations?${params.toString()}`)
+    fetch(`${baseUrl}/api/consultations?${params.toString()}`)
       .then((res) => res.json())
       .then((data) => {
         setConsultation(data.data);
@@ -66,7 +69,7 @@ const TableConsultation: React.FC<Props> = ({ openConsultation }) => {
   const handleDeleteConsultation = async (id_consultation: string) => {
     try {
       const res = await fetch(
-        `http://localhost:3001/api/consultation/${id_consultation}`,
+        `${baseUrl}/api/consultation/${id_consultation}`,
         {
           method: "DELETE",
         }
@@ -90,7 +93,7 @@ const TableConsultation: React.FC<Props> = ({ openConsultation }) => {
 
     try {
       const res = await fetch(
-        `http://localhost:3001/api/consultation-details/${consult.id_consultation}`
+        `${baseUrl}/api/consultation-details/${consult.id_consultation}`
       );
       const data = await res.json();
       setRelatedDA(data.demandes);
@@ -106,7 +109,7 @@ const TableConsultation: React.FC<Props> = ({ openConsultation }) => {
 
     try {
       const res = await fetch(
-        `http://localhost:3001/api/consultation-details/${consult.id_consultation}`
+        `${baseUrl}/api/consultation-details/${consult.id_consultation}`
       );
       const data = await res.json();
       console.log("Related Da :", data.demandes);

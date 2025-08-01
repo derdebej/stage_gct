@@ -2,6 +2,8 @@ import React from "react";
 import { Eye, Pencil, Trash2, FilePlus, List, Search } from "lucide-react";
 import { OffreType } from "../types/OffreType";
 import { useState, useEffect } from "react";
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 
 const getStatusStyle = (status: OffreType["statut"]) => {
   switch (status) {
@@ -19,7 +21,7 @@ const getStatusStyle = (status: OffreType["statut"]) => {
 const TableOffre = () => {
   const [data, setData] = useState<OffreType[]>([]);
   useEffect(() => {
-    fetch("http://localhost:3001/api/offre")
+    fetch(`${baseUrl}/api/offre`)
       .then((res) => res.json())
       .then((data) => {
         setData(data);

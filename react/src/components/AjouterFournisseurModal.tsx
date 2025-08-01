@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 
 const AjouterFournisseurModal = ({ setIsOpen, onFournisseurAdded }) => {
   const [form, setForm] = useState({
@@ -15,7 +17,7 @@ const AjouterFournisseurModal = ({ setIsOpen, onFournisseurAdded }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:3001/api/ajouter-fournisseur", {
+      const res = await fetch(`${baseUrl}/api/ajouter-fournisseur`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),

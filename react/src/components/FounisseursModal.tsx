@@ -3,6 +3,8 @@ import { X, Search, FileUser } from "lucide-react";
 import { Fournisseur } from "../types/fournisseur";
 import AjouterFournisseurModal from "./AjouterFournisseurModal";
 import { Dispatch, SetStateAction } from "react";
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 
 type Props = {
   setIsModalOpen: Dispatch<SetStateAction<boolean>>;
@@ -27,7 +29,7 @@ const FounisseursModal = ({
     const fetchFournisseurs = async () => {
       try {
         const res = await fetch(
-          `http://localhost:3001/api/fournisseurs?search=${encodeURIComponent(
+          `${baseUrl}/api/fournisseurs?search=${encodeURIComponent(
             search
           )}`
         );

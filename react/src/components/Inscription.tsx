@@ -1,6 +1,8 @@
 import React from "react";
 import { useState } from "react";
 import Loading from "./Loading";
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 
 const Inscription = ({ setInscription }) => {
   const [nomPrenom, setNomPrenom] = useState("");
@@ -19,7 +21,7 @@ const Inscription = ({ setInscription }) => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:3001/api/inscription", {
+      const response = await fetch(`${baseUrl}/api/inscription`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

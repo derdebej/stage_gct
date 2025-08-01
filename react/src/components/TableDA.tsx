@@ -8,6 +8,8 @@ import { useEffect } from "react";
 import ConfirmModal from "./ConfirmModal";
 import { ArrowBigLeft, ArrowBigRight, X, CircleCheckBig } from "lucide-react";
 import ModifyDemandeAchat from "./ModifyDaModal";
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 
 interface TableDAProps {
   columns: Column<DA>[];
@@ -57,7 +59,7 @@ const TableDA: React.FC<TableDAProps> = ({
   const handleSubmitUpdate = async (updatedData: DA) => {
     try {
       const response = await fetch(
-        `http://localhost:3001/api/update-demande-achat/${updatedData.id_da}`,
+        `${baseUrl}/api/update-demande-achat/${updatedData.id_da}`,
         {
           method: "PUT",
           headers: {
@@ -91,7 +93,7 @@ const TableDA: React.FC<TableDAProps> = ({
   const handleDelete = async (id_da: string) => {
     try {
       const response = await fetch(
-        `http://localhost:3001/api/demande/${id_da}`,
+        `${baseUrl}/api/demande/${id_da}`,
         {
           method: "DELETE",
         }

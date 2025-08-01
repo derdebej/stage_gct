@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 
 const ProfileEdit = () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -16,7 +18,7 @@ const ProfileEdit = () => {
     setMessage(""); // Clear previous messages
 
     try {
-      const res = await fetch(`http://localhost:3001/api/utilisateur/${user.id_utilisateur}`, {
+      const res = await fetch(`${baseUrl}/api/utilisateur/${user.id_utilisateur}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { X, Search, PlusCircle, ChevronLeft } from "lucide-react";
 import { DA } from "../types/DA";
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const AjouterDaConsModal = ({ setIsModalOpen, id_consultation, onDaAdded }) => {
   const [search, setSearch] = useState("");
@@ -13,7 +14,7 @@ const AjouterDaConsModal = ({ setIsModalOpen, id_consultation, onDaAdded }) => {
     const fetchDemandes = async () => {
       try {
         const res = await fetch(
-          `http://localhost:3001/api/demande-non-traitee?search=${encodeURIComponent(
+          `${baseUrl}/api/demande-non-traitee?search=${encodeURIComponent(
             search
           )}`
         );

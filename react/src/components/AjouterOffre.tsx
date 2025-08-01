@@ -4,6 +4,8 @@ import { Fournisseur } from "../types/fournisseur";
 import FounisseursModal from "./FounisseursModal";
 import { Lot } from "../types/Lot";
 import LotModal from "./LotModal";
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 
 const AjouterOffre = ({ onClose }) => {
   const [selectedFournisseur, setSelectedFournisseur] =
@@ -22,7 +24,7 @@ const AjouterOffre = ({ onClose }) => {
 
       // 1. Create the offre
       const offreResponse = await fetch(
-        "http://localhost:3001/api/offre-insert",
+        `${baseUrl}/api/offre-insert`,
         {
           method: "POST",
           headers: {
@@ -44,7 +46,7 @@ const AjouterOffre = ({ onClose }) => {
 
       // 2. Link lots to the offre
       const linkResponse = await fetch(
-        `http://localhost:3001/api/offres/${id_offre}/lots`,
+        `${baseUrl}/api/offres/${id_offre}/lots`,
         {
           method: "POST",
           headers: {

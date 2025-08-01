@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import { DA } from "../types/DA";
 import { Lot } from "../types/Lot";
 import { consultationType } from "../types/consultationType";
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
@@ -27,7 +29,7 @@ const DemandeDetailsModal: React.FC<Props> = ({ isOpen, onClose, demande }) => {
       if (!demande || demande.etat === "Non Traitée") return;
 
       try {
-        const res = await fetch("http://localhost:3001/api/demande-related", {
+        const res = await fetch(`${baseUrl}/api/demande-related`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id: demande.id_da }),

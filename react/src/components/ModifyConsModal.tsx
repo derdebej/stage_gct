@@ -4,6 +4,7 @@ import AjouterDaConsModal from "./AjouterDaConsModal";
 import { DA } from "../types/DA";
 import { Lot } from "../types/Lot";
 import { consultationType } from "../types/consultationType";
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 type AddedDa = {
   da: DA;
@@ -69,7 +70,7 @@ const ModifyConsultation: React.FC<ModifyConsultationProps> = ({
 
   const handleConfirm = async () => {
     try {
-      await fetch("http://localhost:3001/api/consultation/update", {
+      await fetch(`${baseUrl}/api/consultation/update`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -79,7 +80,7 @@ const ModifyConsultation: React.FC<ModifyConsultationProps> = ({
       });
 
       for (const da of removedDAs) {
-        await fetch("http://localhost:3001/api/consultation/remove-da", {
+        await fetch(`${baseUrl}/api/consultation/remove-da`, {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -90,7 +91,7 @@ const ModifyConsultation: React.FC<ModifyConsultationProps> = ({
       }
 
       for (const { da, lotNumber } of addedDas) {
-        await fetch("http://localhost:3001/api/lots", {
+        await fetch(`${baseUrl}/api/lots`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

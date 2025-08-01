@@ -1,12 +1,13 @@
 import React from "react";
 import SideBar from "../components/SideBar";
 import Header from "../components/Header";
-import Box from "../components/box";
+import Box from "../components/Box";
 import { LineChart } from "lucide-react";
 import TableDA from "../components/TableDA";
 import DaHeadDashboard from "../components/DaHeadDashboard";
 import { useEffect, useState } from "react";
 import { DA } from "../types/DA";
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 function Dashboard() {
   const [data, setData] = useState<DA[]>([]);
@@ -24,9 +25,7 @@ function Dashboard() {
     if (month) params.append("month", month);
 
     try {
-      const res = await fetch(
-        `http://localhost:3001/api/demandes?${params.toString()}`
-      );
+      const res = await fetch(`${baseUrl}/api/demandes?${params.toString()}`);
       const result = await res.json();
       setData(result.data);
       setTotalPages(result.totalPages);
@@ -92,9 +91,10 @@ function Dashboard() {
                   setMonth={setMonth}
                 />
                 <TableDA
+                  onUpdate={fetchData}
+                  totalPages={totalPages}
                   setPage={setPage}
                   page={page}
-                  totalPages={totalPages}
                   data={data}
                   columns={[
                     { header: "ID", key: "id_da" },

@@ -11,7 +11,6 @@ const TableEval = () => {
     fetch("http://localhost:3001/api/evaluation")
       .then((res) => res.json())
       .then((data) => {
-        console.log("DATA FROM API:", data);
         setData(data);
       })
       .catch((err) => console.error(err));

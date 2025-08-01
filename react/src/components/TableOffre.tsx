@@ -22,7 +22,6 @@ const TableOffre = () => {
     fetch("http://localhost:3001/api/offre")
       .then((res) => res.json())
       .then((data) => {
-        console.log("DATA FROM API:", data);
         setData(data);
       })
       .catch((err) => console.error(err));
@@ -43,9 +42,6 @@ const TableOffre = () => {
             </th>
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
               Montant
-            </th>
-            <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
-              Id Consultation
             </th>
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
               Chemin Offre
@@ -71,13 +67,10 @@ const TableOffre = () => {
                 {offre.id_fournisseur}
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {offre.date_d_offre}
+                {offre.date_offre.slice(0,10)}
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
                 {offre.montant} dt
-              </td>
-              <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {offre.id_consultation}
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
                 {offre.chemin_document}

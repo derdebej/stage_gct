@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X } from "lucide-react";
+import { X, CheckCheck, Shredder } from "lucide-react";
 import { Fournisseur } from "../types/fournisseur";
 import FounisseursModal from "./FounisseursModal";
 import { Lot } from "../types/Lot";
@@ -9,9 +9,63 @@ const AjouterOffre = ({ onClose }) => {
   const [selectedFournisseur, setSelectedFournisseur] =
     useState<Fournisseur | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [montant, setMontant] = useState(0);
   const [selectedLots, setSelectedLots] = useState<Lot[]>([]);
   const [isLotModalOpen, setIsLotModalOpen] = useState(false);
+  const handleConfirm = async () => {
+    if (!selectedFournisseur || selectedLots.length === 0) {
+      alert("Veuillez sélectionner un fournisseur et au moins un lot.");
+      return;
+    }
+    try {
+      const date_offre = new Date().toISOString(); // e.g., "2025-08-01T13:05:00.000Z"
+
+      // 1. Create the offre
+      const offreResponse = await fetch(
+        "http://localhost:3001/api/offre-insert",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id_fournisseur: selectedFournisseur.id_fournisseur,
+            date_offre: date_offre,
+            chemin_document: "offres/temp.pdf",
+            montant: montant,
+          }),
+        }
+      );
+
+      if (!offreResponse.ok)
+        throw new Error("Erreur lors de la création de l'offre");
+
+      const { id_offre } = await offreResponse.json();
+
+      // 2. Link lots to the offre
+      const linkResponse = await fetch(
+        `http://localhost:3001/api/offres/${id_offre}/lots`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            lots: selectedLots.map((lot) => lot.id_lot),
+          }),
+        }
+      );
+
+      if (!linkResponse.ok)
+        throw new Error("Erreur lors de l'association des lots");
+
+      alert("Offre ajoutée avec succès !");
+      onClose();
+    } catch (error) {
+      console.error(error);
+      alert("Une erreur est survenue lors de l'ajout de l'offre.");
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -117,14 +171,27 @@ const AjouterOffre = ({ onClose }) => {
         </>
         <label>Montant :</label>
         <input
-          placeholder="id consultation"
+          placeholder="Montant offre"
+          type="number"
+          value={montant}
+          onChange={(e) => setMontant(Number(e.target.value))}
           className="w-full px-4 py-2 border rounded-md  focus:outline-none focus:ring-2 focus:ring-blue-900 border-gray-300 mb-2"
         />
-        <label>Nombre de lots:</label>
-        <input
-          placeholder="nombre de lots"
-          className="w-full px-4 py-2 border rounded-md  focus:outline-none focus:ring-2 focus:ring-blue-900 border-gray-300"
-        />
+        <div className="mt-6 flex justify-between">
+          <button
+            onClick={onClose}
+            className="bg-white hover:bg-blue-900 text-blue-900 hover:text-white border-blue-900 border px-4 py-2 rounded-md flex items-center gap-2"
+          >
+            Fermer
+          </button>
+          <button
+            onClick={handleConfirm}
+            className="bg-blue-800 hover:bg-blue-900 text-white px-4 py-2 rounded-md flex items-center gap-2"
+          >
+            <CheckCheck />
+            Confirmer
+          </button>
+        </div>
       </div>
       {isModalOpen && (
         <FounisseursModal

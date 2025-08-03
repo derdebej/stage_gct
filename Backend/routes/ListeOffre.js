@@ -13,8 +13,10 @@ router.get("/", async (req, res) => {
       FROM offre o
       JOIN fournisseur f ON o.id_fournisseur = f.id_fournisseur
       WHERE 
-        CAST(o.id_offre AS TEXT) ILIKE $1 OR 
-        LOWER(f.nom) ILIKE $1
+        o.statut = 'Non évalué' AND (
+          CAST(o.id_offre AS TEXT) ILIKE $1 OR 
+          LOWER(f.nom) ILIKE $1
+        )
       ORDER BY o.date_offre DESC
       `,
       [`%${search}%`]

@@ -4,7 +4,7 @@ export interface OffreType {
   date_offre: string;
   montant: number;
   chemin_document: string;
-  statut: "Acceptée" | "En attente" | "Rejetée";
+  statut: "Non évalué" | "évalué";
   fournisseur?: {
     nom: string;
     id_fournisseur:string;

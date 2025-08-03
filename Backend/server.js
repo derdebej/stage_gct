@@ -30,6 +30,9 @@ import offreLotRoute from './routes/offreLot.js'
 import offreInsertRoute from './routes/offreInsert.js'
 import ListeOffreRoute from './routes/ListeOffre.js'
 import AjouterEvalRoute from './routes/ajouterEvaluation.js'
+import deleteOffreRoute from './routes/deleteOffre.js'
+import deleteArticleRoute from './routes/deleteArticle.js'
+import deleteEvalRoute from './routes/deleteEval.js'
 
 const app = express();
 app.use(cors());
@@ -83,6 +86,9 @@ app.post("/enregistrer-demande", async (req, res) => {
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
+app.use("/api/article-delete",deleteArticleRoute)
+app.use("/api/evaluation-delete",deleteEvalRoute)
+app.use("/api/offre-delete",deleteOffreRoute)
 app.use("/api/evaluation-insert",AjouterEvalRoute)
 app.use("/api/offres",ListeOffreRoute)
 app.use("/api", offreInsertRoute);

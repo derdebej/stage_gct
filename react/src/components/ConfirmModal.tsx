@@ -18,7 +18,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
   return (
     <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
       <div className="bg-white rounded-lg shadow-lg p-6 max-w-lg w-full">
-        <p className="mb-4 text-gray-800">{message}</p>
+        <div className="mb-4 text-gray-800">{message}</div>
         <div className="flex justify-end gap-4">
           <button
             onClick={onCancel}

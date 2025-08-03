@@ -9,8 +9,13 @@ router.post("/", async (req, res) => {
     return res.status(400).json({ error: "Champs requis manquants" });
   }
 
+  const client = await pool.connect();
+
   try {
-    const result = await pool.query(
+    await client.query("BEGIN");
+
+    // 1. Insert the evaluation
+    const evalResult = await client.query(
       `
       INSERT INTO evaluation (id_offre, date, chemin_document, conformite, id_fournisseur)
       VALUES ($1, $2, $3, $4, $5)
@@ -19,10 +24,25 @@ router.post("/", async (req, res) => {
       [id_offre, date, chemin_evaluation, conformite, id_fournisseur]
     );
 
-    res.status(201).json(result.rows[0]);
+    // 2. Update the statut of the related offre
+    await client.query(
+      `
+      UPDATE offre
+      SET statut = 'évalué'
+      WHERE id_offre = $1;
+      `,
+      [id_offre]
+    );
+
+    await client.query("COMMIT");
+
+    res.status(201).json(evalResult.rows[0]);
   } catch (err) {
+    await client.query("ROLLBACK");
     console.error("Erreur lors de l'insertion:", err);
     res.status(500).json({ error: "Erreur serveur" });
+  } finally {
+    client.release();
   }
 });
 

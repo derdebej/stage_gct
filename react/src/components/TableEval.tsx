@@ -2,14 +2,21 @@ import React from "react";
 import { Eval } from "../types/Eval";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
+import ConfirmModal from "./ConfirmModal";
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 type Props = {
   evaluations: Eval[];
   search: string;
 };
 
 const TableEval = ({ evaluations, search }: Props) => {
-  const filtered = evaluations.filter((ev) => {
+  const [evalList, setEvalList] = useState<Eval[]>(evaluations);
+  useEffect(() => {
+    setEvalList(evaluations);
+  }, [evaluations]);
+
+  const filtered = evalList.filter((ev) => {
     const lower = search.toLowerCase();
     return (
       ev.id_eval.toLowerCase().includes(lower) ||
@@ -18,6 +25,41 @@ const TableEval = ({ evaluations, search }: Props) => {
       ev.date.toLowerCase().includes(lower)
     );
   });
+
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+
+  const openConfirm = (id: string) => {
+    setDeleteId(id);
+    setConfirmOpen(true);
+  };
+
+  const handleCancelDelete = () => {
+    setConfirmOpen(false);
+    setDeleteId(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteId) return;
+
+    try {
+      const res = await fetch(`${baseUrl}/api/evaluation-delete/${deleteId}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        setEvalList((prev) => prev.filter((e) => e.id_eval !== deleteId));
+      } else {
+        console.error("Échec suppression évaluation");
+      }
+    } catch (err) {
+      console.error("Erreur réseau:", err);
+    }
+
+    setConfirmOpen(false);
+    setDeleteId(null);
+  };
+
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full text-left border-separate border-spacing-y-2">
@@ -62,7 +104,7 @@ const TableEval = ({ evaluations, search }: Props) => {
                 {evalItem.id_fournisseur}
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {evalItem.date}
+                {evalItem.date.slice(0, 10)}
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
                 {evalItem.chemin_document}
@@ -94,6 +136,7 @@ const TableEval = ({ evaluations, search }: Props) => {
                 <button
                   className="text-red-600 hover:text-red-800"
                   title="Supprimer"
+                  onClick={() => openConfirm(evalItem.id_eval)}
                 >
                   <Trash2 size={16} />
                 </button>
@@ -102,6 +145,23 @@ const TableEval = ({ evaluations, search }: Props) => {
           ))}
         </tbody>
       </table>
+      {confirmOpen && (
+        <ConfirmModal
+          isOpen={confirmOpen}
+          message={
+            <>
+              <p className="text-xl mb-4 border-b pb-4 border-b-gray-300">
+                Supprimer cette évaluation ?
+              </p>
+              <p className="text-sm text-gray-500">
+                Cette action est irréversible.
+              </p>
+            </>
+          }
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+        />
+      )}
     </div>
   );
 };

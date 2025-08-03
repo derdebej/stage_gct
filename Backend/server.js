@@ -28,7 +28,8 @@ import DaRelatedRoute from './routes/DaRelated.js'
 import LotOffreRoute from './routes/LotOffre.js'
 import offreLotRoute from './routes/offreLot.js'
 import offreInsertRoute from './routes/offreInsert.js'
-
+import ListeOffreRoute from './routes/ListeOffre.js'
+import AjouterEvalRoute from './routes/ajouterEvaluation.js'
 
 const app = express();
 app.use(cors());
@@ -82,6 +83,8 @@ app.post("/enregistrer-demande", async (req, res) => {
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
+app.use("/api/evaluation-insert",AjouterEvalRoute)
+app.use("/api/offres",ListeOffreRoute)
 app.use("/api", offreInsertRoute);
 app.use("/api", offreLotRoute);
 app.use("/api/LotsOffre", LotOffreRoute);

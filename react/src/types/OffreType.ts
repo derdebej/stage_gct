@@ -5,4 +5,8 @@ export interface OffreType {
   montant: number;
   chemin_document: string;
   statut: "Acceptée" | "En attente" | "Rejetée";
+  fournisseur?: {
+    nom: string;
+    id_fournisseur:string;
+  };
 }

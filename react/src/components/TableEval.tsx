@@ -2,21 +2,22 @@ import React from "react";
 import { Eval } from "../types/Eval";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
-const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
+type Props = {
+  evaluations: Eval[];
+  search: string;
+};
 
-
-
-const TableEval = () => {
-  const [data,setData] = useState<Eval[]>([]);
-  useEffect(() => {
-    fetch(`${baseUrl}/api/evaluation`)
-      .then((res) => res.json())
-      .then((data) => {
-        setData(data);
-      })
-      .catch((err) => console.error(err));
-  }, []);
+const TableEval = ({ evaluations, search }: Props) => {
+  const filtered = evaluations.filter((ev) => {
+    const lower = search.toLowerCase();
+    return (
+      ev.id_eval.toLowerCase().includes(lower) ||
+      ev.id_offre.toLowerCase().includes(lower) ||
+      ev.conformite.toLowerCase().includes(lower) ||
+      ev.date.toLowerCase().includes(lower)
+    );
+  });
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full text-left border-separate border-spacing-y-2">
@@ -35,12 +36,6 @@ const TableEval = () => {
               Date
             </th>
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
-              Montant
-            </th>
-            <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
-              Id Consultation
-            </th>
-            <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
               Chemin Evaluation
             </th>
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
@@ -52,8 +47,11 @@ const TableEval = () => {
           </tr>
         </thead>
         <tbody>
-          {data.map((evalItem) => (
-            <tr key={evalItem.id_eval} className="bg-white rounded hover:bg-gray-50">
+          {filtered.map((evalItem) => (
+            <tr
+              key={evalItem.id_eval}
+              className="bg-white rounded hover:bg-gray-50"
+            >
               <td className="text-center py-3 px-4 text-sm text-gray-700">
                 {evalItem.id_eval}
               </td>
@@ -67,13 +65,7 @@ const TableEval = () => {
                 {evalItem.date}
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {evalItem.montant} dt
-              </td>
-              <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {evalItem.id_consultation}
-              </td>
-              <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {evalItem.chemin_evaluation}
+                {evalItem.chemin_document}
               </td>
               <td className="px-4 py-2">
                 <span

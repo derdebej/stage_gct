@@ -36,7 +36,7 @@ import deleteEvalRoute from './routes/deleteEval.js'
 import ConsOffreRoute from './routes/ConsOffre.js'
 import lotsByOffreRouter from "./routes/lotsByOffre.js";
 import receptionRoute from './routes/reception.js'
-
+import commandeRoutes from "./routes/commande.js"; 
 
 const app = express();
 app.use(cors());
@@ -90,6 +90,7 @@ app.post("/enregistrer-demande", async (req, res) => {
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
+app.use("/api/commandes", commandeRoutes);
 app.use(receptionRoute)
 app.use("/api/lots-by-offre", lotsByOffreRouter);
 app.use('/api/consultation-offre',ConsOffreRoute)

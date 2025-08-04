@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import { Commande } from "../types/Comm";
 import { Eye, Trash2, Pencil } from "lucide-react";
 
@@ -6,7 +6,7 @@ interface TableCommandeProps {
   data: Commande[];
 }
 
-const TableCommande = ({data}:TableCommandeProps) => {
+const TableCommande = ({ data }: TableCommandeProps) => {
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full text-left border-separate border-spacing-y-2">
@@ -16,16 +16,16 @@ const TableCommande = ({data}:TableCommandeProps) => {
               ID
             </th>
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
-              Fournisseur
+              ID offre
             </th>
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
-              Date
+              ID lot
             </th>
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
               Montant
             </th>
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
-              Id Consultation
+              Date
             </th>
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
               Statut
@@ -37,21 +37,24 @@ const TableCommande = ({data}:TableCommandeProps) => {
         </thead>
         <tbody>
           {data.map((evalItem) => (
-            <tr key={evalItem.id} className="bg-white rounded hover:bg-gray-50">
+            <tr
+              key={evalItem.id_commande}
+              className="bg-white rounded hover:bg-gray-50"
+            >
               <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {evalItem.id}
+                {evalItem.id_commande}
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {evalItem.fournisseur}
+                {evalItem.id_offre}
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {evalItem.dateCommande}
+                {evalItem.id_lot}
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {evalItem.montant.toLocaleString()} dt
+                a ajouter
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {evalItem.IdConsultation}
+                {evalItem.date.slice(0, 10)}
               </td>
               <td className="px-4 py-2">
                 <span
@@ -91,7 +94,7 @@ const TableCommande = ({data}:TableCommandeProps) => {
         </tbody>
       </table>
     </div>
-  )
-}
+  );
+};
 
-export default TableCommande
+export default TableCommande;

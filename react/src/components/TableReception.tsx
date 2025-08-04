@@ -45,7 +45,7 @@ const TableReception = ({ receptions }: props) => {
                 {reception.id_commande}
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {reception.id_commande}
+                a ajouter
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
                 {reception.date.slice(0, 10)}

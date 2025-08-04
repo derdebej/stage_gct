@@ -1,12 +1,12 @@
-import React from 'react'
-import { Commande } from "../types/Comm";
+import React from "react";
+import { useState } from "react";
 import { Eye, Trash2, Pencil } from "lucide-react";
-
-interface TableCommandeProps {
-  data: Commande[];
+import { reception } from "../types/Reception";
+interface props {
+  receptions: reception[];
 }
 
-const TableCommande = ({data}:TableCommandeProps) => {
+const TableReception = ({ receptions }: props) => {
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full text-left border-separate border-spacing-y-2">
@@ -16,19 +16,16 @@ const TableCommande = ({data}:TableCommandeProps) => {
               ID
             </th>
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
-              Fournisseur
+              Id Commande
             </th>
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
-              Date
+              Id Lot
             </th>
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
-              Montant
+              Montant recue
             </th>
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
-              Id Consultation
-            </th>
-            <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
-              Statut
+              Date reception
             </th>
             <th className="rounded-r-xl text-center py-3 px-4 text-sm  text-gray-800 bg-gray-100">
               Actions
@@ -36,36 +33,27 @@ const TableCommande = ({data}:TableCommandeProps) => {
           </tr>
         </thead>
         <tbody>
-          {data.map((evalItem) => (
-            <tr key={evalItem.id} className="bg-white rounded hover:bg-gray-50">
+          {receptions.map((reception) => (
+            <tr
+              key={reception.id_reception}
+              className="bg-white rounded hover:bg-gray-50"
+            >
               <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {evalItem.id}
-              </td>
-              <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {evalItem.fournisseur}
-              </td>
-              <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {evalItem.dateCommande}
+                {reception.id_reception}
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {evalItem.montant.toLocaleString()} dt
+                {reception.id_commande}
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {evalItem.IdConsultation}
+                {reception.id_commande}
               </td>
-              <td className="px-4 py-2">
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                    evalItem.statut === "Terminée"
-                      ? "bg-green-100 text-green-800"
-                      : evalItem.statut === "En cours"
-                      ? "bg-yellow-100 text-yellow-800"
-                      : "bg-red-100 text-red-800"
-                  }`}
-                >
-                  {evalItem.statut}
-                </span>
+              <td className="text-center py-3 px-4 text-sm text-gray-700">
+                {reception.date.slice(0, 10)}
               </td>
+              <td className="text-center py-3 px-4 text-sm text-gray-700">
+                {reception.montant_recue}
+              </td>
+
               <td className="px-4 py-2 flex gap-2 justify-center">
                 <button
                   className="text-blue-600 hover:text-blue-800"
@@ -82,6 +70,7 @@ const TableCommande = ({data}:TableCommandeProps) => {
                 <button
                   className="text-red-600 hover:text-red-800"
                   title="Supprimer"
+                  //onClick={() => openConfirm(evalItem.id_eval)}
                 >
                   <Trash2 size={16} />
                 </button>
@@ -90,8 +79,25 @@ const TableCommande = ({data}:TableCommandeProps) => {
           ))}
         </tbody>
       </table>
+      {/* {confirmOpen && (
+        <ConfirmModal
+          isOpen={confirmOpen}
+          message={
+            <>
+              <p className="text-xl mb-4 border-b pb-4 border-b-gray-300">
+                Supprimer cette évaluation ?
+              </p>
+              <p className="text-sm text-gray-500">
+                Cette action est irréversible.
+              </p>
+            </>
+          }
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+        />
+      )}*/}
     </div>
-  )
-}
+  );
+};
 
-export default TableCommande
+export default TableReception;

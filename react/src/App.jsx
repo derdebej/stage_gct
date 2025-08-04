@@ -14,6 +14,7 @@ import Commande from "./pages/Commande";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import Consultation from "./pages/Consultation";
+import Reception from './pages/Reception.tsx'
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
           <Route path="offre" element={<Offre />} />
           <Route path="evaluation" element={<Evaluation />} />
           <Route path="commandes" element={<Commande />} />
+          <Route path="reception" element={<Reception />} />
         </Route>
         <Route
           path="/parametre"

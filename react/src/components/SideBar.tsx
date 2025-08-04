@@ -11,6 +11,7 @@ import {
   Settings,
   LogOut,
   File,
+  CheckCheck
 } from "lucide-react";
 import { Link, Routes, Route, useLocation } from "react-router-dom";
 import Da from "../pages/Da";
@@ -108,6 +109,16 @@ const SideBar = () => {
               }`}
             >
               <Handshake size={18} /> Commandes
+            </Link>
+            <Link
+              to="/reception"
+              className={`flex gap-2 text-sm font-medium rounded-lg px-2 py-2 text-left ${
+                isActive("/reception")
+                  ? "text-white bg-blue-900"
+                  : "text-gray-700 hover:text-blue-900 hover:bg-gray-100"
+              }`}
+            >
+              <CheckCheck size={18}/> Reception
             </Link>
           </nav>
         </div>

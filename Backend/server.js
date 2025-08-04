@@ -35,6 +35,7 @@ import deleteArticleRoute from './routes/deleteArticle.js'
 import deleteEvalRoute from './routes/deleteEval.js'
 import ConsOffreRoute from './routes/ConsOffre.js'
 import lotsByOffreRouter from "./routes/lotsByOffre.js";
+import receptionRoute from './routes/reception.js'
 
 
 const app = express();
@@ -89,6 +90,7 @@ app.post("/enregistrer-demande", async (req, res) => {
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
+app.use(receptionRoute)
 app.use("/api/lots-by-offre", lotsByOffreRouter);
 app.use('/api/consultation-offre',ConsOffreRoute)
 app.use("/api/article-delete",deleteArticleRoute)

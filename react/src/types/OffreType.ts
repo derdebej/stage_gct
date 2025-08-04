@@ -9,4 +9,5 @@ export interface OffreType {
     nom: string;
     id_fournisseur:string;
   };
+  id_consultation: string;
 }

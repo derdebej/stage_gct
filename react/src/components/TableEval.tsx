@@ -72,6 +72,9 @@ const TableEval = ({ evaluations, search }: Props) => {
               Id Offre
             </th>
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
+              Id Lot
+            </th>
+            <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
               Fournisseur
             </th>
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
@@ -99,6 +102,9 @@ const TableEval = ({ evaluations, search }: Props) => {
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
                 {evalItem.id_offre}
+              </td>
+              <td className="text-center py-3 px-4 text-sm text-gray-700">
+                {evalItem.id_lot}
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
                 {evalItem.id_fournisseur}

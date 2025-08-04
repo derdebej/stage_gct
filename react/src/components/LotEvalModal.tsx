@@ -1,82 +1,64 @@
 import React, { useState, useEffect } from "react";
 import { X, Search, CheckCircle, Circle } from "lucide-react";
 import { Lot } from "../types/Lot";
-import { consultationType } from "../types/consultationType";
+import { OffreType } from "../types/OffreType";
+
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
-interface LotModalProps {
+interface LotEvalModalProps {
   setIsModalOpen: (open: boolean) => void;
-  setSelectedLots: (lots: Lot[]) => void;
-  selectedLots: Lot[];
-  selectedConsultation: consultationType | null;
+  onSelectedLot: (lot: Lot | null) => void;
+  selectedLot: Lot | null;
+  selectedOffre: OffreType | null;
 }
 
-const LotModal: React.FC<LotModalProps> = ({
+const LotEvalModal: React.FC<LotEvalModalProps> = ({
   setIsModalOpen,
-  setSelectedLots,
-  selectedLots,
-  selectedConsultation,
+  onSelectedLot,
+  selectedLot,
+  selectedOffre,
 }) => {
   const [search, setSearch] = useState("");
   const [lots, setLots] = useState<Lot[]>([]);
-  const [selected, setSelected] = useState<Lot[]>([]);
+  const [selected, setSelected] = useState<Lot | null>(selectedLot);
 
   useEffect(() => {
     const fetchLots = async () => {
       try {
         const res = await fetch(
-          `${baseUrl}/api/LotsOffre?search=${encodeURIComponent(search)}`
+          `${baseUrl}/api/lots-by-offre/${selectedOffre?.id_offre}?search=${encodeURIComponent(
+            search
+          )}`
         );
         const data: Lot[] = await res.json();
-        
-
-        const filtered = data.filter(
-          (lot) =>
-            // Match the selected consultation
-            lot.id_consultation == selectedConsultation?.id_consultation &&
-            // Exclude already selected lots
-            !selectedLots.some(
-              (selectedLot) => selectedLot.id_lot == lot.id_lot
-            )
-        );
-        console.log(filtered)
-        setLots(filtered);
+        setLots(data);
       } catch (err) {
         console.error("Erreur lors du fetch:", err);
       }
     };
 
-    const delayDebounce = setTimeout(() => {
-      if (selectedConsultation) {
+    const delay = setTimeout(() => {
+      if (selectedOffre) {
         fetchLots();
       } else {
-        setLots([]); // Clear if no consultation selected
+        setLots([]);
       }
     }, 400);
 
-    return () => clearTimeout(delayDebounce);
-  }, [search, selectedLots, selectedConsultation]);
+    return () => clearTimeout(delay);
+  }, [search, selectedOffre]);
 
-  // Toggle selection
-  const handleToggle = (lot: Lot) => {
-    const alreadySelected = selected.some((l) => l.id_lot === lot.id_lot);
-    if (alreadySelected) {
-      setSelected(selected.filter((l) => l.id_lot !== lot.id_lot));
-    } else {
-      setSelected([...selected, lot]);
-    }
+  const handleSelect = (lot: Lot) => {
+    setSelected(lot.id_lot === selected?.id_lot ? null : lot);
   };
 
-  // Confirm selection
   const handleConfirm = () => {
-    setSelectedLots([...selectedLots, ...selected]);
-    setIsModalOpen(false);
+    onSelectedLot(selected);
   };
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
       <div className="bg-white rounded-xl shadow-lg w-full max-w-lg p-6 relative">
-        {/* Close Button */}
         <button
           onClick={() => setIsModalOpen(false)}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
@@ -84,32 +66,29 @@ const LotModal: React.FC<LotModalProps> = ({
           <X size={20} />
         </button>
 
-        {/* Title */}
         <h2 className="text-2xl font-bold mb-4 pb-4 text-blue-900 text-center border-b border-gray-200">
-          Liste des Lots
+          Sélectionner un Lot à évaluer
         </h2>
 
-        {/* Search Bar */}
         <div className="flex items-center bg-white px-4 py-2 rounded-full w-full max-w-xl flex-1 mr-4 my-5 border border-gray-300">
           <Search className="w-4 h-4 text-gray-500 mr-2" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Rechercher par ID, DA, Consultation..."
+            placeholder="Rechercher par ID, DA..."
             className="bg-transparent outline-none w-full text-sm text-gray-700"
           />
         </div>
 
-        {/* Lots List */}
         <div className="max-h-60 overflow-y-auto">
           {lots.length > 0 ? (
             lots.map((lot) => {
-              const isSelected = selected.some((l) => l.id_lot === lot.id_lot);
+              const isSelected = selected?.id_lot === lot.id_lot;
               return (
                 <div
                   key={lot.id_lot}
-                  onClick={() => handleToggle(lot)}
+                  onClick={() => handleSelect(lot)}
                   className={`p-2 border-b border-gray-100 flex items-start justify-between hover:bg-gray-50 cursor-pointer ${
                     isSelected ? "bg-blue-50" : ""
                   }`}
@@ -132,25 +111,26 @@ const LotModal: React.FC<LotModalProps> = ({
               );
             })
           ) : (
-            <p className="text-sm text-center text-gray-500">Aucun résultat</p>
+            <p className="text-sm text-center text-gray-500">
+              Aucun résultat
+            </p>
           )}
         </div>
 
-        {/* Confirm Button */}
         <button
           onClick={handleConfirm}
-          disabled={selected.length === 0}
+          disabled={!selected}
           className={`w-full mt-5 py-2 px-4 rounded-md text-white text-lg flex items-center justify-center gap-2 ${
-            selected.length > 0
+            selected
               ? "bg-blue-800 hover:bg-blue-900"
               : "bg-gray-300 cursor-not-allowed"
           }`}
         >
-          Ajouter {selected.length > 0 && `(${selected.length})`}
+          Sélectionner
         </button>
       </div>
     </div>
   );
 };
 
-export default LotModal;
+export default LotEvalModal;

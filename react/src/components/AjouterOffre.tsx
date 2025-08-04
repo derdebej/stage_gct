@@ -4,8 +4,9 @@ import { Fournisseur } from "../types/fournisseur";
 import FounisseursModal from "./FounisseursModal";
 import { Lot } from "../types/Lot";
 import LotModal from "./LotModal";
+import { consultationType } from "../types/consultationType";
+import ConsModal from "./ConsModal";
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
-
 
 const AjouterOffre = ({ onClose }) => {
   const [selectedFournisseur, setSelectedFournisseur] =
@@ -14,30 +15,30 @@ const AjouterOffre = ({ onClose }) => {
   const [montant, setMontant] = useState(0);
   const [selectedLots, setSelectedLots] = useState<Lot[]>([]);
   const [isLotModalOpen, setIsLotModalOpen] = useState(false);
+  const [selectedConsultation, setSelectedConsultation] =
+    useState<consultationType | null>(null);
+  const [isConsModalOpen, setIsConsModalOpen] = useState(false);
   const handleConfirm = async () => {
     if (!selectedFournisseur || selectedLots.length === 0) {
       alert("Veuillez sélectionner un fournisseur et au moins un lot.");
       return;
     }
     try {
-      const date_offre = new Date().toISOString(); // e.g., "2025-08-01T13:05:00.000Z"
+      const date_offre = new Date().toISOString();
 
-      // 1. Create the offre
-      const offreResponse = await fetch(
-        `${baseUrl}/api/offre-insert`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            id_fournisseur: selectedFournisseur.id_fournisseur,
-            date_offre: date_offre,
-            chemin_document: "offres/temp.pdf",
-            montant: montant,
-          }),
-        }
-      );
+      const offreResponse = await fetch(`${baseUrl}/api/offre-insert`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id_fournisseur: selectedFournisseur.id_fournisseur,
+          date_offre: date_offre,
+          chemin_document: "offres/temp.pdf",
+          montant: montant,
+          id_consultation: selectedConsultation.id_consultation,
+        }),
+      });
 
       if (!offreResponse.ok)
         throw new Error("Erreur lors de la création de l'offre");
@@ -129,6 +130,42 @@ const AjouterOffre = ({ onClose }) => {
             Choisir un fournisseur
           </button>
         )}
+        <label>Consultation associé :</label>
+        {selectedConsultation && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 mb-4">
+            <div className="relative bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-900">
+              <button
+                onClick={() => {
+                  setSelectedConsultation(null);
+                  setSelectedLots([]);
+                }}
+                className="absolute top-1 right-1 text-red-500 hover:text-red-700"
+              >
+                <X size={14} />
+              </button>
+              <p>
+                <span className="font-semibold">ID Consultation:</span>{" "}
+                {selectedConsultation.id_consultation}
+              </p>
+              <p>
+                <span className="font-semibold">Date de Creation:</span>{" "}
+                {selectedConsultation.date_creation.slice(0, 10)}
+              </p>
+              <p>
+                <span className="font-semibold">Nombre des Lots:</span>{" "}
+                {selectedConsultation.nombre_des_lots}
+              </p>
+            </div>
+          </div>
+        )}
+        {!selectedConsultation && (
+          <button
+            onClick={() => setIsConsModalOpen(true)}
+            className="bg-blue-800 hover:bg-blue-900 text-white px-4 py-2 rounded-md flex items-center gap-2 text-md cursor-pointer mb-2"
+          >
+            Choisir une consultation
+          </button>
+        )}
 
         <label>Lots associés :</label>
         {selectedLots.length > 0 && (
@@ -165,8 +202,13 @@ const AjouterOffre = ({ onClose }) => {
 
         <>
           <button
+            disabled={selectedConsultation == null}
             onClick={() => setIsLotModalOpen(true)}
-            className="bg-blue-800 hover:bg-blue-900 text-white px-4 py-2 rounded-md flex items-center gap-2 text-md cursor-pointer mb-2"
+            className={`text-white px-4 py-2 rounded-md flex items-center gap-2 text-md cursor-pointer mb-2 ${
+              selectedConsultation === null
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-800 hover:bg-blue-900"
+            }`}
           >
             Choisir un Lot
           </button>
@@ -203,9 +245,17 @@ const AjouterOffre = ({ onClose }) => {
       )}
       {isLotModalOpen && (
         <LotModal
+          selectedConsultation={selectedConsultation}
           setIsModalOpen={setIsLotModalOpen}
           setSelectedLots={setSelectedLots}
           selectedLots={selectedLots}
+        />
+      )}
+      {isConsModalOpen && (
+        <ConsModal
+          setSelectedConsultations={setSelectedConsultation}
+          selectedConsultations={selectedConsultation}
+          setIsModalOpen={setIsConsModalOpen}
         />
       )}
     </div>

@@ -20,7 +20,9 @@ router.delete('/api/consultation/:id', async (req, res) => {
     const relatedDaIds = [...new Set(lotResult.rows.map(row => row.id_da))];
 
     // 2. Delete lots
-    await client.query('DELETE FROM lot WHERE id_consultation = $1', [id]);
+    await client.query('DELETE FROM lot WHERE id_consultation = $1',[id]);
+
+    await client.query('DELETE FROM offre WHERE id_consultation = $1',[id]);
 
     // 3. Delete consultation
     await client.query('DELETE FROM consultation WHERE id_consultation = $1', [id]);

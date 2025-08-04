@@ -71,6 +71,9 @@ const TableOffre = () => {
               Fournisseur
             </th>
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
+              ID Consultation
+            </th>
+            <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
               Date
             </th>
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
@@ -98,6 +101,9 @@ const TableOffre = () => {
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
                 {offre.id_fournisseur}
+              </td>
+              <td className="text-center py-3 px-4 text-sm text-gray-700">
+                {offre.id_consultation}
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
                 {offre.date_offre.slice(0, 10)}

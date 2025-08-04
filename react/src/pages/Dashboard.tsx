@@ -2,11 +2,12 @@ import React from "react";
 import SideBar from "../components/SideBar";
 import Header from "../components/Header";
 import Box from "../components/Box";
-import { LineChart } from "lucide-react";
+import { LineChart, CircleDollarSign } from "lucide-react";
 import TableDA from "../components/TableDA";
 import DaHeadDashboard from "../components/DaHeadDashboard";
 import { useEffect, useState } from "react";
 import { DA } from "../types/DA";
+import { TopArticles, TopFournisseurs } from "../components/Top";
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 function Dashboard() {
@@ -45,42 +46,32 @@ function Dashboard() {
             <div className="border-b w-min text-3xl font-bold text-gray-800 border-gray-300 mb-6 mt-6 pb-3">
               Dashboard
             </div>
-            <div className="flex justify-between pb-6 flex-1 border-b  border-gray-300">
-              <div className="flex-1">
+            <div className="flex justify-between items-center pb-6 flex-1 border-b  border-gray-300">
+              <div>
                 <Box
-                  titre="Total Achats"
+                  titre="Total de Dépenses"
+                  valeur="4,689 dt"
+                  icon={
+                    <CircleDollarSign className="w-6 h-6 text-indigo-600" />
+                  }
+                  variation="8.5%"
+                  variationText="Par rapport au dernier mois"
+                />
+              </div>
+              <div>
+                <Box
+                  titre="Nombre de Commandes"
                   valeur="4,689 dt"
                   icon={<LineChart className="w-6 h-6 text-indigo-600" />}
                   variation="8.5%"
                   variationText="Par rapport au dernier mois"
                 />
               </div>
-              <div className="flex-1">
-                <Box
-                  titre="Total Achats"
-                  valeur="4,689 dt"
-                  icon={<LineChart className="w-6 h-6 text-indigo-600" />}
-                  variation="8.5%"
-                  variationText="Par rapport au dernier mois"
-                />
+              <div>
+                <TopArticles />
               </div>
-              <div className="flex-1">
-                <Box
-                  titre="Total Achats"
-                  valeur="4,689 dt"
-                  icon={<LineChart className="w-6 h-6 text-indigo-600" />}
-                  variation="8.5%"
-                  variationText="Par rapport au dernier mois"
-                />
-              </div>
-              <div className="flex-1">
-                <Box
-                  titre="Total Achats"
-                  valeur="4,689 dt"
-                  icon={<LineChart className="w-6 h-6 text-indigo-600" />}
-                  variation="8.5%"
-                  variationText="Par rapport au dernier mois"
-                />
+              <div>
+                <TopFournisseurs />
               </div>
             </div>
             <div className="mt-6">

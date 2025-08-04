@@ -3,9 +3,9 @@ import pool from "../db.js";
 const router = express.Router();
 
 router.post("/", async (req, res) => {
-  const { id_offre, date, chemin_evaluation, conformite, id_fournisseur } = req.body;
+  const { id_offre, date, chemin_evaluation, conformite, id_fournisseur,id_lot } = req.body;
 
-  if (!id_offre || !date || !chemin_evaluation || !conformite || !id_fournisseur) {
+  if (!id_offre || !date || !chemin_evaluation || !conformite || !id_fournisseur || !id_lot) {
     return res.status(400).json({ error: "Champs requis manquants" });
   }
 
@@ -17,11 +17,11 @@ router.post("/", async (req, res) => {
     // 1. Insert the evaluation
     const evalResult = await client.query(
       `
-      INSERT INTO evaluation (id_offre, date, chemin_document, conformite, id_fournisseur)
-      VALUES ($1, $2, $3, $4, $5)
+      INSERT INTO evaluation (id_offre, date, chemin_document, conformite, id_fournisseur, id_lot)
+      VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *;
       `,
-      [id_offre, date, chemin_evaluation, conformite, id_fournisseur]
+      [id_offre, date, chemin_evaluation, conformite, id_fournisseur, id_lot]
     );
 
     // 2. Update the statut of the related offre

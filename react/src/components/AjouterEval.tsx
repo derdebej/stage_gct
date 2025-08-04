@@ -1,12 +1,16 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import { X } from "lucide-react";
 import { OffreType } from "../types/OffreType";
 import ListeOffresModal from "./ListeOffre";
+import { Lot } from "../types/Lot";
+import LotEvalModal from "./LotEvalModal";
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const AjouterEvaluationModal = ({ setIsOpen, onEvaluationAdded }) => {
   const [selectedOffre, setSelectedOffre] = useState<OffreType | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedLot, setSelectedLot] = useState<Lot | null>(null);
+  const [isLotEvalOpen, setIsLotEvalOpen] = useState(false);
   const [form, setForm] = useState({
     id_offre: "",
     date: new Date().toISOString().split("T")[0],
@@ -22,6 +26,14 @@ const AjouterEvaluationModal = ({ setIsOpen, onEvaluationAdded }) => {
       id_fournisseur: offre.fournisseur?.id_fournisseur,
     }));
     setIsModalOpen(false);
+  };
+  const handleLotSelection = (Lot: Lot) => {
+    setSelectedLot(Lot);
+    setForm((prev) => ({
+      ...prev,
+      id_lot: Lot.id_lot,
+    }));
+    setIsLotEvalOpen(false);
   };
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -69,7 +81,8 @@ const AjouterEvaluationModal = ({ setIsOpen, onEvaluationAdded }) => {
                 </p>
                 <p className="text-xs text-gray-600">
                   <span className="font-semibold">Fournisseur:</span>{" "}
-                  {selectedOffre.fournisseur?.id_fournisseur}--{selectedOffre.fournisseur.nom}
+                  {selectedOffre.fournisseur?.id_fournisseur}--
+                  {selectedOffre.fournisseur.nom}
                 </p>
                 <p className="text-xs text-gray-600">
                   <span className="font-semibold">Montant:</span>{" "}
@@ -83,13 +96,19 @@ const AjouterEvaluationModal = ({ setIsOpen, onEvaluationAdded }) => {
 
               <div className="flex flex-col items-end gap-2">
                 <button
-                  onClick={() => setIsModalOpen(true)}
+                  onClick={() => {
+                    setIsModalOpen(true);
+                    setSelectedLot(null);
+                  }}
                   className="bg-blue-800 hover:bg-blue-900 text-white px-3 py-1 rounded-md text-xs"
                 >
                   Changer
                 </button>
                 <button
-                  onClick={() => setSelectedOffre(null)}
+                  onClick={() => {
+                    setSelectedOffre(null);
+                    setSelectedLot(null);
+                  }}
                   className="text-red-500 hover:text-red-700 text-xs underline"
                 >
                   Désélectionner
@@ -103,6 +122,45 @@ const AjouterEvaluationModal = ({ setIsOpen, onEvaluationAdded }) => {
             className="bg-blue-800 hover:bg-blue-900 text-white px-4 py-2 rounded-md flex items-center gap-2 text-md cursor-pointer mb-4 mt-1"
           >
             Choisir un Offre
+          </button>
+        )}
+        <label>Lots associés :</label>
+        {selectedLot && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 mb-4">
+            <div className="relative bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-900">
+              <button
+                onClick={() => setSelectedLot(null)}
+                className="absolute top-1 right-1 text-red-500 hover:text-red-700"
+              >
+                <X size={14} />
+              </button>
+              <p>
+                <span className="font-semibold">ID Lot:</span>{" "}
+                {selectedLot.id_lot}
+              </p>
+              <p>
+                <span className="font-semibold">ID DA:</span>{" "}
+                {selectedLot.id_da}
+              </p>
+              <p>
+                <span className="font-semibold">Consultation:</span>{" "}
+                {selectedLot.id_consultation}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {!selectedLot && (
+          <button
+            disabled={selectedOffre == null}
+            onClick={() => setIsLotEvalOpen(true)}
+            className={`text-white px-4 py-2 rounded-md flex items-center gap-2 text-md cursor-pointer mb-2 ${
+              selectedOffre === null
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-800 hover:bg-blue-900"
+            }`}
+          >
+            Choisir un Lot
           </button>
         )}
 
@@ -149,6 +207,14 @@ const AjouterEvaluationModal = ({ setIsOpen, onEvaluationAdded }) => {
         <ListeOffresModal
           setIsModalOpen={setIsModalOpen}
           onSelectOffre={handleOffreSelection}
+        />
+      )}
+      {isLotEvalOpen && (
+        <LotEvalModal
+          selectedLot={selectedLot}
+          selectedOffre={selectedOffre}
+          setIsModalOpen={setIsLotEvalOpen}
+          onSelectedLot={handleLotSelection}
         />
       )}
     </div>

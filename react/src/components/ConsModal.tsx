@@ -1,75 +1,60 @@
 import React, { useState, useEffect } from "react";
 import { X, Search, CheckCircle, Circle } from "lucide-react";
-import { Lot } from "../types/Lot";
 import { consultationType } from "../types/consultationType";
+
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
-interface LotModalProps {
+interface ConsModalProps {
   setIsModalOpen: (open: boolean) => void;
-  setSelectedLots: (lots: Lot[]) => void;
-  selectedLots: Lot[];
-  selectedConsultation: consultationType | null;
+  selectedConsultations: consultationType | null;
+  setSelectedConsultations: (cons: consultationType | null) => void;
 }
 
-const LotModal: React.FC<LotModalProps> = ({
+const ConsModal: React.FC<ConsModalProps> = ({
   setIsModalOpen,
-  setSelectedLots,
-  selectedLots,
-  selectedConsultation,
+  selectedConsultations,
+  setSelectedConsultations,
 }) => {
   const [search, setSearch] = useState("");
-  const [lots, setLots] = useState<Lot[]>([]);
-  const [selected, setSelected] = useState<Lot[]>([]);
+  const [consultations, setConsultations] = useState<consultationType[]>([]);
+  const [selected, setSelected] = useState<consultationType | null>(null);
 
   useEffect(() => {
-    const fetchLots = async () => {
+    const fetchConsultations = async () => {
       try {
         const res = await fetch(
-          `${baseUrl}/api/LotsOffre?search=${encodeURIComponent(search)}`
+          `${baseUrl}/api/consultation-offre?search=${encodeURIComponent(
+            search
+          )}`
         );
-        const data: Lot[] = await res.json();
-        
-
+        const data: consultationType[] = await res.json();
         const filtered = data.filter(
-          (lot) =>
-            // Match the selected consultation
-            lot.id_consultation == selectedConsultation?.id_consultation &&
-            // Exclude already selected lots
-            !selectedLots.some(
-              (selectedLot) => selectedLot.id_lot == lot.id_lot
-            )
+          (cons) =>
+            cons.id_consultation !== selectedConsultations?.id_consultation
         );
-        console.log(filtered)
-        setLots(filtered);
+        setConsultations(filtered);
       } catch (err) {
         console.error("Erreur lors du fetch:", err);
       }
     };
 
     const delayDebounce = setTimeout(() => {
-      if (selectedConsultation) {
-        fetchLots();
-      } else {
-        setLots([]); // Clear if no consultation selected
-      }
+      fetchConsultations();
     }, 400);
 
     return () => clearTimeout(delayDebounce);
-  }, [search, selectedLots, selectedConsultation]);
+  }, [search]);
 
-  // Toggle selection
-  const handleToggle = (lot: Lot) => {
-    const alreadySelected = selected.some((l) => l.id_lot === lot.id_lot);
-    if (alreadySelected) {
-      setSelected(selected.filter((l) => l.id_lot !== lot.id_lot));
+  const handleSelect = (cons: consultationType) => {
+    if (selected?.id_consultation === cons.id_consultation) {
+      setSelected(null); // Unselect if already selected
     } else {
-      setSelected([...selected, lot]);
+      setSelected(cons);
     }
   };
 
-  // Confirm selection
   const handleConfirm = () => {
-    setSelectedLots([...selectedLots, ...selected]);
+    setSelectedConsultations(selected);
     setIsModalOpen(false);
   };
 
@@ -86,7 +71,7 @@ const LotModal: React.FC<LotModalProps> = ({
 
         {/* Title */}
         <h2 className="text-2xl font-bold mb-4 pb-4 text-blue-900 text-center border-b border-gray-200">
-          Liste des Lots
+          Liste des Consultations
         </h2>
 
         {/* Search Bar */}
@@ -96,31 +81,31 @@ const LotModal: React.FC<LotModalProps> = ({
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Rechercher par ID, DA, Consultation..."
+            placeholder="Rechercher par ID, objet..."
             className="bg-transparent outline-none w-full text-sm text-gray-700"
           />
         </div>
 
-        {/* Lots List */}
+        {/* Consultation List */}
         <div className="max-h-60 overflow-y-auto">
-          {lots.length > 0 ? (
-            lots.map((lot) => {
-              const isSelected = selected.some((l) => l.id_lot === lot.id_lot);
+          {consultations.length > 0 ? (
+            consultations.map((cons) => {
+              const isSelected =
+                selected?.id_consultation === cons.id_consultation;
               return (
                 <div
-                  key={lot.id_lot}
-                  onClick={() => handleToggle(lot)}
+                  key={cons.id_consultation}
+                  onClick={() => handleSelect(cons)}
                   className={`p-2 border-b border-gray-100 flex items-start justify-between hover:bg-gray-50 cursor-pointer ${
                     isSelected ? "bg-blue-50" : ""
                   }`}
                 >
                   <div>
                     <p className="text-sm font-semibold text-gray-800">
-                      {lot.id_lot}
+                      {cons.id_consultation} — {cons.nombre_des_lots}
                     </p>
                     <p className="text-xs text-gray-500">
-                      ID DA: {lot.id_da} • ID Consultation:{" "}
-                      {lot.id_consultation}
+                      Date: {new Date(cons.date_creation).toLocaleDateString()}
                     </p>
                   </div>
                   {isSelected ? (
@@ -139,18 +124,18 @@ const LotModal: React.FC<LotModalProps> = ({
         {/* Confirm Button */}
         <button
           onClick={handleConfirm}
-          disabled={selected.length === 0}
+          disabled={!selected}
           className={`w-full mt-5 py-2 px-4 rounded-md text-white text-lg flex items-center justify-center gap-2 ${
-            selected.length > 0
+            selected
               ? "bg-blue-800 hover:bg-blue-900"
               : "bg-gray-300 cursor-not-allowed"
           }`}
         >
-          Ajouter {selected.length > 0 && `(${selected.length})`}
+          Sélectionner
         </button>
       </div>
     </div>
   );
 };
 
-export default LotModal;
+export default ConsModal;

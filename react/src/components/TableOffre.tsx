@@ -1,8 +1,9 @@
 import React from "react";
-import { Eye, Pencil, Trash2, FilePlus, List, Search } from "lucide-react";
+import { Eye, Pencil, Trash2, ArrowBigLeft, ArrowBigRight } from "lucide-react";
 import { OffreType } from "../types/OffreType";
 import { useState, useEffect } from "react";
 import ConfirmModal from "./ConfirmModal";
+
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const getStatusStyle = (status: OffreType["statut"]) => {
@@ -15,19 +16,32 @@ const getStatusStyle = (status: OffreType["statut"]) => {
       return "bg-gray-100 text-gray-800";
   }
 };
+type TableOffreProps = {
+  search: string;
+};
 
-const TableOffre = () => {
+const TableOffre = ({search}:TableOffreProps) => {
   const [data, setData] = useState<OffreType[]>([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
   useEffect(() => {
-    fetch(`${baseUrl}/api/offre`)
+    setPage(1);
+  }, [search]);
+  useEffect(() => {
+    fetch(
+      `${baseUrl}/api/offre?page=${page}&search=${encodeURIComponent(search)}`
+    )
       .then((res) => res.json())
       .then((data) => {
-        setData(data);
+        setData(data.offres);
+        setTotalPages(data.totalPages);
       })
-      .catch((err) => console.error(err));
-  }, []);
+      .catch((err) => console.error("Erreur chargement:", err));
+  }, [page, search]);
+
   const openConfirm = (id: string) => {
     setDeleteId(id);
     setConfirmOpen(true);
@@ -148,6 +162,25 @@ const TableOffre = () => {
           ))}
         </tbody>
       </table>
+      <div className="flex items-center gap-4 bg-gray-200 rounded-xl py-2 px-4 w-max mt-4 text-gray-800">
+        <button
+          onClick={() => setPage((p) => Math.max(p - 1, 1))}
+          disabled={page === 1}
+          className="cursor-pointer flex hover:bg-gray-100 bg-white py-1 px-2 rounded-lg"
+        >
+          <ArrowBigLeft /> Precedent
+        </button>
+        <span className="bg-white py-1 px-2 rounded-lg">
+          Page {page} / {totalPages}
+        </span>
+        <button
+          onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+          disabled={page === totalPages}
+          className="cursor-pointer flex hover:bg-gray-100 bg-white py-1 px-2 rounded-lg"
+        >
+          Suivant <ArrowBigRight />
+        </button>
+      </div>
       {confirmOpen && (
         <ConfirmModal
           isOpen={confirmOpen}

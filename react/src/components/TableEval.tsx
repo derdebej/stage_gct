@@ -7,24 +7,14 @@ import ConfirmModal from "./ConfirmModal";
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 type Props = {
   evaluations: Eval[];
-  search: string;
 };
 
-const TableEval = ({ evaluations, search }: Props) => {
+const TableEval = ({ evaluations}: Props)  => {
   const [evalList, setEvalList] = useState<Eval[]>(evaluations);
   useEffect(() => {
     setEvalList(evaluations);
   }, [evaluations]);
 
-  const filtered = evalList.filter((ev) => {
-    const lower = search.toLowerCase();
-    return (
-      ev.id_eval.toLowerCase().includes(lower) ||
-      ev.id_offre.toLowerCase().includes(lower) ||
-      ev.conformite.toLowerCase().includes(lower) ||
-      ev.date.toLowerCase().includes(lower)
-    );
-  });
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -92,7 +82,7 @@ const TableEval = ({ evaluations, search }: Props) => {
           </tr>
         </thead>
         <tbody>
-          {filtered.map((evalItem) => (
+          {evalList.map((evalItem) => (
             <tr
               key={evalItem.id_eval}
               className="bg-white rounded hover:bg-gray-50"

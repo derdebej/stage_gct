@@ -1,39 +1,41 @@
 import React, { useState, useEffect } from "react";
 import TableReception from "../components/TableReception";
-import { FilePlus, Search } from "lucide-react";
+import { FilePlus, Search, ArrowBigLeft, ArrowBigRight } from "lucide-react";
 import { reception } from "../types/Reception";
+import Loading from "../components/Loading";
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 const Reception = () => {
   const [search, setSearch] = useState("");
   const [receptions, setReceptions] = useState<reception[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const fetchReceptions = async (query = "") => {
+  const fetchReceptions = async () => {
     try {
       setLoading(true);
       const res = await fetch(
-        `${baseUrl}/api/receptions?search=${encodeURIComponent(query)}`
+        `${baseUrl}/api/reception?page=${page}&search=${encodeURIComponent(
+          search
+        )}`
       );
       const data = await res.json();
-      setReceptions(data);
+      setReceptions(data.receptions);
+      setTotalPages(data.totalPages);
     } catch (error) {
-      console.error("Erreur lors du chargement des réceptions:", error);
+      console.error("Failed to fetch receptions", error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchReceptions();
-  }, []);
-
-  useEffect(() => {
     const timeout = setTimeout(() => {
-      fetchReceptions(search);
-    }, 300); // debounce
+      fetchReceptions();
+    }, 300);
 
     return () => clearTimeout(timeout);
-  }, [search]);
+  }, [page, search]);
 
   return (
     <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
@@ -61,11 +63,26 @@ const Reception = () => {
         />
       </div>
 
-      {loading ? (
-        <div className="text-gray-500 text-sm">Chargement...</div>
-      ) : (
-        <TableReception receptions={receptions} />
-      )}
+      {loading ? <Loading /> : <TableReception receptions={receptions} />}
+      <div className="flex items-center gap-4 bg-gray-200 rounded-xl py-2 px-4 w-max mt-4 text-gray-800">
+        <button
+          onClick={() => setPage((p) => Math.max(p - 1, 1))}
+          disabled={page === 1}
+          className="cursor-pointer flex hover:bg-gray-100 bg-white py-1 px-2 rounded-lg"
+        >
+          <ArrowBigLeft /> Precedent
+        </button>
+        <span className="bg-white py-1 px-2 rounded-lg">
+          Page {page} / {totalPages}
+        </span>
+        <button
+          onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+          disabled={page === totalPages}
+          className="cursor-pointer flex hover:bg-gray-100 bg-white py-1 px-2 rounded-lg"
+        >
+          Suivant <ArrowBigRight />
+        </button>
+      </div>
     </div>
   );
 };

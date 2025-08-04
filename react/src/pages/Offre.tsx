@@ -7,6 +7,7 @@ import AjouterOffre from "../components/AjouterOffre";
 const Offre = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAjouterOpen, setIsAjouterOpen] = useState(false);
+  const [search, setSearch] = useState("");
   return (
     <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
       <div className="mb-6 flex justify-between items-center border-b-2 border-gray-200 pb-4">
@@ -32,13 +33,16 @@ const Offre = () => {
         <Search className="w-4 h-4 text-gray-500 mr-2" />
         <input
           type="text"
+          onChange={(e) => setSearch(e.target.value)}
           placeholder="Rechercher par ID, Fournisseur, Date de Soumission..."
           className="bg-transparent outline-none w-full text-sm text-gray-700"
         />
       </div>
-      <TableOffre />
+      <TableOffre search={search} />
       {isModalOpen && <FounisseursModal setIsModalOpen={setIsModalOpen} />}
-      {isAjouterOpen && <AjouterOffre onClose={()=>setIsAjouterOpen(false)} />}
+      {isAjouterOpen && (
+        <AjouterOffre onClose={() => setIsAjouterOpen(false)} />
+      )}
     </div>
   );
 };

@@ -37,10 +37,17 @@ import ConsOffreRoute from './routes/ConsOffre.js'
 import lotsByOffreRouter from "./routes/lotsByOffre.js";
 import receptionRoute from './routes/reception.js'
 import commandeRoutes from "./routes/commande.js"; 
+import fs from 'fs/promises';
+import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 
 function convertFrToISO(frDateStr) {
   const [day, month, year] = frDateStr.split("/"); // "16/04/2024"
@@ -54,6 +61,24 @@ app.post('/upload', upload.single('pdf'), async (req, res) => {
         console.log(req.file);
 
         const result = await parsePDF(req.file.path);
+        console.log("✅ Résultat du parsing:", result);
+
+        const id_da = result.numero || null;
+
+        if (!id_da) {
+          return res.status(400).json({ message: "Le champ 'id_da' est manquant dans le PDF." });
+        }
+        const basePath = process.env.BASE_PDF_PATH;
+
+        const folderPath = path.join(basePath, "/Demande d'achat/",id_da);
+        const newFilePath = path.join(folderPath, req.file.originalname);
+        const relativePath = `/Demande d'achat/${id_da}/${req.file.originalname}`;
+        console.log(relativePath)
+
+        await fs.mkdir(folderPath, { recursive: true });
+
+        await fs.rename(req.file.path, newFilePath);
+
         res.json(result);
     } catch (err) {
       console.error("Erreur upload:", err.message);

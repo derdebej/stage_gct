@@ -22,10 +22,10 @@ const TableReception = ({ receptions }: props) => {
               Id Lot
             </th>
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
-              Montant recue
+              Date reception
             </th>
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
-              Date reception
+              Montant recue
             </th>
             <th className="rounded-r-xl text-center py-3 px-4 text-sm  text-gray-800 bg-gray-100">
               Actions

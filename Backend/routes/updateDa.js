@@ -21,7 +21,6 @@ router.put("/api/update-demande-achat/:id_da", async (req, res) => {
   }
 
   try {
-    // Build your update query dynamically or explicitly:
     const query = `
       UPDATE demande_d_achat
       SET

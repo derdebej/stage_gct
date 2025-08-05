@@ -64,7 +64,7 @@ const AjouterDocument = ({
   };
 
   useEffect(() => {
-    return () => resetStates(); // Clean up on unmount
+    return () => resetStates();
   }, []);
 
   if (!isOpen) return null;

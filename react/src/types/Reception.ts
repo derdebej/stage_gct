@@ -3,4 +3,5 @@ export interface reception {
   date: string;
   id_commande: string;
   montant_recue: number;
+
 }

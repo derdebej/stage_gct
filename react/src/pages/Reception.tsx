@@ -3,6 +3,7 @@ import TableReception from "../components/TableReception";
 import { FilePlus, Search, ArrowBigLeft, ArrowBigRight } from "lucide-react";
 import { reception } from "../types/Reception";
 import Loading from "../components/Loading";
+import AjouterReceptionModal from "../components/AjouterReceptionModal";
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 const Reception = () => {
   const [search, setSearch] = useState("");
@@ -10,7 +11,10 @@ const Reception = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
+  const handleReceptionAdded = (newReception: reception) => {
+    setReceptions((prev) => [newReception, ...prev]);
+  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const fetchReceptions = async () => {
     try {
       setLoading(true);
@@ -43,7 +47,7 @@ const Reception = () => {
         <h2 className="text-xl font-bold">Avis de Réception</h2>
         <div className="flex gap-2">
           <button
-            // onClick={() => setIsModalOpen(true)}
+            onClick={() => setIsModalOpen(true)}
             className="flex items-center gap-1 bg-blue-800 hover:bg-blue-900 text-white px-4 py-2 rounded-md text-sm"
           >
             <FilePlus className="w-4 h-4" />
@@ -83,6 +87,12 @@ const Reception = () => {
           Suivant <ArrowBigRight />
         </button>
       </div>
+      {isModalOpen && (
+        <AjouterReceptionModal
+          setIsOpen={setIsModalOpen}
+          onReceptionAdded={handleReceptionAdded}
+        />
+      )}
     </div>
   );
 };

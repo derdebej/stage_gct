@@ -1,9 +1,9 @@
 import React from "react";
-import { Commande } from "../types/Comm";
+import { CommandeType } from "../types/Comm";
 import { Eye, Trash2, Pencil } from "lucide-react";
 
 interface TableCommandeProps {
-  data: Commande[];
+  data: CommandeType[];
 }
 
 const TableCommande = ({ data }: TableCommandeProps) => {

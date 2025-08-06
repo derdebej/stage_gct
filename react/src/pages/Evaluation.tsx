@@ -33,7 +33,6 @@ const Evaluation = () => {
   }, [page, search]);
 
   const handleEvaluationAdded = (newEval: Eval) => {
-    // Optionally refetch or prepend without resetting pagination
     setEvaluations((prev) => [newEval, ...prev]);
   };
 

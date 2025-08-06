@@ -37,6 +37,8 @@ import ConsOffreRoute from './routes/ConsOffre.js'
 import lotsByOffreRouter from "./routes/lotsByOffre.js";
 import receptionRoute from './routes/reception.js'
 import commandeRoutes from "./routes/commande.js"; 
+import articleConsultationRoute from './routes/articleConsultation.js'
+
 import fs from 'fs/promises';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
@@ -50,8 +52,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 
 function convertFrToISO(frDateStr) {
-  const [day, month, year] = frDateStr.split("/"); // "16/04/2024"
-  return `${year}-${month}-${day}`; // → "2024-04-16"
+  const [day, month, year] = frDateStr.split("/"); 
+  return `${year}-${month}-${day}`; 
 }
 const upload = multer({ dest: 'uploads/' }); 
 
@@ -115,6 +117,7 @@ app.post("/enregistrer-demande", async (req, res) => {
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
+app.use("/api/article-consultation", articleConsultationRoute);
 app.use("/api/commandes", commandeRoutes);
 app.use(receptionRoute)
 app.use("/api/lots-by-offre", lotsByOffreRouter);

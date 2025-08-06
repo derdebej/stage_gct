@@ -24,14 +24,16 @@ router.get("/", async (req, res) => {
     WHERE 
       (CAST(id_da AS TEXT) ILIKE $1 
       OR LOWER(titre) ILIKE LOWER($1) 
-      OR LOWER(demandeur) ILIKE LOWER($1))`;
+      OR LOWER(demandeur) ILIKE LOWER($1))
+      OR LOWER(nature) ILIKE LOWER($1) `;
 
   let countQuery = `
     SELECT COUNT(*) FROM demande_d_achat
     WHERE 
       (CAST(id_da AS TEXT) ILIKE $1 
       OR LOWER(titre) ILIKE LOWER($1) 
-      OR LOWER(demandeur) ILIKE LOWER($1))`;
+      OR LOWER(demandeur) ILIKE LOWER($1))
+      OR LOWER(nature) ILIKE LOWER($1) `;
 
   const params = [searchQuery];
   let paramIndex = 2;

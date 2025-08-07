@@ -40,6 +40,7 @@ import commandeRoutes from "./routes/commande.js";
 import articleConsultationRoute from './routes/articleConsultation.js'
 import articleConsRoute from './routes/articlesCons.js'
 import offreArticleRoute from './routes/offreArticle.js'
+import offreDocumentRoute from './routes/offreDocument.js'
 
 import fs from 'fs/promises';
 import { fileURLToPath } from 'url';
@@ -119,17 +120,18 @@ app.post("/enregistrer-demande", async (req, res) => {
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
-app.use("/api", articleConsRoute)
+app.use(offreDocumentRoute);
+app.use("/api", articleConsRoute);
 app.use("/api/article-consultation", articleConsultationRoute);
 app.use("/api/commandes", commandeRoutes);
-app.use(receptionRoute)
+app.use(receptionRoute);
 app.use("/api/lots-by-offre", lotsByOffreRouter);
-app.use('/api/consultation-offre',ConsOffreRoute)
-app.use("/api/article-delete",deleteArticleRoute)
-app.use("/api/evaluation-delete",deleteEvalRoute)
-app.use("/api/offre-delete",deleteOffreRoute)
-app.use("/api/evaluation-insert",AjouterEvalRoute)
-app.use("/api/offres",ListeOffreRoute)
+app.use('/api/consultation-offre',ConsOffreRoute);
+app.use("/api/article-delete",deleteArticleRoute);
+app.use("/api/evaluation-delete",deleteEvalRoute);
+app.use("/api/offre-delete",deleteOffreRoute);
+app.use("/api/evaluation-insert",AjouterEvalRoute);
+app.use("/api/offres",ListeOffreRoute);
 app.use("/api", offreInsertRoute);
 app.use("/api", offreArticleRoute);
 app.use("/api", offreLotRoute);

@@ -91,9 +91,6 @@ const TableOffre = ({search}:TableOffreProps) => {
               Date
             </th>
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
-              Montant
-            </th>
-            <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
               Chemin Offre
             </th>
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
@@ -121,9 +118,6 @@ const TableOffre = ({search}:TableOffreProps) => {
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
                 {offre.date_offre.slice(0, 10)}
-              </td>
-              <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {offre.montant} dt
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
                 {offre.chemin_document}

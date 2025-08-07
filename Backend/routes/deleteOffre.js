@@ -3,7 +3,6 @@ import pool from "../db.js";
 
 const router = express.Router();
 
-// DELETE /api/offre/:id
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
 

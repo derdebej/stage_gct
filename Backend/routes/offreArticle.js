@@ -28,6 +28,7 @@ router.post("/offres/:id_offre/articles", async (req, res) => {
 
   try {
     await db.query(query, params);
+    
     res.sendStatus(200);
   } catch (error) {
     console.error("Erreur lors de l'insertion des articles:", error);

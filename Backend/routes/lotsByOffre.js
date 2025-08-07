@@ -1,9 +1,7 @@
 import express from "express";
-import pool from "../db.js"; // adjust if you use TS or different file name
-
+import pool from "../db.js";
 const router = express.Router();
 
-// GET /api/lots-by-offre/:id_offre?search=
 router.get("/:id_offre", async (req, res) => {
   const { id_offre } = req.params;
   const { search } = req.query;

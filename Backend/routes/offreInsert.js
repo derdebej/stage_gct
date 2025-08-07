@@ -9,6 +9,7 @@ router.post("/offre-insert", async (req, res) => {
     "INSERT INTO offre (id_fournisseur, date_offre, chemin_document, id_consultation) VALUES ($1, $2, $3, $4) RETURNING id_offre",
     [id_fournisseur, date_offre, chemin_document , id_consultation ]
   );
+  await db.query("UPDATE consultation SET statut_offre = 'offre totale' WHERE id_consultation = $1",[id_consultation])
   res.json({ id_offre: result.rows[0].id_offre });
 });
 export default router;

@@ -3,7 +3,6 @@ import pool from "../db.js";
 
 const router = express.Router();
 
-// GET /api/consultations?search=...
 router.get("/", async (req, res) => {
   const { search = "" } = req.query;
 

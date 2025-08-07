@@ -30,11 +30,11 @@ router.post('/', async (req, res) => {
     await client.query('BEGIN');
 
     const consultationInsert = `
-      INSERT INTO consultation (id_consultation, nombre_des_lots, date_creation, id_utilisateur)
-      VALUES ($1, $2, $3, $4)
+      INSERT INTO consultation (id_consultation, nombre_des_lots, date_creation, id_utilisateur, type)
+      VALUES ($1, $2, $3, $4, $5)
     `;
     
-    await client.query(consultationInsert, [id_consultation, nombre_lots, date_creation, userid]);
+    await client.query(consultationInsert, [id_consultation, nombre_lots, date_creation, userid, type]);
 
     if (type === 'equipement' && Array.isArray(lots) && lots.length > 0) {
       for (const lot of lots) {

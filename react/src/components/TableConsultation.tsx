@@ -132,7 +132,16 @@ const TableConsultation: React.FC<Props> = ({ openConsultation }) => {
               Date De Création
             </th>
             <th className="bg-gray-100 py-3 px-4 text-gray-800 text-sm">
+              Type
+            </th>
+            <th className="bg-gray-100 py-3 px-4 text-gray-800 text-sm">
               Nombre de Lots
+            </th>
+            <th className="bg-gray-100 py-3 px-4 text-gray-800 text-sm">
+              Statut Offre
+            </th>
+            <th className="bg-gray-100 py-3 px-4 text-gray-800 text-sm">
+              Statut Evaluation
             </th>
             <th className="bg-gray-100 py-3 px-4 text-gray-800 text-sm rounded-r-xl">
               Action
@@ -149,7 +158,16 @@ const TableConsultation: React.FC<Props> = ({ openConsultation }) => {
                 {new Date(row.date_creation).toLocaleDateString("fr-FR")}
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {row.nombre_des_lots}
+                {row.type}
+              </td>
+              <td className="text-center py-3 px-4 text-sm text-gray-700">
+                {row.type == "equipement" ? row.nombre_des_lots : "--"}
+              </td>
+              <td className="text-center py-3 px-4 text-sm text-gray-700">
+                {row.statut_offre}
+              </td>
+              <td className="text-center py-3 px-4 text-sm text-gray-700">
+                {row.statut_evaluation}
               </td>
               <td className="flex justify-between items-center py-3 px-4">
                 <button

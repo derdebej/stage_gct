@@ -8,21 +8,50 @@ router.delete('/api/consultation/:id', async (req, res) => {
   const { id } = req.params;
 
   const client = await pool.connect();
-
+  console.log("hello")
   try {
     await client.query('BEGIN');
 
-    // 1. Get related lots
-    const lotResult = await client.query(
-      'SELECT id_da FROM lot WHERE id_consultation = $1',
+    // 0. Get consultation type
+    const typeResult = await client.query(
+      'SELECT type FROM consultation WHERE id_consultation = $1',
       [id]
     );
-    const relatedDaIds = [...new Set(lotResult.rows.map(row => row.id_da))];
 
-    // 2. Delete lots
-    await client.query('DELETE FROM lot WHERE id_consultation = $1',[id]);
+    const consultationType = typeResult.rows[0]?.type?.trim().toLowerCase();
 
-    await client.query('DELETE FROM offre WHERE id_consultation = $1',[id]);
+    let relatedDaIds = [];
+
+    if (consultationType === "equipement") {
+      // 1. Get related lots
+      const lotResult = await client.query(
+        'SELECT id_da FROM lot WHERE id_consultation = $1',
+        [id]
+      );
+
+      relatedDaIds = [...new Set(lotResult.rows.map(row => row.id_da))];
+
+      // 2. Delete from lot
+      await client.query(
+        'DELETE FROM lot WHERE id_consultation = $1',
+        [id]
+      );
+    } else if (consultationType === "consommable") {
+      // 1. Get related DA IDs directly from consultation_da
+      const daResult = await client.query(
+        'SELECT id_da FROM consultation_da WHERE id_consultation = $1',
+        [id]
+      );
+      console.log(daResult)
+      relatedDaIds = [...new Set(daResult.rows.map(row => row.id_da))];
+      
+
+      // 2. Delete from consultation_da
+      await client.query(
+        'DELETE FROM consultation_da WHERE id_consultation = $1',
+        [id]
+      );
+    }
 
     // 3. Delete consultation
     await client.query('DELETE FROM consultation WHERE id_consultation = $1', [id]);

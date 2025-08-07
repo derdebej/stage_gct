@@ -3,12 +3,17 @@ import { X, Search, PlusCircle, ChevronLeft } from "lucide-react";
 import { DA } from "../types/DA";
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
-const AjouterDaConsModal = ({ setIsModalOpen, id_consultation, onDaAdded }) => {
+const AjouterDaConsModal = ({ setIsModalOpen, type, onDaAdded }) => {
   const [search, setSearch] = useState("");
   const [demandes, setDemandes] = useState<DA[]>([]);
   const [selectedDa, setSelectedDa] = useState<DA | null>(null);
   const [selection, setSelection] = useState(false);
   const [lotNumber, setLotNumber] = useState("");
+
+  let nature = "";
+  type == "consommable"
+    ? (nature = "Exploitation")
+    : (nature = "Investissement");
 
   useEffect(() => {
     const fetchDemandes = async () => {
@@ -16,7 +21,7 @@ const AjouterDaConsModal = ({ setIsModalOpen, id_consultation, onDaAdded }) => {
         const res = await fetch(
           `${baseUrl}/api/demande-non-traitee?search=${encodeURIComponent(
             search
-          )}`
+          )}&nature=${encodeURIComponent(nature)}`
         );
         const data = await res.json();
         setDemandes(data);
@@ -32,7 +37,8 @@ const AjouterDaConsModal = ({ setIsModalOpen, id_consultation, onDaAdded }) => {
     return () => clearTimeout(delayDebounce);
   }, [search]);
   const handleConfirm = () => {
-    if (!selectedDa || !lotNumber) return;
+    if (!selectedDa) return;
+    if (selectedDa.nature == "Investissement" && !lotNumber) return;
     onDaAdded(selectedDa, lotNumber);
     setIsModalOpen(false);
   };
@@ -131,15 +137,17 @@ const AjouterDaConsModal = ({ setIsModalOpen, id_consultation, onDaAdded }) => {
                 <strong>Statut :</strong> {selectedDa.etat}
               </div>
             </div>
-            <div className="mt-4 text-gray-700 flex flex-col gap-2">
-              <label>N° Lot Consultation</label>
-              <input
-                type="text"
-                value={lotNumber}
-                onChange={(e) => setLotNumber(e.target.value)}
-                className="w-max px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900 border-gray-300"
-              />
-            </div>
+            {selectedDa.nature == "Investissement" && (
+              <div className="mt-4 text-gray-700 flex flex-col gap-2">
+                <label>N° Lot Consultation</label>
+                <input
+                  type="text"
+                  value={lotNumber}
+                  onChange={(e) => setLotNumber(e.target.value)}
+                  className="w-max px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900 border-gray-300"
+                />
+              </div>
+            )}
             <div className=" flex justify-between mt-6 text-right">
               <button
                 onClick={() => {

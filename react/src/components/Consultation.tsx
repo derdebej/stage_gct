@@ -40,8 +40,8 @@ const Consultation = ({
   const userid = user?.id_utilisateur;
 
   useEffect(() => {
-    const fetchArticlesForConsomable = async () => {
-      if (type !== "consomable") return;
+    const fetchArticlesForConsommable = async () => {
+      if (type !== "consommable") return;
 
       const id_das = selectedRows.map((row) => row.id_da).join(",");
 
@@ -64,7 +64,7 @@ const Consultation = ({
       }
     };
 
-    fetchArticlesForConsomable();
+    fetchArticlesForConsommable();
   }, [type, articlePage, selectedRows]);
 
   useEffect(() => {
@@ -84,7 +84,7 @@ const Consultation = ({
     } else {
       const commonNature = natures[0];
       setError("");
-      setType(commonNature === "Investissement" ? "equipement" : "consomable");
+      setType(commonNature === "Investissement" ? "equipement" : "consommable");
     }
   }, [isOpen, selectedRows]);
 

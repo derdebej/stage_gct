@@ -40,11 +40,20 @@ const ConsultationDetails: React.FC<Props> = ({
             <strong>ID Consultation :</strong> {consultation.id_consultation}
           </div>
           <div>
+            <strong>Type :</strong> {consultation.type}
+          </div>
+          <div>
             <strong>Date de création :</strong>{" "}
             {new Date(consultation.date_creation).toLocaleDateString("fr-FR")}
           </div>
-          <div>
+          {consultation.type == "equipement" && <div>
             <strong>Nombre de lots :</strong> {consultation.nombre_des_lots}
+          </div>}
+          <div>
+            <strong>Statut Offre :</strong> {consultation.statut_offre}
+          </div>
+          <div>
+            <strong>Statut Evaluation :</strong> {consultation.statut_evaluation}
           </div>
         </div>
         <h3 className="font-bold text-lg text-blue-800 border-b pb-2 mt-6">
@@ -77,11 +86,11 @@ const ConsultationDetails: React.FC<Props> = ({
             ))}
         </div>
 
-        <h3 className="mt-6 font-bold text-lg text-blue-800 border-b pb-2">
-          Lots associés
-        </h3>
         {relatedLots.length > 0 && (
           <>
+            <h3 className="mt-6 font-bold text-lg text-blue-800 border-b pb-2">
+              Lots associés
+            </h3>
             <ul className="list-disc pl-5 text-sm mt-2 space-y-1">
               {relatedLots.map((lot, index) => (
                 <li key={index}>

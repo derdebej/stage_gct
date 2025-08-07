@@ -8,7 +8,7 @@ const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 type AddedDa = {
   da: DA;
-  lotNumber: string;
+  lotNumber?: string;
 };
 
 interface ModifyConsultationProps {
@@ -26,7 +26,7 @@ const ModifyConsultation: React.FC<ModifyConsultationProps> = ({
 }) => {
   const [form, setForm] = useState(() => ({
     id_consultation: initialData?.id_consultation ?? "",
-    date_creation: initialData?.date_creation ?? "",
+    date_creation: initialData?.date_creation.slice(0, 10) ?? "",
     nombre_des_lots: initialData?.nombre_des_lots ?? "",
   }));
   const [isAjouterOpen, setIsAjouterOpen] = useState(false);
@@ -91,14 +91,23 @@ const ModifyConsultation: React.FC<ModifyConsultationProps> = ({
       }
 
       for (const { da, lotNumber } of addedDas) {
-        await fetch(`${baseUrl}/api/lots`, {
+        const body: {
+          id_da: number;
+          id_consultation: string;
+          id_lot?: string;
+        } = {
+          id_da: da.id_da,
+          id_consultation: form.id_consultation,
+        };
+
+        if (initialData.type === "equipement") {
+          body.id_lot = `${form.id_consultation}${lotNumber}`;
+        }
+
+        await fetch(`${baseUrl}/api/ajouter-demande`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            id_lot: `${form.id_consultation}${lotNumber}`,
-            id_da: da.id_da,
-            id_consultation: form.id_consultation,
-          }),
+          body: JSON.stringify(body),
         });
       }
 
@@ -143,13 +152,19 @@ const ModifyConsultation: React.FC<ModifyConsultationProps> = ({
             className="w-full px-4 py-2 bg-neutral-200 border rounded-md"
           />
 
-          <label className="block text-md text-gray-700">Nombre des Lots</label>
-          <input
-            name="nombre_des_lots"
-            value={form.nombre_des_lots}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md"
-          />
+          {initialData.type == "equipement" && (
+            <>
+              <label className="block text-md text-gray-700">
+                Nombre des Lots
+              </label>
+              <input
+                name="nombre_des_lots"
+                value={form.nombre_des_lots}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border rounded-md"
+              />
+            </>
+          )}
         </div>
 
         <h3 className="text-lg font-bold text-blue-800 border-b mt-6 pb-2">
@@ -190,18 +205,20 @@ const ModifyConsultation: React.FC<ModifyConsultationProps> = ({
           ))}
         </div>
 
-        <h3 className="text-lg font-bold text-blue-800 border-b mt-6 pb-2">
-          Lots associés
-        </h3>
-        {displayedLots.length > 0 && (
-          <ul className="list-disc pl-5 text-sm mt-2 space-y-1">
-            {displayedLots.map((lot, index) => (
-              <li key={index}>
-                <strong>ID Lot:</strong> {lot.id_lot} — <strong>ID DA:</strong>{" "}
-                {lot.id_da}
-              </li>
-            ))}
-          </ul>
+        {initialData.type == "equipement" && displayedLots.length > 0 && (
+          <>
+            <h3 className="text-lg font-bold text-blue-800 border-b mt-6 pb-2">
+              Lots associés
+            </h3>
+            <ul className="list-disc pl-5 text-sm mt-2 space-y-1">
+              {displayedLots.map((lot, index) => (
+                <li key={index}>
+                  <strong>ID Lot:</strong> {lot.id_lot} —{" "}
+                  <strong>ID DA:</strong> {lot.id_da}
+                </li>
+              ))}
+            </ul>
+          </>
         )}
 
         <div className="flex justify-between items-center mt-6">
@@ -209,7 +226,7 @@ const ModifyConsultation: React.FC<ModifyConsultationProps> = ({
             onClick={() => setIsAjouterOpen(true)}
             className="px-4 py-2 border-2 border-blue-900 text-blue-900 rounded hover:bg-blue-900 hover:text-white"
           >
-            Ajouter un Lot
+            Ajouter {initialData.type =="consommable"?"une Demande" : "un Lot"}
           </button>
           <button
             onClick={handleConfirm}
@@ -223,7 +240,7 @@ const ModifyConsultation: React.FC<ModifyConsultationProps> = ({
       {isAjouterOpen && (
         <AjouterDaConsModal
           setIsModalOpen={setIsAjouterOpen}
-          id_consultation={form.id_consultation}
+          type={initialData.type}
           onDaAdded={(da, lotNumber) => {
             const alreadyExists =
               linkedDAs.some((d) => d.id_da === da.id_da) ||
@@ -234,7 +251,11 @@ const ModifyConsultation: React.FC<ModifyConsultationProps> = ({
               return;
             }
 
-            setAddedDas((prev) => [...prev, { da, lotNumber }]);
+            if (initialData.type === "consommable") {
+              setAddedDas((prev) => [...prev, { da }]);
+            } else {
+              setAddedDas((prev) => [...prev, { da, lotNumber }]);
+            }
           }}
         />
       )}

@@ -38,6 +38,8 @@ import lotsByOffreRouter from "./routes/lotsByOffre.js";
 import receptionRoute from './routes/reception.js'
 import commandeRoutes from "./routes/commande.js"; 
 import articleConsultationRoute from './routes/articleConsultation.js'
+import articleConsRoute from './routes/articlesCons.js'
+import offreArticleRoute from './routes/offreArticle.js'
 
 import fs from 'fs/promises';
 import { fileURLToPath } from 'url';
@@ -117,6 +119,7 @@ app.post("/enregistrer-demande", async (req, res) => {
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
+app.use("/api", articleConsRoute)
 app.use("/api/article-consultation", articleConsultationRoute);
 app.use("/api/commandes", commandeRoutes);
 app.use(receptionRoute)
@@ -128,6 +131,7 @@ app.use("/api/offre-delete",deleteOffreRoute)
 app.use("/api/evaluation-insert",AjouterEvalRoute)
 app.use("/api/offres",ListeOffreRoute)
 app.use("/api", offreInsertRoute);
+app.use("/api", offreArticleRoute);
 app.use("/api", offreLotRoute);
 app.use("/api/LotsOffre", LotOffreRoute);
 app.use(DaRelatedRoute);

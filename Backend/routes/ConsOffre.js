@@ -10,7 +10,7 @@ router.get("/", async (req, res) => {
   try {
     const result = await pool.query(
       `
-      SELECT id_consultation, nombre_des_lots, date_creation
+      SELECT *
       FROM consultation
       WHERE 
         CAST(id_consultation AS TEXT) ILIKE $1

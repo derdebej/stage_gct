@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X, CheckCheck, Shredder } from "lucide-react";
 import { Fournisseur } from "../types/fournisseur";
 import FounisseursModal from "./FounisseursModal";
 import { Lot } from "../types/Lot";
-import LotModal from "./LotModal";
+import { Art } from "../types/Art";
+import { ArticleOffre } from "../types/ArticleOffre";
+import { LotOffre } from "../types/LotOffre";
+import ItemSelector from "./ItemSelector";
 import { consultationType } from "../types/consultationType";
 import ConsModal from "./ConsModal";
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
@@ -12,20 +15,26 @@ const AjouterOffre = ({ onClose }) => {
   const [selectedFournisseur, setSelectedFournisseur] =
     useState<Fournisseur | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [montant, setMontant] = useState(0);
-  const [selectedLots, setSelectedLots] = useState<Lot[]>([]);
-  const [isLotModalOpen, setIsLotModalOpen] = useState(false);
+  const [selectedLots, setSelectedLots] = useState<LotOffre[]>([]);
+  const [selectedArticles, setSelectedArticles] = useState<ArticleOffre[]>([]);
   const [selectedConsultation, setSelectedConsultation] =
     useState<consultationType | null>(null);
   const [isConsModalOpen, setIsConsModalOpen] = useState(false);
   const handleConfirm = async () => {
-    if (!selectedFournisseur || selectedLots.length === 0) {
-      alert("Veuillez sélectionner un fournisseur et au moins un lot.");
+    const isEquipement = selectedConsultation.type === "equipement";
+
+    if (
+      !selectedFournisseur ||
+      (isEquipement ? selectedLots.length === 0 : selectedArticles.length === 0)
+    ) {
+      alert("Veuillez sélectionner un fournisseur et au moins un élément.");
       return;
     }
+
     try {
       const date_offre = new Date().toISOString();
 
+      // 1. Create the offer
       const offreResponse = await fetch(`${baseUrl}/api/offre-insert`, {
         method: "POST",
         headers: {
@@ -35,7 +44,6 @@ const AjouterOffre = ({ onClose }) => {
           id_fournisseur: selectedFournisseur.id_fournisseur,
           date_offre: date_offre,
           chemin_document: "offres/temp.pdf",
-          montant: montant,
           id_consultation: selectedConsultation.id_consultation,
         }),
       });
@@ -45,22 +53,36 @@ const AjouterOffre = ({ onClose }) => {
 
       const { id_offre } = await offreResponse.json();
 
-      // 2. Link lots to the offre
-      const linkResponse = await fetch(
-        `${baseUrl}/api/offres/${id_offre}/lots`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            lots: selectedLots.map((lot) => lot.id_lot),
-          }),
-        }
-      );
+      // 2. Link lots or articles to the offer
+      const payload = isEquipement
+        ? {
+            lots: selectedLots.map((lot) => ({
+              id_lot: lot.id_lot,
+              montant: lot.montant,
+            })),
+          }
+        : {
+            articles: selectedArticles.map((article) => ({
+              id_article: article.id_article,
+              id_da: article.id_da,
+              montant: article.montant,
+            })),
+          };
+
+      const linkUrl = isEquipement
+        ? `${baseUrl}/api/offres/${id_offre}/lots`
+        : `${baseUrl}/api/offres/${id_offre}/articles`;
+
+      const linkResponse = await fetch(linkUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
       if (!linkResponse.ok)
-        throw new Error("Erreur lors de l'association des lots");
+        throw new Error("Erreur lors de l'association des éléments");
 
       alert("Offre ajoutée avec succès !");
       onClose();
@@ -137,6 +159,7 @@ const AjouterOffre = ({ onClose }) => {
               <button
                 onClick={() => {
                   setSelectedConsultation(null);
+                  setSelectedArticles([]);
                   setSelectedLots([]);
                 }}
                 className="absolute top-1 right-1 text-red-500 hover:text-red-700"
@@ -152,8 +175,8 @@ const AjouterOffre = ({ onClose }) => {
                 {selectedConsultation.date_creation.slice(0, 10)}
               </p>
               <p>
-                <span className="font-semibold">Nombre des Lots:</span>{" "}
-                {selectedConsultation.nombre_des_lots}
+                <span className="font-semibold">Type:</span>{" "}
+                {selectedConsultation.type}
               </p>
             </div>
           </div>
@@ -167,61 +190,16 @@ const AjouterOffre = ({ onClose }) => {
           </button>
         )}
 
-        <label>Lots associés :</label>
-        {selectedLots.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 mb-4">
-            {selectedLots.map((lot) => (
-              <div
-                key={lot.id_lot}
-                className="relative bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-900"
-              >
-                <button
-                  onClick={() =>
-                    setSelectedLots((prev) =>
-                      prev.filter((l) => l.id_lot !== lot.id_lot)
-                    )
-                  }
-                  className="absolute top-1 right-1 text-red-500 hover:text-red-700"
-                >
-                  <X size={14} />
-                </button>
-                <p>
-                  <span className="font-semibold">ID Lot:</span> {lot.id_lot}
-                </p>
-                <p>
-                  <span className="font-semibold">ID DA:</span> {lot.id_da}
-                </p>
-                <p>
-                  <span className="font-semibold">Consultation:</span>{" "}
-                  {lot.id_consultation}
-                </p>
-              </div>
-            ))}
-          </div>
+        {selectedConsultation && (
+          <ItemSelector
+            selectedConsultation={selectedConsultation}
+            setSelectedLots={setSelectedLots}
+            selectedLots={selectedLots}
+            selectedArticles={selectedArticles}
+            setSelectedArticles={setSelectedArticles}
+          />
         )}
-
-        <>
-          <button
-            disabled={selectedConsultation == null}
-            onClick={() => setIsLotModalOpen(true)}
-            className={`text-white px-4 py-2 rounded-md flex items-center gap-2 text-md cursor-pointer mb-2 ${
-              selectedConsultation === null
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-blue-800 hover:bg-blue-900"
-            }`}
-          >
-            Choisir un Lot
-          </button>
-        </>
-        <label>Montant :</label>
-        <input
-          placeholder="Montant offre"
-          type="number"
-          value={montant}
-          onChange={(e) => setMontant(Number(e.target.value))}
-          className="w-full px-4 py-2 border rounded-md  focus:outline-none focus:ring-2 focus:ring-blue-900 border-gray-300 mb-2"
-        />
-        <div className="mt-6 flex justify-between">
+        <div className="mt-10 flex justify-between">
           <button
             onClick={onClose}
             className="bg-white hover:bg-blue-900 text-blue-900 hover:text-white border-blue-900 border px-4 py-2 rounded-md flex items-center gap-2"
@@ -241,14 +219,6 @@ const AjouterOffre = ({ onClose }) => {
         <FounisseursModal
           setIsModalOpen={setIsModalOpen}
           setSelectedFournisseur={setSelectedFournisseur}
-        />
-      )}
-      {isLotModalOpen && (
-        <LotModal
-          selectedConsultation={selectedConsultation}
-          setIsModalOpen={setIsLotModalOpen}
-          setSelectedLots={setSelectedLots}
-          selectedLots={selectedLots}
         />
       )}
       {isConsModalOpen && (

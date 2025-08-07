@@ -102,7 +102,7 @@ const ConsModal: React.FC<ConsModalProps> = ({
                 >
                   <div>
                     <p className="text-sm font-semibold text-gray-800">
-                      {cons.id_consultation} — {cons.nombre_des_lots}
+                      {cons.id_consultation} — {cons.type}
                     </p>
                     <p className="text-xs text-gray-500">
                       Date: {new Date(cons.date_creation).toLocaleDateString()}

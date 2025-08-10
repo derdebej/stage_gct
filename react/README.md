@@ -1,2 +1,0 @@
-## Avancement jusqu'à present:
-  -Implémentation partielle de l’interface utilisateur avec la création de deux composants React (Box et Header), localisés dans le répertoire src/components. Ces composants ont été intégrés et utilisés dans le fichier App.jsx.

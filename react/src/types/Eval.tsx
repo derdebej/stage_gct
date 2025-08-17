@@ -1,6 +1,6 @@
 export interface Eval {
   id_eval: string;
-  id_offre: string;
+  id_consultation: string;
   date: string;
   chemin_document: string;
   conformite: "Conforme" | "Non Conforme";

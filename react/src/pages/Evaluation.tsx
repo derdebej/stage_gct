@@ -21,7 +21,7 @@ const Evaluation = () => {
         )}`
       );
       const data = await res.json();
-      setEvaluations(data.evaluations); // Make sure the backend returns { evaluations, totalPages }
+      setEvaluations(data.evaluations);
       setTotalPages(data.totalPages);
     } catch (err) {
       console.error("Erreur lors du chargement des évaluations", err);
@@ -33,12 +33,13 @@ const Evaluation = () => {
   }, [page, search]);
 
   const handleEvaluationAdded = (newEval: Eval) => {
+    console.log("Nouvelle évaluation ajoutée:", newEval);
     setEvaluations((prev) => [newEval, ...prev]);
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
-    setPage(1); // Reset to page 1 when search changes
+    setPage(1);
   };
 
   return (

@@ -9,12 +9,11 @@ type Props = {
   evaluations: Eval[];
 };
 
-const TableEval = ({ evaluations}: Props)  => {
+const TableEval = ({ evaluations }: Props) => {
   const [evalList, setEvalList] = useState<Eval[]>(evaluations);
   useEffect(() => {
     setEvalList(evaluations);
   }, [evaluations]);
-
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -59,13 +58,7 @@ const TableEval = ({ evaluations}: Props)  => {
               ID
             </th>
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
-              Id Offre
-            </th>
-            <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
-              Id Lot
-            </th>
-            <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
-              Fournisseur
+              Id Consultation
             </th>
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
               Date
@@ -73,48 +66,30 @@ const TableEval = ({ evaluations}: Props)  => {
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
               Chemin Evaluation
             </th>
-            <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
-              Statut
-            </th>
             <th className="rounded-r-xl text-center py-3 px-4 text-sm  text-gray-800 bg-gray-100">
               Actions
             </th>
           </tr>
         </thead>
         <tbody>
-          {evalList.map((evalItem) => (
+          {evalList.map((evalItem, index) => (
             <tr
-              key={evalItem.id_eval}
+              key={index}
               className="bg-white rounded hover:bg-gray-50"
             >
               <td className="text-center py-3 px-4 text-sm text-gray-700">
                 {evalItem.id_eval}
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {evalItem.id_offre}
+                {evalItem.id_consultation}
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {evalItem.id_lot}
-              </td>
-              <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {evalItem.id_fournisseur}
-              </td>
-              <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {evalItem.date.slice(0, 10)}
+                {evalItem.date
+                  ? new Date(evalItem.date).toLocaleDateString()
+                  : "-"}
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
                 {evalItem.chemin_document}
-              </td>
-              <td className="px-4 py-2">
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                    evalItem.conformite === "Conforme"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-800"
-                  }`}
-                >
-                  {evalItem.conformite}
-                </span>
               </td>
               <td className="px-4 py-2 flex gap-2 justify-center">
                 <button

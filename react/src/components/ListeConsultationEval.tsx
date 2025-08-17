@@ -15,7 +15,7 @@ const ListeConsultationsModal = ({ setIsModalOpen, onSelectConsultation }) => {
   useEffect(() => {
     const fetchConsultations = async () => {
       try {
-        const res = await fetch(`${baseUrl}/api/consultations?search=${encodeURIComponent(search)}`);
+        const res = await fetch(`${baseUrl}/api/consultationsEval?search=${encodeURIComponent(search)}`);
         const data = await res.json();
         setConsultations(data.data);
       } catch (err) {

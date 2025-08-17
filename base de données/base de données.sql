@@ -139,3 +139,39 @@ CREATE TABLE decision (
     id_eval BIGINT NOT NULL REFERENCES evaluation(id_eval),
     date_decision DATE DEFAULT CURRENT_DATE
 );
+
+-- Les nouveaux changements faites
+-- ========================
+
+-- 1️⃣ Supprimer la colonne conformite de evaluation
+ALTER TABLE evaluation
+DROP COLUMN IF EXISTS conformite;
+
+-- 2️⃣ Créer table evaluation_article
+CREATE TABLE IF NOT EXISTS evaluation_article (
+    id_evaluation_article SERIAL PRIMARY KEY,
+    id_eval INT NOT NULL REFERENCES evaluation(id_eval) ON DELETE CASCADE,
+    id_article INT NOT NULL,
+    id_da VARCHAR NOT NULL,
+    id_offre INT NOT NULL REFERENCES offre(id_offre) ON DELETE CASCADE,
+    conformite VARCHAR(20) NOT NULL CHECK (conformite IN ('Conforme', 'Non Conforme')),
+    UNIQUE (id_eval, id_article, id_da, id_offre),
+    FOREIGN KEY (id_article, id_da) REFERENCES article(id_article, id_da) ON DELETE CASCADE
+);
+
+
+-- 3️⃣ Créer table evaluation_lot
+CREATE TABLE IF NOT EXISTS evaluation_lot (
+    id_evaluation_lot SERIAL PRIMARY KEY,
+    id_eval INT NOT NULL REFERENCES evaluation(id_eval) ON DELETE CASCADE,
+    id_lot INT NOT NULL REFERENCES lot(id_lot) ON DELETE CASCADE,
+    id_offre INT NOT NULL REFERENCES offre(id_offre) ON DELETE CASCADE,
+    conformite VARCHAR(20) NOT NULL CHECK (conformite IN ('Conforme', 'Non Conforme')),
+    UNIQUE (id_eval, id_lot, id_offre)
+);
+
+-- 4️⃣ Index pour accélérer les recherches
+CREATE INDEX IF NOT EXISTS idx_evaluation_article_evaluation ON evaluation_article(id_eval);
+CREATE INDEX IF NOT EXISTS idx_evaluation_article_article ON evaluation_article(id_article);
+CREATE INDEX IF NOT EXISTS idx_evaluation_lot_evaluation ON evaluation_lot(id_eval);
+CREATE INDEX IF NOT EXISTS idx_evaluation_lot_lot ON evaluation_lot(id_lot);

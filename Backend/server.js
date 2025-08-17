@@ -41,6 +41,10 @@ import articleConsultationRoute from './routes/articleConsultation.js'
 import articleConsRoute from './routes/articlesCons.js'
 import offreArticleRoute from './routes/offreArticle.js'
 import offreDocumentRoute from './routes/offreDocument.js'
+import consultationItemsRoute from './routes/consultationItems.js';
+import articleRelatedOffreRoute from './routes/articleRelatedOffre.js';
+import lotsRelatedOffreRoute from './routes/lotsRelatedOffre.js';
+import consultationListRoute from './routes/consultationList.js';
 
 import fs from 'fs/promises';
 import { fileURLToPath } from 'url';
@@ -120,6 +124,10 @@ app.post("/enregistrer-demande", async (req, res) => {
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
+app.use("/api/consultationsEval", consultationListRoute);
+app.use("/api/consultations", consultationItemsRoute);
+app.use("/api/articles", articleRelatedOffreRoute);
+app.use("/api/lots", lotsRelatedOffreRoute);
 app.use(offreDocumentRoute);
 app.use("/api", articleConsRoute);
 app.use("/api/article-consultation", articleConsultationRoute);

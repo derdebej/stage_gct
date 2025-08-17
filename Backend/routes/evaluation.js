@@ -11,7 +11,7 @@ router.get("/api/evaluation", async (req, res) => {
 
   const evals = await db.query(
     `SELECT * FROM evaluation 
-     WHERE CAST(id_eval AS TEXT) ILIKE $1 OR CAST(id_offre AS TEXT) ILIKE $1
+     WHERE CAST(id_eval AS TEXT) ILIKE $1 OR CAST(id_consultation AS TEXT) ILIKE $1
      ORDER BY date DESC
      LIMIT $2 OFFSET $3`,
     [`%${search}%`, limit, offset]
@@ -19,7 +19,7 @@ router.get("/api/evaluation", async (req, res) => {
 
   const count = await db.query(
     `SELECT COUNT(*) FROM evaluation 
-     WHERE CAST(id_eval AS TEXT) ILIKE $1 OR CAST(id_offre AS TEXT) ILIKE $1`,
+     WHERE CAST(id_eval AS TEXT) ILIKE $1 OR CAST(id_consultation AS TEXT) ILIKE $1`,
     [`%${search}%`]
   );
 

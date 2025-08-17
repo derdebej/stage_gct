@@ -1,52 +1,88 @@
-import React, { use, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
-import { OffreType } from "../types/OffreType";
-import ListeOffresModal from "./ListeOffre";
+import { consultationType } from "../types/consultationType";
 import { Lot } from "../types/Lot";
-import LotEvalModal from "./LotEvalModal";
+import { Art } from "../types/Art";
+import { OffreType } from "../types/OffreType";
+import ListeConsultationEval from "./ListeConsultationEval";
+
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
+type ItemWithOffres = (Lot | Art) & { offres: OffreType[] };
+
 const AjouterEvaluationModal = ({ setIsOpen, onEvaluationAdded }) => {
-  const [selectedOffre, setSelectedOffre] = useState<OffreType | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedLot, setSelectedLot] = useState<Lot | null>(null);
-  const [isLotEvalOpen, setIsLotEvalOpen] = useState(false);
-  const [form, setForm] = useState({
-    id_offre: "",
-    date: new Date().toISOString().split("T")[0],
-    chemin_evaluation: "",
-    conformite: "Conforme",
-    id_fournisseur: "",
-  });
-  const handleOffreSelection = (offre: OffreType) => {
-    setSelectedOffre(offre);
-    setForm((prev) => ({
+  const [selectedConsultation, setSelectedConsultation] =
+    useState<consultationType | null>(null);
+  const [isConsultationModalOpen, setIsConsultationModalOpen] = useState(false);
+  const [items, setItems] = useState<ItemWithOffres[]>([]);
+  const [evaluations, setEvaluations] = useState<
+    Record<string, Record<string, string>>
+  >({});
+
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [cheminEval, setCheminEval] = useState("");
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      if (!selectedConsultation) return;
+
+      try {
+        const itemsRes = await fetch(
+          `${baseUrl}/api/consultations/${selectedConsultation.id_consultation}/items`
+        );
+        const rawItems = await itemsRes.json();
+
+        const itemsWithOffres = await Promise.all(
+          rawItems.map(async (item: Lot | Art) => {
+            const offreRoute =
+              selectedConsultation.type === "consommable"
+                ? `${baseUrl}/api/articles/${(item as Art).id_article}/offres`
+                : `${baseUrl}/api/lots/${(item as Lot).id_lot}/offres`;
+
+            const offresRes = await fetch(offreRoute);
+            const offres = await offresRes.json();
+
+            return { ...item, offres };
+          })
+        );
+
+        setItems(itemsWithOffres);
+      } catch (err) {
+        console.error("Erreur lors du chargement des items", err);
+      }
+    };
+
+    fetchItems();
+  }, [selectedConsultation]);
+
+  const handleEvaluationChange = (
+    itemId: string,
+    offreId: string,
+    conformite: string
+  ) => {
+    setEvaluations((prev) => ({
       ...prev,
-      id_offre: offre.id_offre,
-      id_fournisseur: offre.fournisseur?.id_fournisseur,
+      [itemId]: {
+        ...prev[itemId],
+        [offreId]: conformite,
+      },
     }));
-    setIsModalOpen(false);
-  };
-  const handleLotSelection = (Lot: Lot) => {
-    setSelectedLot(Lot);
-    setForm((prev) => ({
-      ...prev,
-      id_lot: Lot.id_lot,
-    }));
-    setIsLotEvalOpen(false);
-  };
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const payload = {
+        id_consultation: selectedConsultation?.id_consultation,
+        date,
+        chemin_evaluation: cheminEval,
+        evaluations,
+      };
+
       const res = await fetch(`${baseUrl}/api/evaluation-insert`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) throw new Error("Erreur lors de l'ajout de l'évaluation");
@@ -60,163 +96,141 @@ const AjouterEvaluationModal = ({ setIsOpen, onEvaluationAdded }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-1000">
-      <div className="bg-white rounded-xl shadow-lg w-full max-w-md p-6 relative">
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl p-6 relative max-h-[90vh] overflow-y-auto">
         <button
           onClick={() => setIsOpen(false)}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
         >
-          <X size={20} />
+          <X size={24} />
         </button>
-        <h2 className="text-2xl font-bold mb-4 pb-4 text-blue-900 text-center border-b border-gray-200">
+
+        <h2 className="text-2xl font-bold mb-6 text-blue-900 text-center">
           Ajouter une évaluation
         </h2>
-        <label>Offre Associée :</label>
-        {selectedOffre ? (
-          <div className="relative bg-blue-50 border border-blue-200 rounded-md p-4 mb-4 text-sm text-blue-900 shadow-sm mt-1">
-            <div className="flex justify-between items-start gap-4">
-              <div>
-                <p className="text-md font-bold text-blue-900">
-                  Offre #{selectedOffre.id_offre}
-                </p>
-                <p className="text-xs text-gray-600">
-                  <span className="font-semibold">Fournisseur:</span>{" "}
-                  {selectedOffre.fournisseur?.id_fournisseur}--
-                  {selectedOffre.fournisseur.nom}
-                </p>
-                <p className="text-xs text-gray-600">
-                  <span className="font-semibold">Montant:</span>{" "}
-                  {selectedOffre.montant}
-                </p>
-                <p className="text-xs text-gray-600">
-                  <span className="font-semibold">Chemin Document:</span>{" "}
-                  {selectedOffre.chemin_document}
-                </p>
-              </div>
 
-              <div className="flex flex-col items-end gap-2">
-                <button
-                  onClick={() => {
-                    setIsModalOpen(true);
-                    setSelectedLot(null);
-                  }}
-                  className="bg-blue-800 hover:bg-blue-900 text-white px-3 py-1 rounded-md text-xs"
-                >
-                  Changer
-                </button>
-                <button
-                  onClick={() => {
-                    setSelectedOffre(null);
-                    setSelectedLot(null);
-                  }}
-                  className="text-red-500 hover:text-red-700 text-xs underline"
-                >
-                  Désélectionner
-                </button>
-              </div>
-            </div>
-          </div>
+        {/* Consultation selection */}
+        {!selectedConsultation ? (
+          <button
+            onClick={() => setIsConsultationModalOpen(true)}
+            className="bg-blue-800 hover:bg-blue-900 text-white px-5 py-3 rounded-md mb-6 transition-colors"
+          >
+            Choisir une Consultation
+          </button>
         ) : (
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="bg-blue-800 hover:bg-blue-900 text-white px-4 py-2 rounded-md flex items-center gap-2 text-md cursor-pointer mb-4 mt-1"
-          >
-            Choisir un Offre
-          </button>
-        )}
-        <label>Lots associés :</label>
-        {selectedLot && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 mb-4">
-            <div className="relative bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-900">
-              <button
-                onClick={() => setSelectedLot(null)}
-                className="absolute top-1 right-1 text-red-500 hover:text-red-700"
-              >
-                <X size={14} />
-              </button>
-              <p>
-                <span className="font-semibold">ID Lot:</span>{" "}
-                {selectedLot.id_lot}
+          <div className="flex justify-between items-center bg-blue-50 border border-blue-200 rounded-md p-4 mb-6">
+            <div>
+              <p className="font-semibold text-blue-900">
+                Consultation #{selectedConsultation.id_consultation}
               </p>
-              <p>
-                <span className="font-semibold">ID DA:</span>{" "}
-                {selectedLot.id_da}
-              </p>
-              <p>
-                <span className="font-semibold">Consultation:</span>{" "}
-                {selectedLot.id_consultation}
-              </p>
+              <span className="text-sm text-gray-600 px-2 py-1 bg-blue-100 rounded-md">
+                {selectedConsultation.type}
+              </span>
             </div>
+            <button
+              onClick={() => setSelectedConsultation(null)}
+              className="text-red-500 underline text-sm"
+            >
+              Changer
+            </button>
           </div>
         )}
 
-        {!selectedLot && (
-          <button
-            disabled={selectedOffre == null}
-            onClick={() => setIsLotEvalOpen(true)}
-            className={`text-white px-4 py-2 rounded-md flex items-center gap-2 text-md cursor-pointer mb-2 ${
-              selectedOffre === null
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-blue-800 hover:bg-blue-900"
-            }`}
-          >
-            Choisir un Lot
-          </button>
+        {/* Items + Offres */}
+        <div className="space-y-4">
+          {items.map((item) => {
+            const itemId =
+              selectedConsultation?.type === "consommable"
+                ? (item as Art).id_article
+                : (item as Lot).id_lot;
+            const title =
+              selectedConsultation?.type === "consommable"
+                ? `Article #${(item as Art).id_article} – ${(item as Art).designation}`
+                : `Lot #${(item as Lot).id_lot} – DA: ${(item as Lot).id_da}`;
+
+            return (
+              <div
+                key={itemId}
+                className="bg-blue-50 border border-blue-200 rounded-lg shadow-sm p-4"
+              >
+                <h3 className="font-semibold text-blue-900 mb-3">{title}</h3>
+                <div className="space-y-2">
+                  {item.offres.map((offre) => (
+                    <div
+                      key={offre.id_offre}
+                      className="flex justify-between items-center bg-white border border-blue-200 p-2 rounded-md"
+                    >
+                      <div>
+                        <p className="text-gray-700">
+                          Offre #{offre.id_offre} – {offre.fournisseur?.nom || "N/A"}
+                        </p>
+                        <p className="text-xs text-gray-500">Montant: {offre.montant}</p>
+                      </div>
+                      <select
+                        value={evaluations[itemId]?.[offre.id_offre] || ""}
+                        onChange={(e) =>
+                          handleEvaluationChange(
+                            String(itemId),
+                            String(offre.id_offre),
+                            e.target.value
+                          )
+                        }
+                        className="border rounded-md px-3 py-1 border-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-900"
+                      >
+                        <option value="">Choisir</option>
+                        <option value="Conforme">Conforme</option>
+                        <option value="Non Conforme">Non Conforme</option>
+                      </select>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Footer form */}
+        {selectedConsultation && (
+          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1 flex flex-col">
+                <label className="mb-1 font-medium text-gray-700">Date</label>
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-900"
+                />
+              </div>
+              <div className="flex-1 flex flex-col">
+                <label className="mb-1 font-medium text-gray-700">
+                  Chemin Evaluation
+                </label>
+                <input
+                  type="text"
+                  value={cheminEval}
+                  onChange={(e) => setCheminEval(e.target.value)}
+                  className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-900"
+                  placeholder="Ex: /path/to/file.pdf"
+                />
+              </div>
+            </div>
+            <button
+              type="submit"
+              className="bg-blue-800 hover:bg-blue-900 text-white px-5 py-3 rounded-md w-full transition-colors"
+            >
+              Enregistrer
+            </button>
+          </form>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <label>Date :</label>
-          <input
-            type="date"
-            name="date"
-            placeholder="Date"
-            value={form.date}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900 border-gray-200 mt-1"
+        {isConsultationModalOpen && (
+          <ListeConsultationEval
+            setIsModalOpen={setIsConsultationModalOpen}
+            onSelectConsultation={setSelectedConsultation}
           />
-          <label>Chemin Evaluation :</label>
-          <input
-            type="text"
-            name="chemin_evaluation"
-            placeholder="Chemin de l'évaluation (PDF, doc...)"
-            value={form.chemin_evaluation}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900 border-gray-200 mt-1"
-          />
-          <label>Conformité :</label>
-          <select
-            name="conformite"
-            value={form.conformite}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900 border-gray-200 mt-1"
-          >
-            <option value="Conforme">Conforme</option>
-            <option value="Non Conforme">Non Conforme</option>
-          </select>
-          <button
-            type="submit"
-            className="bg-blue-800 hover:bg-blue-900 text-white px-4 py-2 rounded-md w-full"
-          >
-            Enregistrer
-          </button>
-        </form>
+        )}
       </div>
-      {isModalOpen && (
-        <ListeOffresModal
-          setIsModalOpen={setIsModalOpen}
-          onSelectOffre={handleOffreSelection}
-        />
-      )}
-      {isLotEvalOpen && (
-        <LotEvalModal
-          selectedLot={selectedLot}
-          selectedOffre={selectedOffre}
-          setIsModalOpen={setIsLotEvalOpen}
-          onSelectedLot={handleLotSelection}
-        />
-      )}
     </div>
   );
 };

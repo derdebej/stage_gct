@@ -14,8 +14,6 @@ router.get("/", async (req, res) => {
       SELECT COUNT(*) FROM commande
       WHERE 
         id_commande::text ILIKE $1 OR 
-        id_offre::text ILIKE $1 OR 
-        id_offre::text ILIKE $1 OR 
         date::text ILIKE $1 OR 
         statut::text ILIKE $1
     `;
@@ -28,8 +26,6 @@ router.get("/", async (req, res) => {
       FROM commande
       WHERE 
         id_commande::text ILIKE $1 OR 
-        id_offre::text ILIKE $1 OR 
-        id_offre::text ILIKE $1 OR 
         date::text ILIKE $1 OR 
         statut::text ILIKE $1
       ORDER BY date DESC

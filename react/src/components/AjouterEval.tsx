@@ -71,6 +71,21 @@ const AjouterEvaluationModal = ({ setIsOpen, onEvaluationAdded }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    for (const item of items) {
+      const itemId =
+        selectedConsultation?.type === "consommable"
+          ? (item as Art).id_article
+          : (item as Lot).id_lot;
+
+      for (const offre of item.offres) {
+        if (!evaluations[itemId]?.[offre.id_offre]) {
+          alert(
+            `Veuillez sélectionner la conformité pour l'offre #${offre.id_offre}`
+          );
+          return;
+        }
+      }
+    }
     try {
       const payload = {
         id_consultation: selectedConsultation?.id_consultation,
@@ -128,7 +143,10 @@ const AjouterEvaluationModal = ({ setIsOpen, onEvaluationAdded }) => {
               </span>
             </div>
             <button
-              onClick={() => setSelectedConsultation(null)}
+              onClick={() => {
+                setSelectedConsultation(null);
+                setItems([]);
+              }}
               className="text-red-500 underline text-sm"
             >
               Changer
@@ -145,7 +163,9 @@ const AjouterEvaluationModal = ({ setIsOpen, onEvaluationAdded }) => {
                 : (item as Lot).id_lot;
             const title =
               selectedConsultation?.type === "consommable"
-                ? `Article #${(item as Art).id_article} – ${(item as Art).designation}`
+                ? `Article #${(item as Art).id_article} – ${
+                    (item as Art).designation
+                  }`
                 : `Lot #${(item as Lot).id_lot} – DA: ${(item as Lot).id_da}`;
 
             return (
@@ -162,9 +182,12 @@ const AjouterEvaluationModal = ({ setIsOpen, onEvaluationAdded }) => {
                     >
                       <div>
                         <p className="text-gray-700">
-                          Offre #{offre.id_offre} – {offre.fournisseur?.nom || "N/A"}
+                          Offre #{offre.id_offre} –{" "}
+                          {offre.fournisseur?.nom || "N/A"}
                         </p>
-                        <p className="text-xs text-gray-500">Montant: {offre.montant}</p>
+                        <p className="text-xs text-gray-500">
+                          Montant: {offre.montant}
+                        </p>
                       </div>
                       <select
                         value={evaluations[itemId]?.[offre.id_offre] || ""}

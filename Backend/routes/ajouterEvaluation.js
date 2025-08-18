@@ -67,14 +67,6 @@ router.post("/", async (req, res) => {
           );
         }
 
-        await client.query(
-          `
-          UPDATE offre
-          SET statut = 'évalué'
-          WHERE id_offre = $1
-          `,
-          [offreId]
-        );
       }
     }
 

@@ -1,69 +1,114 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import ListeConsultationsModal from "./ListeConsultationsModal";
-import ListeOffresModal from "./ListeOffresModal";
-import ListeLotsModal from "./ListeLotsModal";
 import { consultationType } from "../types/consultationType";
 import { OffreType } from "../types/OffreType";
 import { Lot } from "../types/Lot";
+import { Art } from "../types/Art";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const AjouterCommandeModal = ({ setIsOpen, onCommandeAdded }) => {
-  const [form, setForm] = useState({
-    id_consultation: "",
-    id_offre: "",
-    id_lot: "",
-    date_commande: new Date().toISOString().split("T")[0],
-  });
-
   const [selectedConsultation, setSelectedConsultation] = useState<consultationType | null>(null);
-  const [selectedOffre, setSelectedOffre] = useState<OffreType | null>(null);
-  const [selectedLot, setSelectedLot] = useState<Lot | null>(null);
-
+  const [items, setItems] = useState<(Lot | Art)[]>([]);
+  const [bestOffers, setBestOffers] = useState<Record<string, OffreType | null>>({});
+  const [dateCommande, setDateCommande] = useState(new Date().toISOString().split("T")[0]);
   const [isConsultModalOpen, setIsConsultModalOpen] = useState(false);
-  const [isOffreModalOpen, setIsOffreModalOpen] = useState(false);
-  const [isLotModalOpen, setIsLotModalOpen] = useState(false);
 
-  const handleConsultationSelect = (consultation: consultationType) => {
-    setSelectedConsultation(consultation);
-    setForm(prev => ({ ...prev, id_consultation: consultation.id_consultation }));
-    setIsConsultModalOpen(false);
-    setSelectedOffre(null);
-    setSelectedLot(null);
-  };
+  useEffect(() => {
+    if (!selectedConsultation) return;
 
-  const handleOffreSelect = (offre: OffreType) => {
-    setSelectedOffre(offre);
-    setForm(prev => ({ ...prev, id_offre: offre.id_offre }));
-    setIsOffreModalOpen(false);
-    setSelectedLot(null);
-  };
+    const fetchItems = async () => {
+      try {
+        const itemsRes = await fetch(
+          `${baseUrl}/api/consultations/${selectedConsultation.id_consultation}/items`
+        );
+        const rawItems = await itemsRes.json();
 
-  const handleLotSelect = (lot: Lot) => {
-    setSelectedLot(lot);
-    setForm(prev => ({ ...prev, id_lot: lot.id_lot }));
-    setIsLotModalOpen(false);
-  };
+        const withOffres = await Promise.all(
+          rawItems.map(async (item: Lot | Art) => {
+            const route =
+              selectedConsultation.type === "consommable"
+                ? `${baseUrl}/api/articles/${(item as Art).id_article}/offres`
+                : `${baseUrl}/api/lots/${(item as Lot).id_lot}/offres`;
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
-  };
+            const offresRes = await fetch(route);
+            const offres: OffreType[] = await offresRes.json();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+            const conformes = offres
+            //.filter((o) => o.evaluation?.conformite === "Conforme");
+            const best =
+              conformes.length > 0
+                ? conformes.reduce((min, o) => (o.montant < min.montant ? o : min), conformes[0])
+                : null;
+
+            setBestOffers((prev) => ({
+              ...prev,
+              [selectedConsultation.type === "consommable"
+                ? (item as Art).id_article
+                : (item as Lot).id_lot]: best,
+            }));
+
+            return { ...item, offres };
+          })
+        );
+
+        setItems(withOffres);
+      } catch (err) {
+        console.error("Erreur chargement items", err);
+      }
+    };
+
+    fetchItems();
+  }, [selectedConsultation]);
+
+  const handleConfirm = async () => {
     try {
-      const res = await fetch(`${baseUrl}/api/commande-insert`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
+      const commandesParFournisseur: Record<string, { id_fournisseur: string; items: any[] }> = {};
 
-      if (!res.ok) throw new Error("Erreur lors de l'ajout de la commande");
+      for (const item of items) {
+        const itemId =
+          selectedConsultation?.type === "consommable"
+            ? (item as Art).id_article
+            : (item as Lot).id_lot;
+        const ItemDa = 
+          selectedConsultation?.type === "consommable"
+            ? (item as Art).id_da
+            : (item as Lot).id_da;
+        
+        const offre = bestOffers[itemId];
+        if (!offre) continue;
 
-      const newCommande = await res.json();
-      onCommandeAdded(newCommande);
+        const fournisseurId = offre.id_fournisseur;
+        if (!commandesParFournisseur[fournisseurId]) {
+          commandesParFournisseur[fournisseurId] = {
+            id_fournisseur: fournisseurId,
+            items: [],
+          };
+        }
+        commandesParFournisseur[fournisseurId].items.push({
+          id_offre: offre.id_offre,
+          id_item: itemId,
+          id_da: ItemDa,
+        });
+      }
+      for (const f of Object.values(commandesParFournisseur)) {
+        const res = await fetch(`${baseUrl}/api/commande-insert`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id_consultation: selectedConsultation?.id_consultation,
+            id_fournisseur: f.id_fournisseur,
+            date_commande: dateCommande,
+            items: f.items,
+          }),
+        });
+
+        if (!res.ok) throw new Error("Erreur ajout commande");
+        const newCmd = await res.json();
+        onCommandeAdded(newCmd);
+      }
+
       setIsOpen(false);
     } catch (err) {
       console.error(err);
@@ -71,8 +116,8 @@ const AjouterCommandeModal = ({ setIsOpen, onCommandeAdded }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-1000">
-      <div className="bg-white rounded-xl shadow-lg w-full max-w-md p-6 relative">
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+      <div className="bg-white rounded-xl shadow-lg w-full max-w-3xl p-6 relative">
         <button
           onClick={() => setIsOpen(false)}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
@@ -83,21 +128,15 @@ const AjouterCommandeModal = ({ setIsOpen, onCommandeAdded }) => {
           Ajouter une commande
         </h2>
 
-        {/* Consultation Section */}
-        <label>Consultation :</label>
         {selectedConsultation ? (
-          <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mb-3 text-sm">
+          <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mb-3">
             <div className="flex justify-between items-center">
-              <p className="font-semibold text-blue-900">
-                Consultation #{selectedConsultation.id_consultation}
+              <p>
+                Consultation #{selectedConsultation.id_consultation} – {selectedConsultation.type}
               </p>
               <button
-                className="text-xs text-blue-700 underline"
-                onClick={() => {
-                  setSelectedConsultation(null);
-                  setSelectedOffre(null);
-                  setSelectedLot(null);
-                }}
+                className="text-sm text-red-500 underline"
+                onClick={() => setSelectedConsultation(null)}
               >
                 Changer
               </button>
@@ -106,113 +145,70 @@ const AjouterCommandeModal = ({ setIsOpen, onCommandeAdded }) => {
         ) : (
           <button
             onClick={() => setIsConsultModalOpen(true)}
-            className="bg-blue-800 hover:bg-blue-900 text-white px-4 py-2 rounded-md  mb-4 block"
+            className="bg-blue-800 hover:bg-blue-900 text-white px-4 py-2 rounded-md mb-4"
           >
             Choisir une Consultation
           </button>
         )}
 
-        {/* Offre Section */}
-        <label>Offre :</label>
-        {selectedOffre ? (
-          <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mb-3 text-sm">
-            <div className="flex justify-between items-center">
-              <p className="font-semibold text-blue-900">
-                Offre #{selectedOffre.id_offre} - {selectedOffre.fournisseur.nom}
-              </p>
-              <button
-                className="text-xs text-blue-700 underline"
-                onClick={() => {
-                  setSelectedOffre(null);
-                  setSelectedLot(null);
-                }}
-              >
-                Changer
-              </button>
-            </div>
+        {selectedConsultation && (
+          <div className="px-3 max-h-80 overflow-y-auto will-change-transform">
+            {items.map((item) => {
+              const itemId =
+                selectedConsultation.type === "consommable"
+                  ? (item as Art).id_article
+                  : (item as Lot).id_lot;
+              const title =
+                selectedConsultation.type === "consommable"
+                  ? `Article #${(item as Art).id_article} – ${(item as Art).designation} Qté: ${(item as Art).quantite}`
+                  : `Lot #${(item as Lot).id_lot} – DA: ${(item as Lot).id_da}`;
+              const offre = bestOffers[itemId];
+
+              return (
+                <div
+                  key={itemId}
+                  className="border border-blue-200 rounded-md my-3 p-3 bg-blue-50"
+                >
+                  <p className="font-semibold text-blue-900">{title}</p>
+                  {offre ? (
+                    <p className="text-sm text-green-700">
+                      Offre #{offre.id_offre} – ID fournisseur :{offre.id_fournisseur} (Montant: {offre.montant})
+                    </p>
+                  ) : (
+                    <p className="text-sm text-red-600">Aucune offre conforme reçue</p>
+                  )}
+                </div>
+              );
+            })}
           </div>
-        ) : (
-          <button
-            disabled={!selectedConsultation}
-            onClick={() => setIsOffreModalOpen(true)}
-            className={`px-4 py-2 rounded-md block mb-4 text-white ${
-              !selectedConsultation ? "bg-gray-400 cursor-not-allowed" : "bg-blue-800 hover:bg-blue-900"
-            }`}
-          >
-            Choisir une Offre
-          </button>
         )}
 
-        {/* Lot Section */}
-        <label>Lot :</label>
-        {selectedLot ? (
-          <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mb-4 text-sm">
-            <div className="flex justify-between items-center">
-              <p className="font-semibold text-blue-900">
-                Lot #{selectedLot.id_lot}
-              </p>
-              <button
-                className="text-xs text-blue-700 underline"
-                onClick={() => setSelectedLot(null)}
-              >
-                Changer
-              </button>
-            </div>
+        {selectedConsultation && (
+          <div className="mt-6 space-y-4">
+            <label>Date de la commande :</label>
+            <input
+              type="date"
+              value={dateCommande}
+              onChange={(e) => setDateCommande(e.target.value)}
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900"
+            />
+
+            <button
+              onClick={handleConfirm}
+              className="bg-blue-800 hover:bg-blue-900 text-white px-4 py-2 rounded-md w-full"
+            >
+              Confirmer et créer les commandes
+            </button>
           </div>
-        ) : (
-          <button
-            disabled={!selectedOffre}
-            onClick={() => setIsLotModalOpen(true)}
-            className={`px-4 py-2 rounded-md block  mb-4 text-white ${
-              !selectedOffre ? "bg-gray-400 cursor-not-allowed" : "bg-blue-800 hover:bg-blue-900"
-            }`}
-          >
-            Choisir un Lot
-          </button>
         )}
 
-        {/* Date Input + Submit */}
-        <form onSubmit={handleSubmit}>
-          <label>Date de la commande :</label>
-          <input
-            type="date"
-            name="date_commande"
-            value={form.date_commande}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md mt-1 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-900 border-gray-200"
-            required
+        {isConsultModalOpen && (
+          <ListeConsultationsModal
+            setIsModalOpen={setIsConsultModalOpen}
+            onSelectConsultation={setSelectedConsultation}
           />
-          <button
-            type="submit"
-            className="bg-blue-800 hover:bg-blue-900 text-white px-4 py-2 rounded-md w-full"
-          >
-            Enregistrer la commande
-          </button>
-        </form>
+        )}
       </div>
-
-      {isConsultModalOpen && (
-        <ListeConsultationsModal
-          setIsModalOpen={setIsConsultModalOpen}
-          onSelectConsultation={handleConsultationSelect}
-        />
-      )}
-
-      {isOffreModalOpen && (
-        <ListeOffresModal
-          setIsModalOpen={setIsOffreModalOpen}
-          onSelectOffre={handleOffreSelect}
-          filterByConsultation={selectedConsultation?.id_consultation}
-        />
-      )}
-
-      {isLotModalOpen && (
-        <ListeLotsModal
-          setIsModalOpen={setIsLotModalOpen}
-          onSelectLot={handleLotSelect}
-          filterByOffre={selectedOffre?.id_offre}
-        />
-      )}
     </div>
   );
 };

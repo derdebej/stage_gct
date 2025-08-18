@@ -6,16 +6,6 @@ import ConfirmModal from "./ConfirmModal";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
-const getStatusStyle = (status: OffreType["statut"]) => {
-  switch (status) {
-    case "évalué":
-      return "bg-green-100 text-green-800";
-    case "Non évalué":
-      return "bg-red-100 text-red-800";
-    default:
-      return "bg-gray-100 text-gray-800";
-  }
-};
 type TableOffreProps = {
   search: string;
 };
@@ -93,9 +83,6 @@ const TableOffre = ({search}:TableOffreProps) => {
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
               Chemin Offre
             </th>
-            <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
-              Statut
-            </th>
             <th className="rounded-r-xl text-center py-3 px-4 text-sm  text-gray-800 bg-gray-100">
               Actions
             </th>
@@ -121,15 +108,6 @@ const TableOffre = ({search}:TableOffreProps) => {
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
                 {offre.chemin_document}
-              </td>
-              <td className="px-4 py-2">
-                <span
-                  className={` px-3 py-1 rounded-full text-xs font-semibold ${getStatusStyle(
-                    offre.statut
-                  )}`}
-                >
-                  {offre.statut}
-                </span>
               </td>
               <td className="px-4 py-2 flex gap-2 justify-center">
                 <button

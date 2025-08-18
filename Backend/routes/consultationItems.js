@@ -20,7 +20,7 @@ router.get("/:id_consultation/items", async (req, res) => {
 
     if (type === "consommable") {
       const { rows } = await db.query(
-        `SELECT a.id_article, a.designation, a.id_da
+        `SELECT a.id_article, a.designation, a.id_da, a.quantite, a.prix_unitaire 
          FROM consultation_da cda
          JOIN article a ON a.id_da = cda.id_da
          WHERE cda.id_consultation = $1`,

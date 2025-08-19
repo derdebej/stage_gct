@@ -1,12 +1,50 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { Eye, Trash2, Pencil } from "lucide-react";
 import { reception } from "../types/Reception";
+import ConfirmModal from "./ConfirmModal";
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 interface props {
   receptions: reception[];
 }
 
 const TableReception = ({ receptions }: props) => {
+  const [receptionList, setReceptionList] = useState<reception[]>(receptions);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setReceptionList(receptions);
+  }, [receptions]);
+
+  const handleCancelDeleteReception = () => {
+    setConfirmOpen(false);
+    setDeleteId(null);
+  };
+
+  const handleConfirmDeleteReception = async () => {
+    if (!deleteId) return;
+
+    try {
+      const res = await fetch(`${baseUrl}/api/receptions/${deleteId}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        setReceptionList((prev) =>
+          prev.filter((r) => r.id_reception !== deleteId)
+        );
+      } else {
+        console.error("Échec suppression réception");
+      }
+    } catch (err) {
+      console.error("Erreur réseau:", err);
+    }
+
+    setConfirmOpen(false);
+    setDeleteId(null);
+  };
+
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full text-left border-separate border-spacing-y-2">
@@ -19,13 +57,10 @@ const TableReception = ({ receptions }: props) => {
               Id Commande
             </th>
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
-              Id Lot
+              Type
             </th>
             <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
               Date reception
-            </th>
-            <th className="text-center py-3 px-4 text-sm text-gray-800 bg-gray-100">
-              Montant recue
             </th>
             <th className="rounded-r-xl text-center py-3 px-4 text-sm  text-gray-800 bg-gray-100">
               Actions
@@ -33,7 +68,7 @@ const TableReception = ({ receptions }: props) => {
           </tr>
         </thead>
         <tbody>
-          {receptions.map((reception) => (
+          {receptionList.map((reception) => (
             <tr
               key={reception.id_reception}
               className="bg-white rounded hover:bg-gray-50"
@@ -45,15 +80,11 @@ const TableReception = ({ receptions }: props) => {
                 {reception.id_commande}
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
-                a ajouter
+                {reception.type}
               </td>
               <td className="text-center py-3 px-4 text-sm text-gray-700">
                 {reception.date.slice(0, 10)}
               </td>
-              <td className="text-center py-3 px-4 text-sm text-gray-700">
-                {reception.montant_recue}
-              </td>
-
               <td className="px-4 py-2 flex gap-2 justify-center">
                 <button
                   className="text-blue-600 hover:text-blue-800"
@@ -70,7 +101,10 @@ const TableReception = ({ receptions }: props) => {
                 <button
                   className="text-red-600 hover:text-red-800"
                   title="Supprimer"
-                  //onClick={() => openConfirm(evalItem.id_eval)}
+                  onClick={() => {
+                    setDeleteId(reception.id_reception);
+                    setConfirmOpen(true);
+                  }}
                 >
                   <Trash2 size={16} />
                 </button>
@@ -79,23 +113,23 @@ const TableReception = ({ receptions }: props) => {
           ))}
         </tbody>
       </table>
-      {/* {confirmOpen && (
+      {confirmOpen && (
         <ConfirmModal
           isOpen={confirmOpen}
           message={
             <>
               <p className="text-xl mb-4 border-b pb-4 border-b-gray-300">
-                Supprimer cette évaluation ?
+                Supprimer reception {deleteId} ?
               </p>
               <p className="text-sm text-gray-500">
                 Cette action est irréversible.
               </p>
             </>
           }
-          onConfirm={handleConfirmDelete}
-          onCancel={handleCancelDelete}
+          onConfirm={handleConfirmDeleteReception}
+          onCancel={handleCancelDeleteReception}
         />
-      )}*/}
+      )}
     </div>
   );
 };

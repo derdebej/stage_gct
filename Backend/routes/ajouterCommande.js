@@ -1,20 +1,8 @@
-// routes/commande.js
 import express from "express";
 import db from "../db.js";
 
 const router = express.Router();
 
-/**
- * POST /api/commande-insert
- * Payload: {
- *   id_consultation,
- *   id_fournisseur,
- *   date_commande,
- *   items: [
- *     { id_offre ,id_article OR id_lot }
- *   ]
- * }
- */
 router.post("/commande-insert", async (req, res) => {
   const client = await db.connect();
   try {
@@ -24,7 +12,6 @@ router.post("/commande-insert", async (req, res) => {
       return res.status(400).json({ error: "Champs manquants" });
     }
 
-    // 1. Check consultation type
     const consultationRes = await client.query(
       `SELECT type FROM consultation WHERE id_consultation = $1`,
       [id_consultation]
@@ -33,19 +20,18 @@ router.post("/commande-insert", async (req, res) => {
       return res.status(404).json({ error: "Consultation introuvable" });
     }
     const type = consultationRes.rows[0].type;
+    const statut = "en_cours";
 
     await client.query("BEGIN");
 
-    // 2. Insert commande
     const insertCmd = await client.query(
-      `INSERT INTO commande (id_consultation, id_fournisseur, date)
-       VALUES ($1, $2, $3)
+      `INSERT INTO commande (id_consultation, id_fournisseur, date, statut, type)
+       VALUES ($1, $2, $3, $4, $5)
        RETURNING id_commande`,
-      [id_consultation, id_fournisseur, date_commande]
+      [id_consultation, id_fournisseur, date_commande, statut, type]
     );
     const id_commande = insertCmd.rows[0].id_commande;
 
-    // 3. Insert accepted items
     console.log("Items to insert:", items);
     if (type === "consommable") {
       for (const item of items) {
@@ -66,14 +52,15 @@ router.post("/commande-insert", async (req, res) => {
     }
 
     await client.query("COMMIT");
-
+    const date = new Date(date_commande).toISOString().split("T")[0];
     res.json({
       id_commande,
       id_consultation,
       id_fournisseur,
-      date_commande,
+      date,
       items,
       type,
+      statut,
     });
   } catch (err) {
     await client.query("ROLLBACK");

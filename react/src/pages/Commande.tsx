@@ -12,6 +12,7 @@ const Commande = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
   const handleCommandeAdded = (newCommande: CommandeType) => {
     setCommandes((prev) => [newCommande, ...prev]);
   };

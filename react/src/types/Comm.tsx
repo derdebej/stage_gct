@@ -1,9 +1,8 @@
-
-
 export interface CommandeType {
   id_commande: string;
-  id_offre: string;
+  id_fournisseur: string;
   date: string;
-  id_lot: string;
+  id_consultation: string;
   statut: string;
+  type: string;
 }

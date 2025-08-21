@@ -107,17 +107,7 @@ const TableConsultation: React.FC<Props> = ({ openConsultation }) => {
     setSelectedConsultation(consult);
     setModalOpen(true);
 
-    try {
-      const res = await fetch(
-        `${baseUrl}/api/consultation-details/${consult.id_consultation}`
-      );
-      const data = await res.json();
-      console.log("Related Da :", data.demandes);
-      setRelatedDA(data.demandes);
-      setLots(data.lots);
-    } catch (error) {
-      console.error("Erreur lors du chargement des détails :", error);
-    }
+    
   };
 
   return (
@@ -237,8 +227,6 @@ const TableConsultation: React.FC<Props> = ({ openConsultation }) => {
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         consultation={selectedConsultation}
-        relatedDemandes={relatedDA}
-        relatedLots={lots}
       />
       {isModifyOpen && (
         <ModifyConsultation

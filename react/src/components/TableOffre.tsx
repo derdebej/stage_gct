@@ -3,6 +3,7 @@ import { Eye, Pencil, Trash2, ArrowBigLeft, ArrowBigRight } from "lucide-react";
 import { OffreType } from "../types/OffreType";
 import { useState, useEffect } from "react";
 import ConfirmModal from "./ConfirmModal";
+import OffreDetail from "./OffreDetail";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -10,12 +11,14 @@ type TableOffreProps = {
   search: string;
 };
 
-const TableOffre = ({search}:TableOffreProps) => {
+const TableOffre = ({ search }: TableOffreProps) => {
   const [data, setData] = useState<OffreType[]>([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [selectedOffre, setSelectedOffre] = useState<OffreType | null>(null);
 
   useEffect(() => {
     setPage(1);
@@ -113,6 +116,10 @@ const TableOffre = ({search}:TableOffreProps) => {
                 <button
                   className="text-blue-600 hover:text-blue-800"
                   title="Voir"
+                  onClick={() => {
+                    setIsDetailOpen(true);
+                    setSelectedOffre(offre);
+                  }}
                 >
                   <Eye size={16} />
                 </button>
@@ -168,6 +175,15 @@ const TableOffre = ({search}:TableOffreProps) => {
           }
           onConfirm={handleConfirmDelete}
           onCancel={handleCancelDelete}
+        />
+      )}
+      {isDetailOpen && selectedOffre && (
+        <OffreDetail
+          id_offre={selectedOffre.id_offre}
+          onClose={() => {
+            setIsDetailOpen(false);
+            setSelectedOffre(null);
+          }}
         />
       )}
     </div>

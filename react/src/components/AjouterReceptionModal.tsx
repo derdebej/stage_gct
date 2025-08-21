@@ -6,7 +6,9 @@ import { CommandeType } from "../types/Comm";
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const AjouterReceptionModal = ({ setIsOpen, onReceptionAdded }) => {
-  const [selectedCommande, setSelectedCommande] = useState<CommandeType | null>(null);
+  const [selectedCommande, setSelectedCommande] = useState<CommandeType | null>(
+    null
+  );
   const [isCommandeModalOpen, setIsCommandeModalOpen] = useState(false);
   const [items, setItems] = useState<any[]>([]);
 
@@ -14,17 +16,28 @@ const AjouterReceptionModal = ({ setIsOpen, onReceptionAdded }) => {
     id_commande: "",
     date_reception: new Date().toISOString().split("T")[0],
   });
-
+  useEffect(() => {
+    console.log("items:", items);
+  }, [items]);
   const handleCommandeSelect = async (commande: CommandeType) => {
     setSelectedCommande(commande);
     setForm((prev) => ({ ...prev, id_commande: commande.id_commande }));
     setIsCommandeModalOpen(false);
 
     try {
-      const res = await fetch(`${baseUrl}/api/commandes/${commande.id_commande}/details`);
-      if (!res.ok) throw new Error("Erreur lors du chargement des détails de la commande");
+      const res = await fetch(
+        `${baseUrl}/api/commandes/${commande.id_commande}/details`
+      );
+      if (!res.ok)
+        throw new Error("Erreur lors du chargement des détails de la commande");
       const data = await res.json();
-      setItems(data); 
+      console.log("Commande items:", data.lots);
+
+      let items = [];
+      if (data.articles?.length > 0) items = data.articles;
+      else if (data.lots?.length > 0) items = data.lots;
+      setItems(items);
+
     } catch (err) {
       console.error(err);
     }
@@ -43,6 +56,7 @@ const AjouterReceptionModal = ({ setIsOpen, onReceptionAdded }) => {
         ...form,
         items,
       };
+      console.log("Submitting payload:", payload);
 
       const res = await fetch(`${baseUrl}/api/receptions-insert`, {
         method: "POST",
@@ -73,7 +87,6 @@ const AjouterReceptionModal = ({ setIsOpen, onReceptionAdded }) => {
           Ajouter une réception
         </h2>
 
-        {/* Commande selection */}
         <label>Commande :</label>
         {selectedCommande ? (
           <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mb-4 text-sm">
@@ -109,12 +122,13 @@ const AjouterReceptionModal = ({ setIsOpen, onReceptionAdded }) => {
               type="date"
               name="date_reception"
               value={form.date_reception}
-              onChange={(e) => setForm({ ...form, date_reception: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, date_reception: e.target.value })
+              }
               required
               className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900 border-gray-200 mt-1"
             />
 
-            {/* Items table */}
             <div className="mt-4">
               {items.length > 0 ? (
                 <table className="w-full border text-sm text-gray-800">
@@ -141,7 +155,7 @@ const AjouterReceptionModal = ({ setIsOpen, onReceptionAdded }) => {
                         </td>
                         {selectedCommande.type === "consommable" ? (
                           <>
-                            <td className="border p-2">{item.quantite_commande}</td>
+                            <td className="border p-2">{item.quantite}</td>
                             <td className="border p-2">
                               <input
                                 type="number"
@@ -149,7 +163,11 @@ const AjouterReceptionModal = ({ setIsOpen, onReceptionAdded }) => {
                                 max={item.quantite_commande}
                                 value={item.quantite_recue || ""}
                                 onChange={(e) =>
-                                  handleItemChange(idx, "quantite_recue", e.target.value)
+                                  handleItemChange(
+                                    idx,
+                                    "quantite_recue",
+                                    e.target.value
+                                  )
                                 }
                                 className="w-20 border rounded px-2"
                               />
@@ -171,7 +189,9 @@ const AjouterReceptionModal = ({ setIsOpen, onReceptionAdded }) => {
                   </tbody>
                 </table>
               ) : (
-                <p className="text-gray-500 text-sm italic">Aucun article/lot trouvé</p>
+                <p className="text-gray-500 text-sm italic">
+                  Aucun article/lot trouvé
+                </p>
               )}
             </div>
 

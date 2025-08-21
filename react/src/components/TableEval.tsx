@@ -3,6 +3,7 @@ import { Eval } from "../types/Eval";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import ConfirmModal from "./ConfirmModal";
+import EvalDetail from "./EvalDetail";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 type Props = {
@@ -17,6 +18,8 @@ const TableEval = ({ evaluations }: Props) => {
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [selectedIdEval, setSelectedIdEval] = useState(null);
 
   const openConfirm = (id: string) => {
     setDeleteId(id);
@@ -73,10 +76,7 @@ const TableEval = ({ evaluations }: Props) => {
         </thead>
         <tbody>
           {evalList.map((evalItem, index) => (
-            <tr
-              key={index}
-              className="bg-white rounded hover:bg-gray-50"
-            >
+            <tr key={index} className="bg-white rounded hover:bg-gray-50">
               <td className="text-center py-3 px-4 text-sm text-gray-700">
                 {evalItem.id_eval}
               </td>
@@ -95,6 +95,10 @@ const TableEval = ({ evaluations }: Props) => {
                 <button
                   className="text-blue-600 hover:text-blue-800"
                   title="Voir"
+                  onClick={() => {
+                    setSelectedIdEval(evalItem.id_eval);
+                    setDetailOpen(true);
+                  }}
                 >
                   <Eye size={16} />
                 </button>
@@ -131,6 +135,15 @@ const TableEval = ({ evaluations }: Props) => {
           }
           onConfirm={handleConfirmDelete}
           onCancel={handleCancelDelete}
+        />
+      )}
+      {detailOpen && selectedIdEval && (
+        <EvalDetail
+          id_evaluation={selectedIdEval}
+          onClose={() => {
+            setDetailOpen(false);
+            setSelectedIdEval(null);
+          }}
         />
       )}
     </div>

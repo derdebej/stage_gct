@@ -34,10 +34,28 @@ function Dashboard() {
       console.error("Fetch error:", err);
     }
   };
+  const [stats, setStats] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await fetch(`${baseUrl}/dashboard/stats`);
+        const data = await res.json();
+        console.log("Stats:", data);
+        setStats(data);
+      } catch (err) {
+        console.error("Erreur lors du chargement des stats:", err);
+      }
+    };
+
+    fetchStats();
+  }, []);
 
   useEffect(() => {
     fetchData();
   }, [page, month]);
+  if (!stats) return <p>Chargement des statistiques...</p>;
+
   return (
     <>
       <div className="flex h-screen ">
@@ -46,11 +64,11 @@ function Dashboard() {
             <div className="border-b w-min text-3xl font-bold text-gray-800 border-gray-300 mb-6 mt-6 pb-3">
               Dashboard
             </div>
-            <div className="flex justify-between items-center pb-6 flex-1 border-b  border-gray-300">
+            <div className="flex justify-between items-center pb-6 flex-1 border-b border-gray-300 space-x-4">
               <div>
                 <Box
                   titre="Total de Dépenses"
-                  valeur="4,689 dt"
+                  valeur={`${stats.totalDepenses.toLocaleString()} dt`}
                   icon={
                     <CircleDollarSign className="w-6 h-6 text-indigo-600" />
                   }
@@ -61,17 +79,17 @@ function Dashboard() {
               <div>
                 <Box
                   titre="Nombre de Commandes"
-                  valeur="4,689 dt"
+                  valeur={stats.nombreCommandes}
                   icon={<LineChart className="w-6 h-6 text-indigo-600" />}
                   variation="8.5%"
-                  variationText="Par rapport au dernier mois"
+                  variationText="Par rapport à la dernière année"
                 />
               </div>
               <div>
-                <TopArticles />
+                <TopArticles topArticles={stats.topArticles} />
               </div>
               <div>
-                <TopFournisseurs />
+                <TopFournisseurs topFournisseurs={stats.topFournisseurs} />
               </div>
             </div>
             <div className="mt-6">

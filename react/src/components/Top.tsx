@@ -1,20 +1,8 @@
 import React from "react";
 
-const topFournisseurs = [
-  { name: "Fournisseur A", total: 1500 },
-  { name: "Fournisseur B", total: 1200 },
-  { name: "Fournisseur C", total: 950 },
-];
-
-const topArticles = [
-  { name: "Article X", quantity: 40 },
-  { name: "Article Y", quantity: 30 },
-  { name: "Article Z", quantity: 25 },
-];
-
 const COLORS = ["#00008B", "#1E90FF", "#87CEFA"];
 
-export function TopFournisseurs() {
+export function TopFournisseurs({  topFournisseurs }) {
   const maxTotal = Math.max(...topFournisseurs.map((f) => f.total));
 
   return (
@@ -24,7 +12,7 @@ export function TopFournisseurs() {
         {topFournisseurs.map((f, index) => (
           <li key={f.name}>
             <div className="flex justify-between mb-1">
-              <span className="font-medium">{f.name}</span>
+              <span className="font-medium">{f.nom}</span>
               <span className="text-sm text-gray-500">{f.total} DT</span>
             </div>
             <div className="w-full bg-gray-100 rounded-full h-2.5">
@@ -43,7 +31,7 @@ export function TopFournisseurs() {
   );
 }
 
-export function TopArticles() {
+export function TopArticles({ topArticles }) {
   const maxQuantity = Math.max(...topArticles.map((a) => a.quantity));
 
   return (
@@ -53,8 +41,8 @@ export function TopArticles() {
         {topArticles.map((a, index) => (
           <li key={a.name}>
             <div className="flex justify-between mb-1">
-              <span className="font-medium">{a.name}</span>
-              <span className="text-sm text-gray-500">{a.quantity} pcs</span>
+              <span className="font-medium">{a.designation}</span>
+              <span className="text-sm text-gray-500">{a.quantite} pcs</span>
             </div>
             <div className="w-full bg-gray-100 rounded-full h-2.5">
               <div

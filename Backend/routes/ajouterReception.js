@@ -34,7 +34,7 @@ router.post("/receptions-insert", async (req, res) => {
     );
 
     const id_reception = receptionRes.rows[0].id_reception;
-
+    await client.query(`UPDATE commande SET statut = $2 WHERE id_commande = $1`, [id_commande, "livree"]);
     if (commandeType === "consommable") {
       for (const item of items) {
         await client.query(

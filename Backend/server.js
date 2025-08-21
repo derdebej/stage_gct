@@ -49,6 +49,11 @@ import ajouterCommandeRoutes from './routes/ajouterCommande.js';
 import commandeDetailsRoute from './routes/commandeDetails.js';
 import ajouterReceptionRoute from './routes/ajouterReception.js'
 import deleteReceptionCommandeRoute from './routes/deleteReceptionCommande.js';
+import offreDetailRoutes from "./routes/offreDetail.js";
+import evalDetailRoutes from "./routes/evalDetail.js";
+import receptionDetailRoutes from "./routes/receptionDetail.js";
+import searchGlobalRoutes from "./routes/searchGlobal.js";
+import statsRoutes from "./routes/stats.js";
 
 import fs from 'fs/promises';
 import { fileURLToPath } from 'url';
@@ -128,6 +133,11 @@ app.post("/enregistrer-demande", async (req, res) => {
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
+app.use("/",statsRoutes);
+app.use("/", searchGlobalRoutes);
+app.use("/", receptionDetailRoutes);
+app.use("/",evalDetailRoutes);
+app.use("/",offreDetailRoutes);
 app.use("/api",deleteReceptionCommandeRoute);
 app.use("/api",ajouterReceptionRoute);
 app.use("/api",commandeDetailsRoute);

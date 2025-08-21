@@ -3,6 +3,8 @@ import { useState } from "react";
 import { Eye, Trash2, Pencil } from "lucide-react";
 import { reception } from "../types/Reception";
 import ConfirmModal from "./ConfirmModal";
+import ReceptionDetail from "./receptionDetail";
+
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 interface props {
   receptions: reception[];
@@ -12,6 +14,8 @@ const TableReception = ({ receptions }: props) => {
   const [receptionList, setReceptionList] = useState<reception[]>(receptions);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [selectedIdReception, setSelectedIdReception] = useState(null);
 
   useEffect(() => {
     setReceptionList(receptions);
@@ -89,6 +93,10 @@ const TableReception = ({ receptions }: props) => {
                 <button
                   className="text-blue-600 hover:text-blue-800"
                   title="Voir"
+                  onClick={() => {
+                    setSelectedIdReception(reception.id_reception);
+                    setDetailOpen(true);
+                  }}
                 >
                   <Eye size={16} />
                 </button>
@@ -128,6 +136,15 @@ const TableReception = ({ receptions }: props) => {
           }
           onConfirm={handleConfirmDeleteReception}
           onCancel={handleCancelDeleteReception}
+        />
+      )}
+      {detailOpen && (
+        <ReceptionDetail
+          id_reception={selectedIdReception}
+          onClose={() => {
+            setDetailOpen(false);
+            setSelectedIdReception(null);
+          }}
         />
       )}
     </div>

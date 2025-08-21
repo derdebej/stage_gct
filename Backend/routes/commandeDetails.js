@@ -8,7 +8,10 @@ router.get("/commandes/:id_commande/details", async (req, res) => {
 
   try {
     const commandeRes = await db.query(
-      "SELECT id_commande, type FROM commande WHERE id_commande = $1",
+      `SELECT c.id_commande, c.date, c.id_consultation, 
+              c.id_fournisseur, c.type
+       FROM commande c
+       WHERE c.id_commande = $1`,
       [id_commande]
     );
 
@@ -18,31 +21,42 @@ router.get("/commandes/:id_commande/details", async (req, res) => {
 
     const commande = commandeRes.rows[0];
 
+    let articles = [];
+    let lots = [];
+
     if (commande.type === "consommable") {
       const articlesRes = await db.query(
-        `SELECT ca.id_commande_article,
-                a.designation,
-                a.quantite AS quantite_commande
+        `SELECT ca.id_article, ca.id_da, a.designation, a.quantite,ca.id_commande_article
          FROM commande_article ca
          JOIN article a 
-           ON ca.id_da = a.id_da AND ca.id_article = a.id_article
+           ON ca.id_article = a.id_article AND ca.id_da = a.id_da
          WHERE ca.id_commande = $1`,
         [id_commande]
       );
-      return res.json(articlesRes.rows);
+      articles = articlesRes.rows;
     } else if (commande.type === "equipement") {
       const lotsRes = await db.query(
-        `SELECT cl.id_commande_lot,
-                l.id_lot
+        `SELECT cl.id_lot,cl.id_commande,l.id_da,l.id_consultation,cl.id_commande_lot
          FROM commande_lot cl
          JOIN lot l ON cl.id_lot = l.id_lot
          WHERE cl.id_commande = $1`,
         [id_commande]
       );
-      return res.json(lotsRes.rows);
+      lots = lotsRes.rows;
     } else {
       return res.status(400).json({ error: "Type de commande invalide" });
     }
+    console.log("articles:", articles);
+    console.log("lots:", lots);
+    res.json({
+      id_commande: commande.id_commande,
+      date_commande: commande.date,
+      id_consultation: commande.id_consultation,
+      id_fournisseur: commande.id_fournisseur,
+      consultation_type: commande.type, 
+      articles,
+      lots,
+    });
   } catch (err) {
     console.error("Erreur lors de la récupération des détails de commande:", err);
     res.status(500).json({ error: "Erreur serveur" });

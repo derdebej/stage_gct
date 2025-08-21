@@ -1,25 +1,41 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { X } from "lucide-react";
 import { DA } from "../types/DA";
 import { Lot } from "../types/Lot";
 import { consultationType } from "../types/consultationType";
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   consultation: consultationType | null;
-  relatedDemandes: DA[];
-  relatedLots: Lot[];
 };
 
 const ConsultationDetails: React.FC<Props> = ({
   isOpen,
   onClose,
   consultation,
-  relatedDemandes,
-  relatedLots,
 }) => {
   if (!isOpen || !consultation) return null;
+  const [relatedDemandes, setRelatedDemandes] = React.useState<DA[]>([]);
+  const [relatedLots, setrelatedLots] = React.useState<Lot[]>([]);
+  useEffect(() => {
+    const fetchDetails = async () => {
+      try {
+        const res = await fetch(
+          `${baseUrl}/api/consultation-details/${consultation.id_consultation}`
+        );
+        const data = await res.json();
+        setRelatedDemandes(data.demandes);
+        setrelatedLots(data.lots);
+      } catch (error) {
+        console.error("Erreur lors du chargement des détails :", error);
+      }
+    };
+
+    fetchDetails();
+  }, [consultation.id_consultation]);
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -46,14 +62,17 @@ const ConsultationDetails: React.FC<Props> = ({
             <strong>Date de création :</strong>{" "}
             {new Date(consultation.date_creation).toLocaleDateString("fr-FR")}
           </div>
-          {consultation.type == "equipement" && <div>
-            <strong>Nombre de lots :</strong> {consultation.nombre_des_lots}
-          </div>}
+          {consultation.type == "equipement" && (
+            <div>
+              <strong>Nombre de lots :</strong> {consultation.nombre_des_lots}
+            </div>
+          )}
           <div>
             <strong>Statut Offre :</strong> {consultation.statut_offre}
           </div>
           <div>
-            <strong>Statut Evaluation :</strong> {consultation.statut_evaluation}
+            <strong>Statut Evaluation :</strong>{" "}
+            {consultation.statut_evaluation}
           </div>
         </div>
         <h3 className="font-bold text-lg text-blue-800 border-b pb-2 mt-6">

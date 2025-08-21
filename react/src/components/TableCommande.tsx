@@ -3,6 +3,7 @@ import { CommandeType } from "../types/Comm";
 import { Eye, Trash2, Pencil } from "lucide-react";
 import { useState, useEffect } from "react";
 import ConfirmModal from "./ConfirmModal";
+import CommandeDetail from "./commandeDetail";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -17,6 +18,8 @@ const TableCommande = ({ data }: TableCommandeProps) => {
   }, [data]);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [selectedIdCommande, setSelectedIdCommande] = useState(null);
 
   const handleCancelDeleteCommande = () => {
     setConfirmOpen(false);
@@ -120,6 +123,10 @@ const TableCommande = ({ data }: TableCommandeProps) => {
                 <button
                   className="text-blue-600 hover:text-blue-800"
                   title="Voir"
+                  onClick={() => {
+                    setSelectedIdCommande(commande.id_commande);
+                    setDetailOpen(true);
+                  }}
                 >
                   <Eye size={16} />
                 </button>
@@ -159,6 +166,15 @@ const TableCommande = ({ data }: TableCommandeProps) => {
           }
           onConfirm={handleConfirmDeleteCommande}
           onCancel={handleCancelDeleteCommande}
+        />
+      )}
+      {detailOpen && (
+        <CommandeDetail
+          id_commande={selectedIdCommande}
+          onClose={() => {
+            setDetailOpen(false);
+            setSelectedIdCommande(null);
+          }}
         />
       )}
     </div>

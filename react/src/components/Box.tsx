@@ -11,7 +11,7 @@ interface BoxProps {
 
 const Box = ({ titre, valeur, icon, variation, variationText }: BoxProps) => {
   return (
-    <div className="bg-white shadow-sm rounded-xl p-5 w-2xs max-w-sm">
+    <div className="bg-white shadow-sm rounded-xl p-5 w-sm max-w-sm">
       <div className="flex justify-between items-start">
         <div>
           <p className="text-sm text-gray-500">{titre}</p>

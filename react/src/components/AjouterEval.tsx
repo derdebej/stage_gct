@@ -5,10 +5,12 @@ import { Lot } from "../types/Lot";
 import { Art } from "../types/Art";
 import { OffreType } from "../types/OffreType";
 import ListeConsultationEval from "./ListeConsultationEval";
+import { LotOffre } from "../types/LotOffre";
+import { ArticleOffre } from "../types/ArticleOffre";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
-type ItemWithOffres = (Lot | Art) & { offres: OffreType[] };
+type ItemWithOffres = (Lot | Art) & { offres: LotOffre[] | ArticleOffre[] };
 
 const AjouterEvaluationModal = ({ setIsOpen, onEvaluationAdded }) => {
   const [selectedConsultation, setSelectedConsultation] =
@@ -36,7 +38,9 @@ const AjouterEvaluationModal = ({ setIsOpen, onEvaluationAdded }) => {
           rawItems.map(async (item: Lot | Art) => {
             const offreRoute =
               selectedConsultation.type === "consommable"
-                ? `${baseUrl}/api/articles/${(item as Art).id_article}/offres`
+                ? `${baseUrl}/api/articles/${(item as Art).id_article}/${
+                    (item as Art).id_da
+                  }/offres`
                 : `${baseUrl}/api/lots/${(item as Lot).id_lot}/offres`;
 
             const offresRes = await fetch(offreRoute);
@@ -74,13 +78,13 @@ const AjouterEvaluationModal = ({ setIsOpen, onEvaluationAdded }) => {
     for (const item of items) {
       const itemId =
         selectedConsultation?.type === "consommable"
-          ? (item as Art).id_article
+          ? `${(item as Art).id_article}-${(item as Art).id_da}`
           : (item as Lot).id_lot;
 
       for (const offre of item.offres) {
         if (!evaluations[itemId]?.[offre.id_offre]) {
           alert(
-            `Veuillez sélectionner la conformité pour l'offre #${offre.id_offre}`
+            `Veuillez sélectionner la conformité pour l'offre #${offre.id_offre} pour l'article/lot ${itemId}`
           );
           return;
         }
@@ -159,7 +163,7 @@ const AjouterEvaluationModal = ({ setIsOpen, onEvaluationAdded }) => {
           {items.map((item) => {
             const itemId =
               selectedConsultation?.type === "consommable"
-                ? (item as Art).id_article
+                ? `${(item as Art).id_article}-${(item as Art).id_da}`
                 : (item as Lot).id_lot;
             const title =
               selectedConsultation?.type === "consommable"
@@ -182,8 +186,7 @@ const AjouterEvaluationModal = ({ setIsOpen, onEvaluationAdded }) => {
                     >
                       <div>
                         <p className="text-gray-700">
-                          Offre #{offre.id_offre} –{" "}
-                          {offre.fournisseur?.nom || "N/A"}
+                          Offre #{offre.id_offre} – {offre.nom || "N/A"}
                         </p>
                         <p className="text-xs text-gray-500">
                           Montant: {offre.montant}
@@ -193,7 +196,7 @@ const AjouterEvaluationModal = ({ setIsOpen, onEvaluationAdded }) => {
                         value={evaluations[itemId]?.[offre.id_offre] || ""}
                         onChange={(e) =>
                           handleEvaluationChange(
-                            String(itemId),
+                            itemId,
                             String(offre.id_offre),
                             e.target.value
                           )

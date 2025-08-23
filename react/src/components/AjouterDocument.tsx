@@ -122,7 +122,7 @@ const AjouterDocument = ({
         coutTotale: result.coutTotale,
         type: result.type,
         objet: result.objet,
-        numAED: result.numeroAED,
+        numAED: result.numeroAED.replace(/ /g, ""),
         codeInvest: result.codeInvest,
         articles: Array.isArray(result.articles) ? result.articles : [],
       });
@@ -188,7 +188,7 @@ const AjouterDocument = ({
               {data.type && <DisplayItem label="Nature" value={data.type} />}
               {data.objet && <DisplayItem label="Objet" value={data.objet} />}
               {data.numAED && (
-                <DisplayItem label="N° AED" value={data.numAED} />
+                <DisplayItem label="N° AED" value={data.numAED.replace(/ /g, "")} />
               )}
               {data.coutTotale && (
                 <DisplayItem

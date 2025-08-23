@@ -109,14 +109,18 @@ const TableCommande = ({ data }: TableCommandeProps) => {
               <td className="px-4 py-2">
                 <span
                   className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                    commande.statut === "Terminée"
+                    commande.statut === "livree"
                       ? "bg-green-100 text-green-800"
-                      : commande.statut === "En cours"
+                      : commande.statut === "en_cours"
                       ? "bg-yellow-100 text-yellow-800"
                       : "bg-red-100 text-red-800"
                   }`}
                 >
-                  {commande.statut}
+                  {commande.statut === "livree"
+                    ? "Livrée"
+                    : commande.statut === "en_cours"
+                    ? "En cours"
+                    : "Annulée"}
                 </span>
               </td>
               <td className="px-4 py-2 flex gap-2 justify-center">

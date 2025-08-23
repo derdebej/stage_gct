@@ -3,8 +3,8 @@ import db from "../db.js";
 
 const router = express.Router();
 
-router.get("/:id_article/offres", async (req, res) => {
-  const { id_article } = req.params;
+router.get("/:id_article/:id_da/offres", async (req, res) => {
+  const { id_article, id_da } = req.params;
 
   try {
     const { rows } = await db.query(
@@ -12,8 +12,8 @@ router.get("/:id_article/offres", async (req, res) => {
        FROM offre_article oa
        JOIN offre o ON o.id_offre = oa.id_offre
        JOIN fournisseur f ON f.id_fournisseur = o.id_fournisseur
-       WHERE oa.id_article = $1`,
-      [id_article]
+       WHERE oa.id_article = $1 AND oa.id_da = $2`,
+      [id_article, id_da]
     );
 
     res.json(rows);

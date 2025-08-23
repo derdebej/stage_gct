@@ -54,6 +54,7 @@ import evalDetailRoutes from "./routes/evalDetail.js";
 import receptionDetailRoutes from "./routes/receptionDetail.js";
 import searchGlobalRoutes from "./routes/searchGlobal.js";
 import statsRoutes from "./routes/stats.js";
+import itemConformeOffreRoute from "./routes/ItemConformeOffre.js";
 
 import fs from 'fs/promises';
 import { fileURLToPath } from 'url';
@@ -133,6 +134,7 @@ app.post("/enregistrer-demande", async (req, res) => {
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
+app.use("/api", itemConformeOffreRoute);
 app.use("/",statsRoutes);
 app.use("/", searchGlobalRoutes);
 app.use("/", receptionDetailRoutes);

@@ -16,9 +16,6 @@ const AjouterReceptionModal = ({ setIsOpen, onReceptionAdded }) => {
     id_commande: "",
     date_reception: new Date().toISOString().split("T")[0],
   });
-  useEffect(() => {
-    console.log("items:", items);
-  }, [items]);
   const handleCommandeSelect = async (commande: CommandeType) => {
     setSelectedCommande(commande);
     setForm((prev) => ({ ...prev, id_commande: commande.id_commande }));
@@ -161,7 +158,7 @@ const AjouterReceptionModal = ({ setIsOpen, onReceptionAdded }) => {
                                 type="number"
                                 min="0"
                                 max={item.quantite_commande}
-                                value={item.quantite_recue || ""}
+                                value={item.quantite_recue || 0}
                                 onChange={(e) =>
                                   handleItemChange(
                                     idx,

@@ -31,6 +31,16 @@ router.post("/", async (req, res) => {
       `,
       [id_consultation]
     ); 
+    await client.query(
+      `
+      UPDATE demande_d_achat dda
+      SET etat = 'Traitée'
+      FROM consultation_da cda
+      WHERE dda.id_da = cda.id_da
+        AND cda.id_consultation = $1
+      `,
+      [id_consultation]
+    );
 
     for (const itemId in evaluations) {
       for (const offreId in evaluations[itemId]) {
@@ -44,18 +54,14 @@ router.post("/", async (req, res) => {
 
         if (type === "consommable") {
 
-          const daRes = await client.query(
-            `SELECT id_da FROM article WHERE id_article = $1`,
-            [itemId]
-          );
-          const id_da = daRes.rows[0].id_da;
+          const [id_article, id_da] = itemId.split("-");
 
           await client.query(
             `
             INSERT INTO evaluation_article (id_eval, id_article, id_da, id_offre, conformite)
             VALUES ($1, $2, $3, $4, $5)
             `,
-            [idEvaluation, itemId, id_da, offreId, conformite]
+            [idEvaluation, id_article, id_da, offreId, conformite]
           );
         } else {
           await client.query(
@@ -65,6 +71,17 @@ router.post("/", async (req, res) => {
             `,
             [idEvaluation, itemId, offreId, conformite]
           );
+          await client.query(
+            `
+            UPDATE demande_d_achat da
+            SET etat = 'Traitée'
+            FROM lot l
+            WHERE da.id_da = l.id_da
+              AND l.id_lot = $1
+            `,
+            [itemId]
+          );
+
         }
 
       }

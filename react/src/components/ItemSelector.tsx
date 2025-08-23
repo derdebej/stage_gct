@@ -141,7 +141,9 @@ const ItemSelector: React.FC<ItemSelectorProps> = ({
             return (
               <div
                 key={
-                  isEquipement ? (item as Lot).id_lot : (item as Art).id_article
+                  isEquipement
+                    ? (item as Lot).id_lot
+                    : `${(item as Art).id_article}-${item.id_da}`
                 }
                 className={`p-2 border-b border-gray-100 flex items-start justify-between hover:bg-gray-50 cursor-pointer ${
                   selected ? "bg-blue-50" : ""

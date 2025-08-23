@@ -5,14 +5,21 @@ import { consultationType } from "../types/consultationType";
 import { OffreType } from "../types/OffreType";
 import { Lot } from "../types/Lot";
 import { Art } from "../types/Art";
+import { LotOffre } from "../types/LotOffre";
+import { ArticleOffre } from "../types/ArticleOffre";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const AjouterCommandeModal = ({ setIsOpen, onCommandeAdded }) => {
-  const [selectedConsultation, setSelectedConsultation] = useState<consultationType | null>(null);
+  const [selectedConsultation, setSelectedConsultation] =
+    useState<consultationType | null>(null);
   const [items, setItems] = useState<(Lot | Art)[]>([]);
-  const [bestOffers, setBestOffers] = useState<Record<string, OffreType | null>>({});
-  const [dateCommande, setDateCommande] = useState(new Date().toISOString().split("T")[0]);
+  const [bestOffers, setBestOffers] = useState<
+    Record<string, OffreType | LotOffre | ArticleOffre | null>
+  >({});
+  const [dateCommande, setDateCommande] = useState(
+    new Date().toISOString().split("T")[0]
+  );
   const [isConsultModalOpen, setIsConsultModalOpen] = useState(false);
 
   useEffect(() => {
@@ -29,23 +36,27 @@ const AjouterCommandeModal = ({ setIsOpen, onCommandeAdded }) => {
           rawItems.map(async (item: Lot | Art) => {
             const route =
               selectedConsultation.type === "consommable"
-                ? `${baseUrl}/api/articles/${(item as Art).id_article}/offres`
-                : `${baseUrl}/api/lots/${(item as Lot).id_lot}/offres`;
+                ? `${baseUrl}/api/articles/${(item as Art).id_article}/${
+                    (item as Art).id_da
+                  }/offresConforme`
+                : `${baseUrl}/api/lots/${(item as Lot).id_lot}/offresConforme`;
 
             const offresRes = await fetch(route);
-            const offres: OffreType[] = await offresRes.json();
-
-            const conformes = offres
-            //.filter((o) => o.evaluation?.conformite === "Conforme");
+            const offres: (LotOffre | ArticleOffre)[] = await offresRes.json();
+            console.log("Fetched offres for item:", item, offres);
+            const conformes = offres;
             const best =
               conformes.length > 0
-                ? conformes.reduce((min, o) => (o.montant < min.montant ? o : min), conformes[0])
+                ? conformes.reduce(
+                    (min, o) => (o.montant < min.montant ? o : min),
+                    conformes[0]
+                  )
                 : null;
 
             setBestOffers((prev) => ({
               ...prev,
               [selectedConsultation.type === "consommable"
-                ? (item as Art).id_article
+                ? `${(item as Art).id_article}-${(item as Art).id_da}`
                 : (item as Lot).id_lot]: best,
             }));
 
@@ -64,18 +75,21 @@ const AjouterCommandeModal = ({ setIsOpen, onCommandeAdded }) => {
 
   const handleConfirm = async () => {
     try {
-      const commandesParFournisseur: Record<string, { id_fournisseur: string; items: any[] }> = {};
+      const commandesParFournisseur: Record<
+        string,
+        { id_fournisseur: string; items: any[] }
+      > = {};
 
       for (const item of items) {
         const itemId =
           selectedConsultation?.type === "consommable"
-            ? (item as Art).id_article
+            ? `${(item as Art).id_article}-${(item as Art).id_da}`
             : (item as Lot).id_lot;
-        const ItemDa = 
+        const ItemDa =
           selectedConsultation?.type === "consommable"
             ? (item as Art).id_da
             : (item as Lot).id_da;
-        
+
         const offre = bestOffers[itemId];
         if (!offre) continue;
 
@@ -132,7 +146,8 @@ const AjouterCommandeModal = ({ setIsOpen, onCommandeAdded }) => {
           <div className="bg-blue-50 border border-blue-200 rounded-md p-3 mb-3">
             <div className="flex justify-between items-center">
               <p>
-                Consultation #{selectedConsultation.id_consultation} – {selectedConsultation.type}
+                Consultation #{selectedConsultation.id_consultation} –{" "}
+                {selectedConsultation.type}
               </p>
               <button
                 className="text-sm text-red-500 underline"
@@ -156,11 +171,13 @@ const AjouterCommandeModal = ({ setIsOpen, onCommandeAdded }) => {
             {items.map((item) => {
               const itemId =
                 selectedConsultation.type === "consommable"
-                  ? (item as Art).id_article
+                  ? `${(item as Art).id_article}-${(item as Art).id_da}`
                   : (item as Lot).id_lot;
               const title =
                 selectedConsultation.type === "consommable"
-                  ? `Article #${(item as Art).id_article} – ${(item as Art).designation} Qté: ${(item as Art).quantite}`
+                  ? `Article #${(item as Art).id_article} – ${
+                      (item as Art).designation
+                    } Qté: ${(item as Art).quantite}`
                   : `Lot #${(item as Lot).id_lot} – DA: ${(item as Lot).id_da}`;
               const offre = bestOffers[itemId];
 
@@ -172,10 +189,13 @@ const AjouterCommandeModal = ({ setIsOpen, onCommandeAdded }) => {
                   <p className="font-semibold text-blue-900">{title}</p>
                   {offre ? (
                     <p className="text-sm text-green-700">
-                      Offre #{offre.id_offre} – ID fournisseur :{offre.id_fournisseur} (Montant: {offre.montant})
+                      Offre #{offre.id_offre} – ID fournisseur :
+                      {offre.id_fournisseur} (Montant: {(offre as (LotOffre | ArticleOffre)).montant})
                     </p>
                   ) : (
-                    <p className="text-sm text-red-600">Aucune offre conforme reçue</p>
+                    <p className="text-sm text-red-600">
+                      Aucune offre conforme reçue
+                    </p>
                   )}
                 </div>
               );

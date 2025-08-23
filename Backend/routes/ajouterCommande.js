@@ -35,10 +35,11 @@ router.post("/commande-insert", async (req, res) => {
     console.log("Items to insert:", items);
     if (type === "consommable") {
       for (const item of items) {
+        const [id_article, id_da] = item.id_item.split("-");
         await client.query(
           `INSERT INTO commande_article (id_commande, id_offre, id_article, id_da)
            VALUES ($1, $2, $3, $4)`,
-          [id_commande, item.id_offre, item.id_item, item.id_da]
+          [id_commande, item.id_offre, id_article, id_da]
         );
       }
     } else {

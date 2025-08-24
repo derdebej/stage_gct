@@ -9,17 +9,13 @@ const Article = () => {
   const limit = 10;
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
-    setPage(1); // reset page on new search
+    setPage(1);
   };
   return (
     <>
       <div className="bg-white rounded-2xl shadow-sm p-6 mb-4">
         <div className="flex justify-between mb-4 items-center border-b-2 border-gray-200 pb-4">
           <h2 className="text-xl  font-semibold text-gray-800 ">Articles</h2>
-          <button className="cursor-pointer bg-blue-800 hover:bg-blue-900 text-white px-4 py-2 rounded-md flex items-center gap-1 text-sm">
-            <FilePlus className="w-4 h-4" />
-            Ajouter un Article
-          </button>
         </div>
         <div className="flex items-center bg-white mb-4 px-4 py-2 rounded-full w-full max-w-xl flex-1  border border-gray-300">
           <Search className="w-4 h-4 text-gray-500 mr-2" />

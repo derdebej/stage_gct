@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import { X, CheckCheck, PlusCircle } from "lucide-react";
 import { Fournisseur } from "../types/fournisseur";
 import FounisseursModal from "./FounisseursModal";
@@ -9,6 +9,8 @@ import { LotOffre } from "../types/LotOffre";
 import ItemSelector from "./ItemSelector";
 import { consultationType } from "../types/consultationType";
 import ConsModal from "./ConsModal";
+import { CircleCheckBig } from "lucide-react";
+
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const AjouterOffre = ({ onClose }) => {
@@ -21,77 +23,66 @@ const AjouterOffre = ({ onClose }) => {
   const [selectedConsultation, setSelectedConsultation] =
     useState<consultationType | null>(null);
   const [isConsModalOpen, setIsConsModalOpen] = useState(false);
-  const [createdOffre, setCreatedOffre] = useState<{
+  type CreatedOffre = {
     id_offre: string;
     id_consultation: string;
     fournisseur_name: string;
-  } | null>(null);
-  const handleFileUpload = async () => {
-    if (!file || !createdOffre) return;
-
-    const formData = new FormData();
-    formData.append("document", file);
-    formData.append("id_offre", createdOffre.id_offre);
-    formData.append("id_consultation", createdOffre.id_consultation);
-    formData.append("fournisseur_name", createdOffre.fournisseur_name);
-
-    try {
-      const res = await fetch(`${baseUrl}/api/upload-offre-document`, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!res.ok) throw new Error("Échec de l'upload du document");
-
-      alert("Document uploadé avec succès !");
-      setCreatedOffre(null);
-      setFile(null);
-      onClose();
-    } catch (err) {
-      console.error(err);
-      alert("Erreur lors de l'envoi du document");
-    }
   };
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState(null);
+  const [messageType, setMessageType] = useState<"success" | "error" | "">("");
 
-  const handleConfirm = async () => {
+  const handleConfirmAndUpload = async () => {
+    if (!selectedConsultation) {
+      setMessage("Veuillez choisir une consultation.");
+      setMessageType("error");
+      setTimeout(() => {
+        setMessage(null);
+        setMessageType("");
+      }, 2000);
+      return;
+    }
+
     const isEquipement = selectedConsultation.type === "equipement";
 
     if (
       !selectedFournisseur ||
       (isEquipement ? selectedLots.length === 0 : selectedArticles.length === 0)
     ) {
-      alert("Veuillez sélectionner un fournisseur et au moins un élément.");
+      setMessage(
+        "Veuillez sélectionner un fournisseur et au moins un élément."
+      );
+      setMessageType("error");
+      setTimeout(() => {
+        setMessage(null);
+        setMessageType("");
+      }, 2000);
       return;
     }
 
     try {
+      setIsSubmitting(true);
       const date_offre = new Date().toISOString();
-
-      // 1. Create the offer
-      const offreResponse = await fetch(`${baseUrl}/api/offre-insert`, {
+      const offreRes = await fetch(`${baseUrl}/api/offre-insert`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           id_fournisseur: selectedFournisseur.id_fournisseur,
-          date_offre: date_offre,
+          date_offre,
           chemin_document: "Sans fichier",
           id_consultation: selectedConsultation.id_consultation,
         }),
       });
-
-      if (!offreResponse.ok)
+      if (!offreRes.ok)
         throw new Error("Erreur lors de la création de l'offre");
+      const { id_offre } = await offreRes.json();
 
-      const { id_offre } = await offreResponse.json();
-      setCreatedOffre({
+      const created: CreatedOffre = {
         id_offre,
         id_consultation: selectedConsultation.id_consultation,
         fournisseur_name: selectedFournisseur.nom,
-      });
+      };
 
-      // 2. Link lots or articles to the offer
       const payload = isEquipement
         ? {
             lots: selectedLots.map((lot) => ({
@@ -100,10 +91,10 @@ const AjouterOffre = ({ onClose }) => {
             })),
           }
         : {
-            articles: selectedArticles.map((article) => ({
-              id_article: article.id_article,
-              id_da: article.id_da,
-              montant: article.montant,
+            articles: selectedArticles.map((a) => ({
+              id_article: a.id_article,
+              id_da: a.id_da,
+              montant: a.montant,
             })),
           };
 
@@ -111,31 +102,70 @@ const AjouterOffre = ({ onClose }) => {
         ? `${baseUrl}/api/offres/${id_offre}/lots`
         : `${baseUrl}/api/offres/${id_offre}/articles`;
 
-      const linkResponse = await fetch(linkUrl, {
+      const linkRes = await fetch(linkUrl, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-
-      if (!linkResponse.ok)
+      if (!linkRes.ok)
         throw new Error("Erreur lors de l'association des éléments");
 
-      alert("Offre ajoutée avec succès !");
-    } catch (error) {
-      console.error(error);
-      alert("Une erreur est survenue lors de l'ajout de l'offre.");
+      if (file) {
+        const formData = new FormData();
+        formData.append("document", file);
+        formData.append("id_offre", created.id_offre);
+        formData.append("id_consultation", created.id_consultation);
+        formData.append("fournisseur_name", created.fournisseur_name);
+
+        const uploadRes = await fetch(`${baseUrl}/api/upload-offre-document`, {
+          method: "POST",
+          body: formData,
+        });
+        if (!uploadRes.ok) throw new Error("Échec de l'upload du document");
+      }
+
+      setMessage("Offre enregistrée avec succès.");
+      setMessageType("success");
+      setSelectedFournisseur(null);
+      setFile(null);
+      setTimeout(() => {
+        setMessage(null);
+        setMessageType("");
+        onClose();
+      }, 2000);
+    } catch (err: any) {
+      console.error(err);
+      const errorMsg =
+        err?.message || "Une erreur est survenue lors de l'enregistrement.";
+      setMessage(errorMsg);
+      setMessageType("error");
+      setTimeout(() => {
+        setMessage(null);
+        setMessageType("");
+      }, 3000);
+    } finally {
+      setIsSubmitting(false);
     }
   };
-
+  if (messageType === "success") {
+    return (
+      <div
+        className={`fixed inset-0 bg-black/40 flex items-center justify-center z-50`}
+      >
+        <div className="bg-white rounded-xl px-6 py-8 shadow-md flex items-center gap-3 text-lg text-gray-800 font-semibold animate-fade-in">
+          <CircleCheckBig className="text-green-600" size={28} />
+          {message}
+        </div>
+      </div>
+    );
+  }
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-lg w-full max-w-lg p-6 relative">
-        <h2 className="text-2xl font-bold mb-4 pb-4 text-blue-900 text-center border-b border-gray-200">
-          Ajouter une offre
-        </h2>
-        {!createdOffre && (
+    <>
+      <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+        <div className="bg-white rounded-xl shadow-lg w-full max-w-lg p-6 relative">
+          <h2 className="text-2xl font-bold mb-4 pb-4 text-blue-900 text-center border-b border-gray-200">
+            Ajouter une offre
+          </h2>
           <>
             <button
               onClick={onClose}
@@ -237,6 +267,20 @@ const AjouterOffre = ({ onClose }) => {
                 setSelectedArticles={setSelectedArticles}
               />
             )}
+            <div className="mt-4">
+              <h4>Uploader le document de l'offre</h4>
+              {file && <div>Nom de fichier à ajouter: {file.name}</div>}
+              <label className="bg-blue-800 hover:bg-blue-900 text-white px-4 py-2 rounded-md flex items-center gap-2 cursor-pointer">
+                <input
+                  type="file"
+                  accept=".pdf"
+                  className="hidden"
+                  onChange={(e) => setFile(e.target.files?.[0] || null)}
+                />
+                <PlusCircle /> Ajouter un document
+              </label>
+            </div>
+
             <div className="mt-10 flex justify-between">
               <button
                 onClick={onClose}
@@ -245,58 +289,37 @@ const AjouterOffre = ({ onClose }) => {
                 Fermer
               </button>
               <button
-                onClick={handleConfirm}
-                className="bg-blue-800 hover:bg-blue-900 text-white px-4 py-2 rounded-md flex items-center gap-2"
+                onClick={handleConfirmAndUpload}
+                disabled={isSubmitting}
+                className="bg-blue-800 hover:bg-blue-900 disabled:opacity-60 disabled:cursor-not-allowed text-white px-4 py-2 rounded-md flex items-center gap-2"
               >
                 <CheckCheck />
-                Confirmer
+                {isSubmitting ? "Traitement..." : "Confirmer & Upload"}
               </button>
             </div>
           </>
-        )}
 
-        {createdOffre && (
-          <div className="mt-4">
-            <h4>Uploader le document de l'offre</h4>
-            {file && <div>Nom de fichier à ajouter: {file.name}</div>}
-            <label className="bg-blue-800 hover:bg-blue-900 text-white px-4 py-2 rounded-md flex items-center gap-2 cursor-pointer">
-              <input
-                type="file"
-                accept=".pdf"
-                className="hidden"
-                onChange={(e) => setFile(e.target.files?.[0] || null)}
-              />
-              <PlusCircle /> Ajouter un document
-            </label>
-            <button
-              onClick={handleFileUpload}
-              disabled={!file}
-              className={`mt-2 px-4 py-2 rounded-md flex items-center gap-2 ${
-                file
-                  ? "bg-blue-800 hover:bg-blue-900 text-white cursor-pointer"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}
-            >
-              <CheckCheck />
-              Confirmer l'upload
-            </button>
-          </div>
-        )}
-        {isModalOpen && (
-          <FounisseursModal
-            setIsModalOpen={setIsModalOpen}
-            setSelectedFournisseur={setSelectedFournisseur}
-          />
-        )}
-        {isConsModalOpen && (
-          <ConsModal
-            setSelectedConsultations={setSelectedConsultation}
-            selectedConsultations={selectedConsultation}
-            setIsModalOpen={setIsConsModalOpen}
-          />
-        )}
+          {isModalOpen && (
+            <FounisseursModal
+              setIsModalOpen={setIsModalOpen}
+              setSelectedFournisseur={setSelectedFournisseur}
+            />
+          )}
+          {isConsModalOpen && (
+            <ConsModal
+              setSelectedConsultations={setSelectedConsultation}
+              selectedConsultations={selectedConsultation}
+              setIsModalOpen={setIsConsModalOpen}
+            />
+          )}
+        </div>
       </div>
-    </div>
+      {message === "error" && (
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded shadow-lg bg-red-100 text-red-800 border border-red-300">
+          {message}
+        </div>
+      )}
+    </>
   );
 };
 

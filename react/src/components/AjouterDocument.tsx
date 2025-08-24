@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { X, PlusCircle, Shredder, CheckCheck } from "lucide-react";
+import { X, PlusCircle, Shredder, CheckCheck, CircleCheckBig } from "lucide-react";
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 
@@ -30,6 +30,8 @@ const AjouterDocument = ({
   const [fileName, setFileName] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const [messageType, setMessageType] = useState<"success" | "error" | "">("");
 
   const [data, setData] = useState({
     numero: null,
@@ -82,13 +84,26 @@ const AjouterDocument = ({
       });
 
       const result = await res.json();
-      console.log("Enregistré avec succès :", result);
+      setMessage("Document enregistré avec succès.");
+      setMessageType("success");
       resetStates();
-      onClose();
+      setTimeout(() => {
+        setMessage(null);
+        setMessageType("");
+        onClose();
+      }, 3000);
+      
     } catch (error) {
       console.error("Erreur d'enregistrement :", error);
+      setMessage("Erreur lors de l'enregistrement.");
+      setMessageType("error");
+      setTimeout(() => {
+        setMessage(null);
+        setMessageType("");
+      }, 3000);
     }
   };
+  
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -112,7 +127,6 @@ const AjouterDocument = ({
       }
 
       const result = await res.json();
-      console.log("PDF upload response:", result);
 
       setData({
         numero: result.numero,
@@ -131,6 +145,20 @@ const AjouterDocument = ({
       setErrorMsg(err.message || "Erreur inattendue.");
     }
   };
+  if (message) {
+    return (
+      <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+        <div className="bg-white rounded-xl px-6 py-8 shadow-md flex items-center gap-3 text-lg text-gray-800 font-semibold animate-fade-in">
+          {messageType === "success" ? (
+            <CircleCheckBig className="text-green-600" size={28} />
+          ) : (
+            <X className="text-red-600" size={28} />
+          )}
+          {message}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">

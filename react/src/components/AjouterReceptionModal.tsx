@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { X, CircleCheckBig } from "lucide-react";
 import ListeCommandesModal from "./ListeCommandesModal";
 import { CommandeType } from "../types/Comm";
 
@@ -11,6 +11,8 @@ const AjouterReceptionModal = ({ setIsOpen, onReceptionAdded }) => {
   );
   const [isCommandeModalOpen, setIsCommandeModalOpen] = useState(false);
   const [items, setItems] = useState<any[]>([]);
+  const [message, setMessage] = useState<string | null>(null);
+  const [messageType, setMessageType] = useState<"success" | "error" | "">("");
 
   const [form, setForm] = useState({
     id_commande: "",
@@ -28,13 +30,20 @@ const AjouterReceptionModal = ({ setIsOpen, onReceptionAdded }) => {
       if (!res.ok)
         throw new Error("Erreur lors du chargement des détails de la commande");
       const data = await res.json();
-      console.log("Commande items:", data.lots);
 
       let items = [];
-      if (data.articles?.length > 0) items = data.articles;
-      else if (data.lots?.length > 0) items = data.lots;
+      if (data.articles?.length > 0) {
+        items = data.articles.map((article: any) => ({
+          ...article,
+          quantite_recue: 0,
+        }));
+      } else if (data.lots?.length > 0) {
+        items = data.lots.map((lot: any) => ({
+          ...lot,
+          recue: false,
+        }));
+      }
       setItems(items);
-
     } catch (err) {
       console.error(err);
     }
@@ -53,7 +62,6 @@ const AjouterReceptionModal = ({ setIsOpen, onReceptionAdded }) => {
         ...form,
         items,
       };
-      console.log("Submitting payload:", payload);
 
       const res = await fetch(`${baseUrl}/api/receptions-insert`, {
         method: "POST",
@@ -65,11 +73,38 @@ const AjouterReceptionModal = ({ setIsOpen, onReceptionAdded }) => {
 
       const newReception = await res.json();
       onReceptionAdded(newReception);
-      setIsOpen(false);
+      setMessage("Réception ajoutée avec succès.");
+      setMessageType("success");
+      setTimeout(() => {
+        setMessage(null);
+        setMessageType("");
+        setIsOpen(false);
+      }, 3000);
     } catch (err) {
       console.error(err);
+      setMessage("Erreur lors de l'ajout de la réception.");
+      setMessageType("error");
+      setTimeout(() => {
+        setMessage(null);
+        setMessageType("");
+      }, 3000);
     }
   };
+
+  if (message) {
+    return (
+      <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+        <div className="bg-white rounded-xl px-6 py-8 shadow-md flex items-center gap-3 text-lg text-gray-800 font-semibold animate-fade-in">
+          {messageType === "success" ? (
+            <CircleCheckBig className="text-green-600" size={28} />
+          ) : (
+            <X className="text-red-600" size={28} />
+          )}
+          {message}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -158,7 +193,7 @@ const AjouterReceptionModal = ({ setIsOpen, onReceptionAdded }) => {
                                 type="number"
                                 min="0"
                                 max={item.quantite_commande}
-                                value={item.quantite_recue || 0}
+                                value={item.quantite_recue}
                                 onChange={(e) =>
                                   handleItemChange(
                                     idx,

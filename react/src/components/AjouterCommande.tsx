@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { X, CircleCheckBig } from "lucide-react";
 import ListeConsultationsModal from "./ListeConsultationsModal";
 import { consultationType } from "../types/consultationType";
 import { OffreType } from "../types/OffreType";
@@ -21,6 +21,8 @@ const AjouterCommandeModal = ({ setIsOpen, onCommandeAdded }) => {
     new Date().toISOString().split("T")[0]
   );
   const [isConsultModalOpen, setIsConsultModalOpen] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const [messageType, setMessageType] = useState<"success" | "error" | "">("");
 
   useEffect(() => {
     if (!selectedConsultation) return;
@@ -122,12 +124,37 @@ const AjouterCommandeModal = ({ setIsOpen, onCommandeAdded }) => {
         const newCmd = await res.json();
         onCommandeAdded(newCmd);
       }
-
-      setIsOpen(false);
+      setMessage("Commandes créées avec succès.");
+      setMessageType("success");
+      setTimeout(() => {
+        setIsOpen(false);
+        setMessage(null);
+        setMessageType("");
+      }, 3000);
     } catch (err) {
       console.error(err);
+      setMessage("Erreur lors de la création des commandes.");
+      setMessageType("error");
+      setTimeout(() => {
+        setMessage(null);
+        setMessageType("");
+      }, 3000);
     }
   };
+  if (message) {
+    return (
+      <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+        <div className="bg-white rounded-xl px-6 py-8 shadow-md flex items-center gap-3 text-lg text-gray-800 font-semibold animate-fade-in">
+          {messageType === "success" ? (
+            <CircleCheckBig className="text-green-600" size={28} />
+          ) : (
+            <X className="text-red-600" size={28} />
+          )}
+          {message}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -190,7 +217,8 @@ const AjouterCommandeModal = ({ setIsOpen, onCommandeAdded }) => {
                   {offre ? (
                     <p className="text-sm text-green-700">
                       Offre #{offre.id_offre} – ID fournisseur :
-                      {offre.id_fournisseur} (Montant: {(offre as (LotOffre | ArticleOffre)).montant})
+                      {offre.id_fournisseur} (Montant:{" "}
+                      {(offre as LotOffre | ArticleOffre).montant})
                     </p>
                   ) : (
                     <p className="text-sm text-red-600">

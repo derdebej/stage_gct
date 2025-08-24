@@ -3,7 +3,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import dotenv from "dotenv";
-import db from "../db.js"; // adjust if needed
+import db from "../db.js";
 
 dotenv.config();
 
@@ -26,18 +26,17 @@ router.post("/api/upload-offre-document", upload.single("document"), async (req,
     fs.mkdirSync(path.dirname(targetPath), { recursive: true });
 
     fs.copyFile(req.file.path, targetPath, async (err) => {
-      fs.unlink(req.file.path, () => {}); // remove temp file
+      fs.unlink(req.file.path, () => {});
 
       if (err) {
         console.error(err);
         return res.status(500).json({ error: "Erreur lors de la copie du fichier" });
       }
 
-      // ✅ Update chemin_document in the `offre` table
       try {
         await db.query(
           "UPDATE offre SET chemin_document = $1 WHERE id_offre = $2",
-          [relativePath.replace(/\\/g, "/"), id_offre] // use forward slashes
+          [relativePath.replace(/\\/g, "/"), id_offre]
         );
 
         return res.status(200).json({

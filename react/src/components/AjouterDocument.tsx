@@ -127,7 +127,6 @@ const AjouterDocument = ({
       }
 
       const result = await res.json();
-
       setData({
         numero: result.numero,
         demandeur: result.demandeur,
@@ -136,7 +135,7 @@ const AjouterDocument = ({
         coutTotale: result.coutTotale,
         type: result.type,
         objet: result.objet,
-        numAED: result.numeroAED.replace(/ /g, ""),
+        numAED: result.numeroAED ? result.numeroAED.replace(/ /g, "") : result.numeroAED,
         codeInvest: result.codeInvest,
         articles: Array.isArray(result.articles) ? result.articles : [],
       });

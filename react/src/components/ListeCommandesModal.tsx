@@ -57,7 +57,7 @@ const ListeCommandesModal = ({ setIsModalOpen, onSelectCommande }: Props) => {
               >
                 <p className="font-semibold text-blue-900">Commande #{commande.id_commande}</p>
                 <p className="text-sm text-gray-600">Date: {commande.date}</p>
-                <p className="text-sm text-gray-600">Montant: {commande.statut} TND</p>
+                <p className="text-sm text-gray-600">Statut: {commande.statut}</p>
               </button>
             ))}
           </div>

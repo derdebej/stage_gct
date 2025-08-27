@@ -114,12 +114,13 @@ router.post("/", upload.single("file"), async (req, res) => {
             `
             UPDATE demande_d_achat da
             SET etat = 'Traitée'
-            FROM lot l
-            WHERE da.id_da = l.id_da
-              AND l.id_lot = $1
+            FROM article a
+            WHERE da.id_da = a.id_da
+              AND a.id_lot = $1
             `,
             [itemId]
           );
+
         }
       }
     }

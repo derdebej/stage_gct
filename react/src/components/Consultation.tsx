@@ -27,9 +27,10 @@ const Consultation = ({
   const [consultationId, setConsultationId] = useState("");
   const [nombreLots, setNombreLots] = useState("");
   const [error, setError] = useState("");
-  const [lots, setLots] = useState(
-    selectedRows.map((row) => ({ id_da: row.id_da, id_lot: "" }))
-  );
+  const [articleLots, setArticleLots] = useState<{
+    [articleId: string]: number | "";
+  }>({});
+
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"success" | "error" | "">("");
   const [type, setType] = useState("");
@@ -40,9 +41,24 @@ const Consultation = ({
   const userid = user?.id_utilisateur;
 
   useEffect(() => {
-    const fetchArticlesForConsommable = async () => {
-      if (type !== "consommable") return;
+    if (articles.length > 0) {
+      setArticleLots((prev) => {
+        const updated = { ...prev };
+        articles.forEach((art) => {
+          const key = `${art.id_article}-${art.id_da}`;
+          if (!(key in updated)) {
+            updated[key] = "";
+          }
+        });
+        return updated;
+      });
+    }
+  }, [articles]);
 
+  
+
+  useEffect(() => {
+    const fetchArticlesForConsommable = async () => {
       const id_das = selectedRows.map((row) => row.id_da).join(",");
 
       try {
@@ -90,7 +106,7 @@ const Consultation = ({
 
   const handleCreateConsultation = async () => {
     if (type === "equipement") {
-      if (!consultationId || !nombreLots || lots.some((lot) => !lot.id_lot)) {
+      if (!consultationId || !nombreLots) {
         setError("Tous les champs sont requis.");
         return;
       }
@@ -108,17 +124,10 @@ const Consultation = ({
         date_creation: new Date().toISOString(),
         userid,
         type,
-        ...(type === "equipement" && lots.length > 0
-          ? {
-              lots: lots.map((lot) => ({
-                id_lot: Number(lot.id_lot),
-                id_da: lot.id_da,
-              })),
-            }
-          : {}),
+        articleLots,
         id_das: selectedRows.map((row) => row.id_da),
       };
-
+      console.log(payload)
       const res = await fetch(`${baseUrl}/api/enrigistrer-consultation`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -130,7 +139,7 @@ const Consultation = ({
       setMessage("Consultation regroupée avec succès");
       setMessageType("success");
       setSelectedRows([]);
-      setLots([]);
+      setArticleLots({});
       setConsultationId("");
       setNombreLots("");
       setError("");
@@ -216,38 +225,63 @@ const Consultation = ({
               <table className="w-full text-sm border border-gray-200">
                 <thead className="bg-gray-100">
                   <tr>
-                    <th className="px-4 py-2 text-left text-gray-600">Titre</th>
+                    <th className="px-4 py-2 text-left text-gray-600">ID DA</th>
                     <th className="px-4 py-2 text-left text-gray-600">
-                      Montant
+                      Designation
                     </th>
+                    <th className="px-4 py-2 text-left text-gray-600">
+                      quantité
+                    </th>
+                    <th className="px-4 py-2 text-left text-gray-600">PU</th>
                     <th className="px-4 py-2 text-left text-gray-600">
                       N° Lot
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {selectedRows.map((row, index) => (
-                    <tr key={row.id_da} className="border-b border-gray-100">
-                      <td className="px-4 py-2">{row.titre}</td>
-                      <td className="px-4 py-2">{row.montant} dt</td>
-                      <td className="px-4 py-2">
-                        <input
-                          type="text"
-                          value={lots[index].id_lot}
-                          onChange={(e) => {
-                            const updated = [...lots];
-                            updated[index].id_lot = e.target.value;
-                            setLots(updated);
-                          }}
-                          className={`w-full px-3 py-1.5 rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-900 ${
-                            error ? "border-red-500" : "border-gray-300"
-                          }`}
-                          placeholder="Ex: 1"
-                        />
-                      </td>
-                    </tr>
-                  ))}
+                  {articles.map((article, index) => {
+                    const key = `${article.id_article}-${article.id_da}`;
+
+                    return (
+                      <tr key={index} className="border-b border-gray-100">
+                        <td className="px-4 py-2">{article.id_da}</td>
+                        <td className="px-4 py-2">{article.designation}</td>
+                        <td className="px-4 py-2">{article.quantite}</td>
+                        <td className="px-4 py-2">
+                          {article.prix_unitaire || "—"} dt
+                        </td>
+                        <td className="px-4 py-2">
+                          <select
+                            value={articleLots[key] || ""}
+                            onChange={(e) =>
+                              setArticleLots((prev) => ({
+                                ...prev,
+                                [key]: e.target.value
+                                  ? Number(e.target.value)
+                                  : "",
+                              }))
+                            }
+                            className="w-25 px-3 py-1.5 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-900"
+                          >
+                            <option value="">Choisir</option>
+                            {Array.from(
+                              { length: Number(nombreLots) || 0 },
+                              (_, i) => i + 1
+                            ).map((lotNum) => (
+                              <option key={lotNum} value={lotNum}>
+                                Lot {lotNum}
+                              </option>
+                            ))}
+                          </select>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+
+                <tbody>
                   <tr>
+                    <td></td>
                     <td></td>
                     <td className="px-4 py-2 font-semibold text-gray-700">
                       Montant Total
@@ -256,6 +290,37 @@ const Consultation = ({
                   </tr>
                 </tbody>
               </table>
+              <div className="flex justify-end gap-4 mt-4">
+                <button
+                  disabled={articlePage === 1}
+                  onClick={() => setArticlePage((p) => Math.max(1, p - 1))}
+                  className={`px-3 py-1 rounded-md border ${
+                    articlePage === 1
+                      ? "text-gray-400 border-gray-200 cursor-not-allowed"
+                      : "text-blue-900 border-blue-900 hover:bg-blue-50"
+                  }`}
+                >
+                  Précédent
+                </button>
+
+                <span className="text-gray-600 font-medium mt-1">
+                  Page {articlePage} / {totalArticlePages}
+                </span>
+
+                <button
+                  disabled={articlePage === totalArticlePages}
+                  onClick={() =>
+                    setArticlePage((p) => Math.min(totalArticlePages, p + 1))
+                  }
+                  className={`px-3 py-1 rounded-md border ${
+                    articlePage === totalArticlePages
+                      ? "text-gray-400 border-gray-200 cursor-not-allowed"
+                      : "text-blue-900 border-blue-900 hover:bg-blue-50"
+                  }`}
+                >
+                  Suivant
+                </button>
+              </div>
             </div>
           ) : (
             <div className="overflow-x-auto rounded-lg">

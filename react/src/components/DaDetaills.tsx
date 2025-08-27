@@ -6,12 +6,12 @@ import { DA } from "../types/DA";
 import { Lot } from "../types/Lot";
 import { consultationType } from "../types/consultationType";
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
+const BASE_PDF_PATH = import.meta.env.VITE_BASE_PDF_PATH;
 
+//import "react-pdf/dist/esm/Page/AnnotationLayer.css";
+//import "react-pdf/dist/esm/Page/TextLayer.css";
 
-import "react-pdf/dist/esm/Page/AnnotationLayer.css";
-import "react-pdf/dist/esm/Page/TextLayer.css";
-
-pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.js";
+//pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.js";
 
 type Props = {
   isOpen: boolean;
@@ -20,7 +20,7 @@ type Props = {
 };
 
 const DemandeDetailsModal: React.FC<Props> = ({ isOpen, onClose, demande }) => {
-  const [relatedLot, setRelatedLot] = useState<Lot | null>(null);
+  const [relatedLots, setRelatedLots] = useState<Lot[]>([]);
   const [relatedConsultation, setRelatedConsultation] =
     useState<consultationType | null>(null);
 
@@ -38,7 +38,7 @@ const DemandeDetailsModal: React.FC<Props> = ({ isOpen, onClose, demande }) => {
         if (!res.ok) throw new Error("Erreur lors de la récupération");
 
         const data = await res.json();
-        setRelatedLot(data.lot);
+        setRelatedLots(data.lot);
         setRelatedConsultation(data.consultation);
       } catch (err) {
         console.error("Erreur dans fetch:", err);
@@ -63,7 +63,7 @@ const DemandeDetailsModal: React.FC<Props> = ({ isOpen, onClose, demande }) => {
     chemin_document,
   } = demande;
 
-  const pdfPath = "http://localhost:3001/pdfs/DA%20091260.pdf";
+  //const pdfPath = `${BASE_PDF_PATH}/${encodeURIComponent(chemin_document)}`;
 
   return (
     <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
@@ -147,22 +147,19 @@ const DemandeDetailsModal: React.FC<Props> = ({ isOpen, onClose, demande }) => {
                 )}
 
                 {/* Lot card */}
-                {relatedLot && (
+                {relatedLots && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 mb-2">
-                    <div className="relative bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-900">
-                      <p>
-                        <span className="font-semibold">ID Lot:</span>{" "}
-                        {relatedLot.id_lot}
-                      </p>
-                      <p>
-                        <span className="font-semibold">ID DA:</span>{" "}
-                        {relatedLot.id_da}
-                      </p>
-                      <p>
-                        <span className="font-semibold">Consultation:</span>{" "}
-                        {relatedLot.id_consultation}
-                      </p>
-                    </div>
+                    {relatedLots.map((relatedLot, index) => (
+                      <div
+                        key={index}
+                        className="relative bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-900"
+                      >
+                        <p>
+                          <span className="font-semibold">ID Lot:</span>{" "}
+                          {relatedLot.id_lot}
+                        </p>
+                      </div>
+                    ))}
                   </div>
                 )}
               </>
@@ -170,8 +167,10 @@ const DemandeDetailsModal: React.FC<Props> = ({ isOpen, onClose, demande }) => {
           </div>
 
           {/* PDF Viewer */}
+          {/*
           {chemin_document && (
             <div className="flex-1 border p-3 rounded-md bg-gray-50">
+              {pdfPath}
               <Document
                 file={pdfPath}
                 onLoadError={(err) => console.error("Erreur PDF:", err)}
@@ -189,7 +188,7 @@ const DemandeDetailsModal: React.FC<Props> = ({ isOpen, onClose, demande }) => {
                 Ouvrir dans un nouvel onglet
               </a>
             </div>
-          )}
+          )}*/}
         </div>
 
         <div className="mt-6 text-right">

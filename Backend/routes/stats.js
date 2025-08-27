@@ -5,7 +5,7 @@ const router = express.Router();
 
 const getCurrentYear = () => new Date().getFullYear();
 
-
+// DEPENSE CONSOMMABLE
 router.get("/depense-consommable", async (req, res) => {
   const year = getCurrentYear();
   try {
@@ -14,17 +14,15 @@ router.get("/depense-consommable", async (req, res) => {
         COALESCE(SUM(ra.quantite_recue * oa.montant), 0) AS total_depense,
         COUNT(DISTINCT ca.id_commande_article) AS nombre_commandes
       FROM reception r
-      JOIN reception_article ra ON r.id_reception = ra.id_reception
-      JOIN commande_article ca ON ra.id_commande_article = ca.id_commande_article
+      JOIN reception_article ra ON r.id_reception::varchar = ra.id_reception::varchar
+      JOIN commande_article ca ON ra.id_commande_article::varchar = ca.id_commande_article::varchar
       JOIN offre_article oa 
-        ON ca.id_article = oa.id_article
-       AND ca.id_da = oa.id_da
-       AND ca.id_offre = oa.id_offre
+        ON ca.id_article::varchar = oa.id_article::varchar
+       AND ca.id_da::varchar = oa.id_da::varchar
+       AND ca.id_offre::varchar = oa.id_offre::varchar
       WHERE EXTRACT(YEAR FROM r.date) = $1;
     `;
     const { rows } = await db.query(query, [year]);
-        console.log(rows[0]);
-
     res.json({
       year,
       type: "consommable",
@@ -37,8 +35,7 @@ router.get("/depense-consommable", async (req, res) => {
   }
 });
 
-
-
+// DEPENSE EQUIPEMENT
 router.get("/depense-equipement", async (req, res) => {
   const year = getCurrentYear();
   try {
@@ -47,9 +44,12 @@ router.get("/depense-equipement", async (req, res) => {
         COALESCE(SUM(ol.montant), 0) AS total_depense,
         COUNT(DISTINCT cl.id_commande_lot) AS nombre_commandes
       FROM reception r
-      JOIN reception_lot rl ON r.id_reception = rl.id_reception
-      JOIN commande_lot cl ON rl.id_commande_lot = cl.id_commande_lot
-      JOIN offre_lot ol ON cl.id_lot = ol.id_lot AND cl.id_offre = ol.id_offre
+      JOIN reception_lot rl ON r.id_reception::varchar = rl.id_reception::varchar
+      JOIN commande_lot cl ON rl.id_commande_lot::varchar = cl.id_commande_lot::varchar
+      JOIN lot l ON cl.id_lot::varchar = l.id_lot::varchar
+      JOIN offre_lot ol 
+        ON cl.id_lot::varchar = ol.id_lot::varchar
+       AND cl.id_offre::varchar = ol.id_offre::varchar
       WHERE rl.recu = true
         AND EXTRACT(YEAR FROM r.date) = $1;
     `;
@@ -66,24 +66,28 @@ router.get("/depense-equipement", async (req, res) => {
   }
 });
 
-
-
+// DEPENSE PAR AED
 router.get("/depense-aed/:numAED", async (req, res) => {
   const { numAED } = req.params;
   const year = getCurrentYear();
+
   try {
     const query = `
       SELECT COALESCE(SUM(ol.montant), 0) AS total_depense
-      FROM lot l
-      JOIN demande_d_achat da ON l.id_da = da.id_da
-      JOIN commande_lot cl ON l.id_lot = cl.id_lot
-      JOIN reception_lot rl ON cl.id_commande_lot = rl.id_commande_lot
-      JOIN reception r ON rl.id_reception = r.id_reception
-      JOIN offre_lot ol ON cl.id_lot = ol.id_lot AND cl.id_offre = ol.id_offre
+      FROM demande_d_achat da
+      JOIN article art ON art.id_da::varchar = da.id_da::varchar
+      JOIN lot l ON art.id_lot::varchar = l.id_lot::varchar
+      JOIN commande_lot cl ON cl.id_lot::varchar = l.id_lot::varchar
+      JOIN reception_lot rl ON rl.id_commande_lot::varchar = cl.id_commande_lot::varchar
+      JOIN reception r ON rl.id_reception::varchar = r.id_reception::varchar
+      JOIN offre_lot ol 
+        ON ol.id_lot::varchar = cl.id_lot::varchar
+       AND ol.id_offre::varchar = cl.id_offre::varchar
       WHERE da.numaed = $1
         AND rl.recu = true
         AND EXTRACT(YEAR FROM r.date) = $2;
     `;
+
     const { rows } = await db.query(query, [numAED, year]);
     res.json({ year, numAED, total: rows[0].total_depense });
   } catch (err) {
@@ -91,6 +95,5 @@ router.get("/depense-aed/:numAED", async (req, res) => {
     res.status(500).json({ error: "Erreur calcul depense par Num AED" });
   }
 });
-
 
 export default router;

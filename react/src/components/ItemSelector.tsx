@@ -5,6 +5,7 @@ import { Art } from "../types/Art";
 import { ArticleOffre } from "../types/ArticleOffre";
 import { consultationType } from "../types/consultationType";
 import { LotOffre } from "../types/LotOffre";
+import LotDetailModal from "./LotDetailModal";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -25,6 +26,8 @@ const ItemSelector: React.FC<ItemSelectorProps> = ({
 }) => {
   const [search, setSearch] = useState("");
   const [items, setItems] = useState<(Lot | Art)[]>([]);
+  const [isDetailOpen, setIsDetaiOpen] = useState(false);
+  const [detailId, setDetailId] = useState(null);
 
   const isEquipement = selectedConsultation?.type === "equipement";
 
@@ -133,7 +136,6 @@ const ItemSelector: React.FC<ItemSelectorProps> = ({
         />
       </div>
 
-      {/* List of Items */}
       <div className="max-h-60 overflow-y-auto">
         {items.length > 0 ? (
           items.map((item) => {
@@ -151,13 +153,18 @@ const ItemSelector: React.FC<ItemSelectorProps> = ({
               >
                 <div>
                   {isEquipement ? (
-                    <div className="m-1">
+                    <div
+                      className="m-1"
+                      onClick={() => {
+                        setIsDetaiOpen(true);
+                        setDetailId((item as Lot).id_lot);
+                      }}  
+                    >
                       <p className="text-sm font-semibold text-gray-800  w-60">
                         Lot: {(item as Lot).id_lot}
                       </p>
                       <p className="text-xs text-gray-500  w-60">
-                        ID DA: {(item as Lot).id_da} • Consultation:{" "}
-                        {(item as Lot).id_consultation}
+                        Consultation: {(item as Lot).id_consultation}
                       </p>
                     </div>
                   ) : (
@@ -246,6 +253,13 @@ const ItemSelector: React.FC<ItemSelectorProps> = ({
           <p className="text-sm text-center text-gray-500">Aucun résultat</p>
         )}
       </div>
+      {isDetailOpen && (
+        <LotDetailModal
+          lotId={detailId}
+          open={isDetailOpen}
+          onClose={() => setIsDetaiOpen(false)}
+        />
+      )}
     </>
   );
 };

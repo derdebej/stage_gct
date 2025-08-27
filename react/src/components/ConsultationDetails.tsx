@@ -1,8 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { DA } from "../types/DA";
 import { Lot } from "../types/Lot";
 import { consultationType } from "../types/consultationType";
+import LotDetailModal from "./LotDetailModal";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -18,8 +19,11 @@ const ConsultationDetails: React.FC<Props> = ({
   consultation,
 }) => {
   if (!isOpen || !consultation) return null;
-  const [relatedDemandes, setRelatedDemandes] = React.useState<DA[]>([]);
-  const [relatedLots, setrelatedLots] = React.useState<Lot[]>([]);
+  const [relatedDemandes, setRelatedDemandes] = useState<DA[]>([]);
+  const [relatedLots, setrelatedLots] = useState<Lot[]>([]);
+  const [isDetailOpen, setIsDetaiOpen] = useState(false);
+  const [detailId, setDetailId] = useState(null);
+
   useEffect(() => {
     const fetchDetails = async () => {
       try {
@@ -75,35 +79,40 @@ const ConsultationDetails: React.FC<Props> = ({
             {consultation.statut_evaluation}
           </div>
         </div>
-        <h3 className="font-bold text-lg text-blue-800 border-b pb-2 mt-6">
-          Demande d'Achat liée
-        </h3>
-        <div className="max-h-46 overflow-y-auto pr-2 ">
-          {relatedDemandes &&
-            relatedDemandes.map((relatedDemande, index) => (
-              <div key={index} className="mt-6">
-                <div className="space-y-2 text-sm pb-6 border-b border-neutral-300">
-                  <div>
-                    <strong>ID DA :</strong> {relatedDemande.id_da}
-                  </div>
-                  <div>
-                    <strong>Titre :</strong> {relatedDemande.titre}
-                  </div>
-                  <div>
-                    <strong>Date :</strong>{" "}
-                    {new Date(relatedDemande.date).toLocaleDateString("fr-FR")}
-                  </div>
-                  <div>
-                    <strong>Montant estimé :</strong> {relatedDemande.montant}{" "}
-                    TND
-                  </div>
-                  <div>
-                    <strong>Statut :</strong> {relatedDemande.etat}
+
+        {relatedDemandes &&
+          relatedDemandes.map((relatedDemande, index) => (
+            <>
+              <h3 className="font-bold text-lg text-blue-800 border-b pb-2 mt-6">
+                Demande d'Achat liée
+              </h3>
+              <div className="max-h-46 overflow-y-auto pr-2 ">
+                <div key={index} className="mt-6">
+                  <div className="space-y-2 text-sm pb-6 border-b border-neutral-300">
+                    <div>
+                      <strong>ID DA :</strong> {relatedDemande.id_da}
+                    </div>
+                    <div>
+                      <strong>Titre :</strong> {relatedDemande.titre}
+                    </div>
+                    <div>
+                      <strong>Date :</strong>{" "}
+                      {new Date(relatedDemande.date).toLocaleDateString(
+                        "fr-FR"
+                      )}
+                    </div>
+                    <div>
+                      <strong>Montant estimé :</strong> {relatedDemande.montant}{" "}
+                      TND
+                    </div>
+                    <div>
+                      <strong>Statut :</strong> {relatedDemande.etat}
+                    </div>
                   </div>
                 </div>
               </div>
-            ))}
-        </div>
+            </>
+          ))}
 
         {relatedLots.length > 0 && (
           <>
@@ -112,9 +121,15 @@ const ConsultationDetails: React.FC<Props> = ({
             </h3>
             <ul className="list-disc pl-5 text-sm mt-2 space-y-1">
               {relatedLots.map((lot, index) => (
-                <li key={index}>
-                  <strong>ID Lot:</strong> {lot.id_lot} —{" "}
-                  <strong>ID DA:</strong> {lot.id_da}
+                <li
+                  key={index}
+                  onClick={() => {
+                    setDetailId(lot.id_lot);
+                    setIsDetaiOpen(true);
+                  }}
+                  className="cursor-pointer hover:bg-blue-50 py-2 px-4 w-max rounded-xl"
+                >
+                  <strong>ID Lot:</strong> {lot.id_lot}
                 </li>
               ))}
             </ul>
@@ -130,6 +145,13 @@ const ConsultationDetails: React.FC<Props> = ({
           </button>
         </div>
       </div>
+      {isDetailOpen && (
+        <LotDetailModal
+          lotId={detailId}
+          open={isDetailOpen}
+          onClose={() => setIsDetaiOpen(false)}
+        />
+      )}
     </div>
   );
 };

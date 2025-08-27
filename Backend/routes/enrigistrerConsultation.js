@@ -4,23 +4,17 @@ import pool from '../db.js';
 const router = express.Router();
 
 router.post('/', async (req, res) => {
-  const {
-    id_consultation,
-    nombre_lots,
-    date_creation,
-    userid,
-    lots,
-    type,
-    id_das,
-  } = req.body;
+  const { id_consultation, nombre_lots, date_creation, userid, articleLots, type, id_das } = req.body;
+
 
   if (!id_consultation || !date_creation) {
     return res.status(400).json({ error: 'Champs manquants ou invalides.' });
   }
 
-  if (type === 'equipement' && (!Array.isArray(lots) || !nombre_lots)) {
-    return res.status(400).json({ error: 'Les lots sont requis pour le type équipement.' });
-  }
+  if (type === 'equipement' && (!articleLots || typeof articleLots !== 'object' || !nombre_lots)) {
+  return res.status(400).json({ error: 'Les articles/lots sont requis pour le type équipement.' });
+}
+
 
 
 
@@ -36,22 +30,40 @@ router.post('/', async (req, res) => {
     
     await client.query(consultationInsert, [id_consultation, nombre_lots, date_creation, userid, type]);
 
-    if (type === 'equipement' && Array.isArray(lots) && lots.length > 0) {
-      for (const lot of lots) {
+    if (type === 'equipement' && nombre_lots > 0) {
+      for (let i = 1; i <= nombre_lots; i++) {
         const lotInsert = `
-          INSERT INTO lot (id_lot, id_da, id_consultation)
-          VALUES ($1, $2, $3)
+          INSERT INTO lot (id_lot, id_consultation)
+          VALUES ($1, $2)
         `;
-        await client.query(lotInsert, [id_consultation * 10 + lot.id_lot, lot.id_da, id_consultation]);
+        await client.query(lotInsert, [id_consultation * 10 + i, id_consultation]);
+      }
+
+      for (const [key, lotNum] of Object.entries(articleLots)) {
+        if (!lotNum) continue; // skip unassigned
+        const [id_article, id_da] = key.split("-");
+
+        const updateArticle = `
+          UPDATE article
+          SET id_lot = $1
+          WHERE id_article = $2 AND id_da = $3
+        `;
+        const id_lot = `${id_consultation}-${lotNum}`;
+        await client.query(updateArticle, [
+          id_lot,
+          id_article,
+          id_da,
+        ]);
       }
     } else {
       for (const id of id_das) {
-      await client.query(
-        `INSERT INTO consultation_da (id_consultation, id_da) VALUES ($1, $2)`,
-        [id_consultation, id]
-      );
+        await client.query(
+          `INSERT INTO consultation_da (id_consultation, id_da) VALUES ($1, $2)`,
+          [id_consultation, id]
+        );
+      }
     }
-    }
+
     for (const id of id_das) {
       const updateEtat = `
         UPDATE demande_d_achat

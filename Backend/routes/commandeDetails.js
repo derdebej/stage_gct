@@ -36,7 +36,7 @@ router.get("/commandes/:id_commande/details", async (req, res) => {
       articles = articlesRes.rows;
     } else if (commande.type === "equipement") {
       const lotsRes = await db.query(
-        `SELECT cl.id_lot,cl.id_commande,l.id_da,l.id_consultation,cl.id_commande_lot
+        `SELECT cl.id_lot,cl.id_commande,l.id_consultation,cl.id_commande_lot
          FROM commande_lot cl
          JOIN lot l ON cl.id_lot = l.id_lot
          WHERE cl.id_commande = $1`,

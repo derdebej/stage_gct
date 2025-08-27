@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Loading from "../components/Loading";
 import { X } from "lucide-react";
+import LotDetailModal from "./LotDetailModal";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -13,6 +14,8 @@ const EvalDetail: React.FC<EvalDetailProps> = ({ id_evaluation, onClose }) => {
   const [evaluation, setEvaluation] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isDetailOpen, setIsDetaiOpen] = useState(false);
+  const [detailId, setDetailId] = useState(null);
 
   useEffect(() => {
     const fetchEvaluation = async () => {
@@ -49,19 +52,24 @@ const EvalDetail: React.FC<EvalDetailProps> = ({ id_evaluation, onClose }) => {
           <X size={22} />
         </button>
         <div className="p-4 space-y-4">
-
           <h2 className="text-2xl font-semibold text-blue-900 text-center border-b pb-4 mb-4">
             Détails de l'évaluation
           </h2>
           <p>
-            <strong className="text-blue-900">ID Évaluation:</strong> {evaluation.id_evaluation}
+            <strong className="text-blue-900">ID Évaluation:</strong>{" "}
+            {evaluation.id_evaluation}
+          </p>
+          <p>
+            <strong className="text-blue-900">ID Consultation:</strong>{" "}
+            {evaluation.id_consultation}
           </p>
           <p>
             <strong className="text-blue-900">Date:</strong>{" "}
             {new Date(evaluation.date).toLocaleDateString()}
           </p>
           <p>
-            <strong className="text-blue-900">Chemin:</strong> {evaluation.chemin_evaluation}
+            <strong className="text-blue-900">Chemin:</strong>{" "}
+            {evaluation.chemin_evaluation}
           </p>
           <h3 className="text-xl font-semibold text-blue-900  my-4">
             {evaluation.consultation_type === "consommable"
@@ -73,7 +81,6 @@ const EvalDetail: React.FC<EvalDetailProps> = ({ id_evaluation, onClose }) => {
             <thead>
               <tr className="bg-blue-100">
                 <th className="border p-2">ID</th>
-                <th className="border p-2">Nom</th>
                 <th className="border p-2">Conformité</th>
               </tr>
             </thead>
@@ -88,8 +95,15 @@ const EvalDetail: React.FC<EvalDetailProps> = ({ id_evaluation, onClose }) => {
                   ))
                 : evaluation.lots.map((l: any) => (
                     <tr key={l.id_lot}>
-                      <td className="border p-2">{l.id_lot}</td>
-                      <td className="border p-2">{l.nom_lot}</td>
+                      <td
+                        className="border p-2 cursor-pointer hover:bg-blue-50"
+                        onClick={() => {
+                          setIsDetaiOpen(true);
+                          setDetailId(l.id_lot);
+                        }}
+                      >
+                        {l.id_lot}
+                      </td>
                       <td className="border p-2">{l.conformite}</td>
                     </tr>
                   ))}
@@ -106,6 +120,13 @@ const EvalDetail: React.FC<EvalDetailProps> = ({ id_evaluation, onClose }) => {
           </div>
         </div>
       </div>
+      {isDetailOpen && (
+        <LotDetailModal
+          lotId={detailId}
+          open={isDetailOpen}
+          onClose={() => setIsDetaiOpen(false)}
+        />
+      )}
     </div>
   );
 };

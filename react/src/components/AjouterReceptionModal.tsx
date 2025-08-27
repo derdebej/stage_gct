@@ -13,6 +13,8 @@ const AjouterReceptionModal = ({ setIsOpen, onReceptionAdded }) => {
   const [items, setItems] = useState<any[]>([]);
   const [message, setMessage] = useState<string | null>(null);
   const [messageType, setMessageType] = useState<"success" | "error" | "">("");
+  const [receptionId, setReceptionId] = useState("");
+  const [error, setError] = useState("");
 
   const [form, setForm] = useState({
     id_commande: "",
@@ -56,11 +58,16 @@ const AjouterReceptionModal = ({ setIsOpen, onReceptionAdded }) => {
   };
 
   const handleSubmit = async (e) => {
+    if (!receptionId) {
+      setError("L'ID de la réception est requis.");
+      return;
+    }
     e.preventDefault();
     try {
       const payload = {
         ...form,
         items,
+        receptionId,
       };
 
       const res = await fetch(`${baseUrl}/api/receptions-insert`, {
@@ -149,6 +156,19 @@ const AjouterReceptionModal = ({ setIsOpen, onReceptionAdded }) => {
 
         {selectedCommande && (
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="text-sm text-gray-600 mb-1 block">
+                ID Reception
+              </label>
+              <input
+                value={receptionId}
+                onChange={(e) => setReceptionId(e.target.value)}
+                className={`w-full px-4 py-2 rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-900 ${
+                  error ? "border-red-500" : "border-gray-300"
+                }`}
+                placeholder="Ex: CST2025"
+              />
+            </div>
             <label>Date de réception :</label>
             <input
               type="date"

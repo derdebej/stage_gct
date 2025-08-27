@@ -3,7 +3,6 @@ import db from "../db.js";
 
 const router = express.Router();
 
-// GET /api/LotsOffre?consultationId=123&search=laptop
 router.get("/", async (req, res) => {
   const search = req.query.search || "";
   const consultationId = req.query.consultationId;
@@ -15,12 +14,11 @@ router.get("/", async (req, res) => {
   try {
     const result = await db.query(
       `
-      SELECT id_lot, id_da, id_consultation
+      SELECT id_lot, id_consultation
       FROM lot
       WHERE id_consultation = $1
         AND (
-          CAST(id_lot AS TEXT) ILIKE $2 OR
-          CAST(id_da AS TEXT) ILIKE $2
+          CAST(id_lot AS TEXT) ILIKE $2
         )
       `,
       [consultationId, `%${search}%`]

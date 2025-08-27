@@ -4,7 +4,7 @@ import db from "../db.js";
 const router = express.Router();
 
 router.post("/receptions-insert", async (req, res) => {
-  const { id_commande, date_reception, items } = req.body;
+  const { id_commande, date_reception, items, receptionId } = req.body;
 
   if (!id_commande || !date_reception || !Array.isArray(items)) {
     return res.status(400).json({ error: "Paramètres manquants ou invalides" });
@@ -26,14 +26,16 @@ router.post("/receptions-insert", async (req, res) => {
 
     const commandeType = commandeRes.rows[0].type;
 
+    const id_reception = receptionId ;
+
+
     const receptionRes = await client.query(
-      `INSERT INTO reception (id_commande, date, type)
-       VALUES ($1, $2, $3)
+      `INSERT INTO reception (id_reception, id_commande, date, type)
+       VALUES ($1, $2, $3, $4)
        RETURNING id_reception`,
-      [id_commande, date_reception, commandeType]
+      [id_reception, id_commande, date_reception, commandeType]
     );
 
-    const id_reception = receptionRes.rows[0].id_reception;
     await client.query(`UPDATE commande SET statut = $2 WHERE id_commande = $1`, [id_commande, "livree"]);
     if (commandeType === "consommable") {
       for (const item of items) {

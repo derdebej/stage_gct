@@ -69,7 +69,7 @@ const ListeOffresModal = ({ setIsModalOpen, onSelectOffre }) => {
                   Offre #{offre.id_offre} - {offre.fournisseur?.nom || "Fournisseur inconnu"}
                 </p>
                 <p className="text-xs text-gray-500">
-                  Date: {new Date(offre.date_offre).toLocaleDateString()} • Montant: {offre.montant} TND
+                  Date: {new Date(offre.date_offre).toLocaleDateString()} • Montant:  TND
                 </p>
               </div>
             ))

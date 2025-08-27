@@ -23,6 +23,8 @@ const AjouterCommandeModal = ({ setIsOpen, onCommandeAdded }) => {
   const [isConsultModalOpen, setIsConsultModalOpen] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [messageType, setMessageType] = useState<"success" | "error" | "">("");
+  const [commandeId, setCommandeId] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!selectedConsultation) return;
@@ -76,6 +78,10 @@ const AjouterCommandeModal = ({ setIsOpen, onCommandeAdded }) => {
   }, [selectedConsultation]);
 
   const handleConfirm = async () => {
+    if (!commandeId){
+      setError("L'ID de la commande est requis.");
+      return;
+    }
     try {
       const commandesParFournisseur: Record<
         string,
@@ -113,6 +119,7 @@ const AjouterCommandeModal = ({ setIsOpen, onCommandeAdded }) => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
+            id_commande: commandeId,
             id_consultation: selectedConsultation?.id_consultation,
             id_fournisseur: f.id_fournisseur,
             date_commande: dateCommande,
@@ -194,41 +201,58 @@ const AjouterCommandeModal = ({ setIsOpen, onCommandeAdded }) => {
         )}
 
         {selectedConsultation && (
-          <div className="px-3 max-h-80 overflow-y-auto will-change-transform">
-            {items.map((item) => {
-              const itemId =
-                selectedConsultation.type === "consommable"
-                  ? `${(item as Art).id_article}-${(item as Art).id_da}`
-                  : (item as Lot).id_lot;
-              const title =
-                selectedConsultation.type === "consommable"
-                  ? `Article #${(item as Art).id_article} – ${
-                      (item as Art).designation
-                    } Qté: ${(item as Art).quantite}`
-                  : `Lot #${(item as Lot).id_lot} – DA: ${(item as Lot).id_da}`;
-              const offre = bestOffers[itemId];
+          <>
+            <div>
+              <label className="text-sm text-gray-600 mb-1 block">
+                ID Consultation
+              </label>
+              <input
+                value={commandeId}
+                onChange={(e) => setCommandeId(e.target.value)}
+                className={`w-full px-4 py-2 rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-900 ${
+                  error ? "border-red-500" : "border-gray-300"
+                }`}
+                placeholder="Ex: CST2025"
+              />
+            </div>
+            <div className="px-3 max-h-80 overflow-y-auto will-change-transform">
+              {items.map((item) => {
+                const itemId =
+                  selectedConsultation.type === "consommable"
+                    ? `${(item as Art).id_article}-${(item as Art).id_da}`
+                    : (item as Lot).id_lot;
+                const title =
+                  selectedConsultation.type === "consommable"
+                    ? `Article #${(item as Art).id_article} – ${
+                        (item as Art).designation
+                      } Qté: ${(item as Art).quantite}`
+                    : `Lot #${(item as Lot).id_lot} – DA: ${
+                        (item as Lot).id_da
+                      }`;
+                const offre = bestOffers[itemId];
 
-              return (
-                <div
-                  key={itemId}
-                  className="border border-blue-200 rounded-md my-3 p-3 bg-blue-50"
-                >
-                  <p className="font-semibold text-blue-900">{title}</p>
-                  {offre ? (
-                    <p className="text-sm text-green-700">
-                      Offre #{offre.id_offre} – ID fournisseur :
-                      {offre.id_fournisseur} (Montant:{" "}
-                      {(offre as LotOffre | ArticleOffre).montant})
-                    </p>
-                  ) : (
-                    <p className="text-sm text-red-600">
-                      Aucune offre conforme reçue
-                    </p>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+                return (
+                  <div
+                    key={itemId}
+                    className="border border-blue-200 rounded-md my-3 p-3 bg-blue-50"
+                  >
+                    <p className="font-semibold text-blue-900">{title}</p>
+                    {offre ? (
+                      <p className="text-sm text-green-700">
+                        Offre #{offre.id_offre} – ID fournisseur :
+                        {offre.id_fournisseur} (Montant:{" "}
+                        {(offre as LotOffre | ArticleOffre).montant})
+                      </p>
+                    ) : (
+                      <p className="text-sm text-red-600">
+                        Aucune offre conforme reçue
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </>
         )}
 
         {selectedConsultation && (

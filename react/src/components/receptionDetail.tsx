@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Loading from "../components/Loading";
 import { X } from "lucide-react";
+import LotDetailModal from "./LotDetailModal";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -16,6 +17,8 @@ const ReceptionDetail: React.FC<ReceptionDetailProps> = ({
   const [reception, setReception] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isDetailOpen, setIsDetaiOpen] = useState(false);
+  const [detailId, setDetailId] = useState(null);
 
   useEffect(() => {
     const fetchReception = async () => {
@@ -50,67 +53,78 @@ const ReceptionDetail: React.FC<ReceptionDetailProps> = ({
         >
           <X size={22} />
         </button>
-          <h2 className="text-2xl font-semibold text-blue-900 text-center border-b pb-4 mb-4">Détails de la réception</h2>
-          <p>
-            <strong className="text-blue-900">ID Réception:</strong> {reception.id_reception}
-          </p>
-          <p>
-            <strong className="text-blue-900">Date:</strong>{" "}
-            {new Date(reception.date_reception).toLocaleDateString()}
-          </p>
-          <p>
-            <strong className="text-blue-900">Commande:</strong> {reception.id_commande}
-          </p>
-          <p>
-            <strong className="text-blue-900">Consultation:</strong> {reception.id_consultation}
-          </p>
+        <h2 className="text-2xl font-semibold text-blue-900 text-center border-b pb-4 mb-4">
+          Détails de la réception
+        </h2>
+        <p>
+          <strong className="text-blue-900">ID Réception:</strong>{" "}
+          {reception.id_reception}
+        </p>
+        <p>
+          <strong className="text-blue-900">Date:</strong>{" "}
+          {new Date(reception.date_reception).toLocaleDateString()}
+        </p>
+        <p>
+          <strong className="text-blue-900">Commande:</strong>{" "}
+          {reception.id_commande}
+        </p>
+        <p>
+          <strong className="text-blue-900">Consultation:</strong>{" "}
+          {reception.id_consultation}
+        </p>
 
-          <h3 className="text-xl font-semibold text-blue-900  my-4">
+        <h3 className="text-xl font-semibold text-blue-900  my-4">
+          {reception.consultation_type === "consommable"
+            ? "Articles reçus"
+            : "Lots reçus"}
+        </h3>
+
+        <table className="w-full border-collapse border">
+          <thead>
+            <tr className="bg-blue-100">
+              {reception.consultation_type === "consommable" ? (
+                <>
+                  <th className="border p-2">ID Article</th>
+                  <th className="border p-2">ID DA</th>
+                  <th className="border p-2">Nom Article</th>
+                  <th className="border p-2">Quantité Reçue</th>
+                </>
+              ) : (
+                <>
+                  <th className="border p-2">ID Lot</th>
+                  <th className="border p-2">Reçu ?</th>
+                </>
+              )}
+            </tr>
+          </thead>
+          <tbody>
             {reception.consultation_type === "consommable"
-              ? "Articles reçus"
-              : "Lots reçus"}
-          </h3>
-
-          <table className="w-full border-collapse border">
-            <thead>
-              <tr className="bg-blue-100">
-                {reception.consultation_type === "consommable" ? (
-                  <>
-                    <th className="border p-2">ID Article</th>
-                    <th className="border p-2">ID DA</th>
-                    <th className="border p-2">Nom Article</th>
-                    <th className="border p-2">Quantité Reçue</th>
-                  </>
-                ) : (
-                  <>
-                    <th className="border p-2">ID Lot</th>
-                    <th className="border p-2">Nom Lot</th>
-                    <th className="border p-2">Reçu ?</th>
-                  </>
-                )}
-              </tr>
-            </thead>
-            <tbody>
-              {reception.consultation_type === "consommable"
-                ? reception.articles.map((a: any) => (
-                    <tr key={`${a.id_article}-${a.id_da}`}>
-                      <td className="border p-2">{a.id_article}</td>
-                      <td className="border p-2">{a.id_da}</td>
-                      <td className="border p-2">{a.designation}</td>
-                      <td className="border p-2">{a.quantite_recue}</td>
-                    </tr>
-                  ))
-                : reception.lots.map((l: any) => (
-                    <tr key={l.id_lot}>
-                      <td className="border p-2">{l.id_lot}</td>
-                      <td className="border p-2">{l.nom_lot}</td>
-                      <td className="border p-2">
-                        {l.recu ? "✅ Oui" : "❌ Non"}
-                      </td>
-                    </tr>
-                  ))}
-            </tbody>
-          </table>
+              ? reception.articles.map((a: any) => (
+                  <tr key={`${a.id_article}-${a.id_da}`}>
+                    <td className="border p-2">{a.id_article}</td>
+                    <td className="border p-2">{a.id_da}</td>
+                    <td className="border p-2">{a.designation}</td>
+                    <td className="border p-2">{a.quantite_recue}</td>
+                  </tr>
+                ))
+              : reception.lots.map((l: any) => (
+                  <tr key={l.id_lot}>
+                    <td
+                      className="border p-2 cursor-pointer hover:bg-blue-50"
+                      onClick={() => {
+                        setIsDetaiOpen(true);
+                        setDetailId(l.id_lot);
+                      }}
+                    >
+                      {l.id_lot}
+                    </td>
+                    <td className="border p-2">
+                      {l.recu ? "✅ Oui" : "❌ Non"}
+                    </td>
+                  </tr>
+                ))}
+          </tbody>
+        </table>
 
         <div className="flex justify-end mt-4">
           <button
@@ -121,6 +135,13 @@ const ReceptionDetail: React.FC<ReceptionDetailProps> = ({
           </button>
         </div>
       </div>
+      {isDetailOpen && (
+        <LotDetailModal
+          lotId={detailId}
+          open={isDetailOpen}
+          onClose={() => setIsDetaiOpen(false)}
+        />
+      )}
     </div>
   );
 };

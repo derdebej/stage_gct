@@ -6,7 +6,7 @@ const router = express.Router();
 router.post("/commande-insert", async (req, res) => {
   const client = await db.connect();
   try {
-    const { id_consultation, id_fournisseur, date_commande, items } = req.body;
+    const { id_consultation, id_fournisseur, date_commande, items, id_commande } = req.body;
 
     if (!id_consultation || !id_fournisseur || !date_commande || !items?.length) {
       return res.status(400).json({ error: "Champs manquants" });
@@ -25,12 +25,11 @@ router.post("/commande-insert", async (req, res) => {
     await client.query("BEGIN");
 
     const insertCmd = await client.query(
-      `INSERT INTO commande (id_consultation, id_fournisseur, date, statut, type)
-       VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO commande (id_commande, id_consultation, id_fournisseur, date, statut, type)
+       VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING id_commande`,
-      [id_consultation, id_fournisseur, date_commande, statut, type]
+      [id_commande, id_consultation, id_fournisseur, date_commande, statut, type]
     );
-    const id_commande = insertCmd.rows[0].id_commande;
 
     console.log("Items to insert:", items);
     if (type === "consommable") {

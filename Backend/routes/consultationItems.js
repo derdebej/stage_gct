@@ -29,7 +29,7 @@ router.get("/:id_consultation/items", async (req, res) => {
       return res.json(rows);
     } else {
       const { rows } = await db.query(
-        `SELECT l.id_lot, l.id_da
+        `SELECT l.id_lot, l.id_consultation
          FROM lot l
          WHERE l.id_consultation = $1`,
         [id_consultation]

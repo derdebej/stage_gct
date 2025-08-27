@@ -55,6 +55,7 @@ import receptionDetailRoutes from "./routes/receptionDetail.js";
 import searchGlobalRoutes from "./routes/searchGlobal.js";
 import statsRoutes from "./routes/stats.js";
 import itemConformeOffreRoute from "./routes/ItemConformeOffre.js";
+import lotRoutes from "./routes/lotDetail.js";
 
 import fs from 'fs/promises';
 import { fileURLToPath } from 'url';
@@ -110,7 +111,7 @@ app.post("/enregistrer-demande", async (req, res) => {
   //console.log("Données reçues :", req.body);
   const etat = "Non Traitée";
   const isodate = convertFrToISO(date);
-  const chemin_document = "/Demande d'achat/" + fileName;
+  const chemin_document = "Demande d'achat/" + fileName;
   try {
     
     const result = await db.query(
@@ -134,6 +135,7 @@ app.post("/enregistrer-demande", async (req, res) => {
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
+app.use("/api/lots", lotRoutes);
 app.use("/api", itemConformeOffreRoute);
 app.use("/",statsRoutes);
 app.use("/", searchGlobalRoutes);

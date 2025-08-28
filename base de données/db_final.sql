@@ -52,7 +52,7 @@ SET default_table_access_method = heap;
 CREATE TABLE public.article (
     id_article bigint NOT NULL,
     id_da character varying NOT NULL,
-    id_lot bigint,
+    id_lot character varying,
     designation character varying NOT NULL,
     description text,
     prix_unitaire double precision,
@@ -84,49 +84,15 @@ ALTER SEQUENCE public.article_id_article_seq OWNED BY public.article.id_article;
 
 
 --
--- Name: bon_sortie; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.bon_sortie (
-    id_bon_sortie bigint NOT NULL,
-    date date NOT NULL,
-    id_reception bigint
-);
-
-
-ALTER TABLE public.bon_sortie OWNER TO postgres;
-
---
--- Name: bon_sortie_id_bon_sortie_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.bon_sortie_id_bon_sortie_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER SEQUENCE public.bon_sortie_id_bon_sortie_seq OWNER TO postgres;
-
---
--- Name: bon_sortie_id_bon_sortie_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.bon_sortie_id_bon_sortie_seq OWNED BY public.bon_sortie.id_bon_sortie;
-
-
---
 -- Name: commande; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.commande (
-    id_commande bigint NOT NULL,
+    id_commande character varying NOT NULL,
     date date NOT NULL,
     statut character varying,
     id_fournisseur bigint,
-    id_consultation bigint,
+    id_consultation character varying,
     type character varying,
     CONSTRAINT commande_statut_check CHECK (((statut)::text = ANY ((ARRAY['en_cours'::character varying, 'livree'::character varying, 'annulee'::character varying])::text[])))
 );
@@ -140,7 +106,7 @@ ALTER TABLE public.commande OWNER TO postgres;
 
 CREATE TABLE public.commande_article (
     id_commande_article integer NOT NULL,
-    id_commande integer,
+    id_commande character varying,
     id_offre integer NOT NULL,
     id_article integer NOT NULL,
     id_da character varying
@@ -198,9 +164,9 @@ ALTER SEQUENCE public.commande_id_commande_seq OWNED BY public.commande.id_comma
 
 CREATE TABLE public.commande_lot (
     id_commande_lot integer NOT NULL,
-    id_commande integer,
+    id_commande character varying,
     id_offre integer NOT NULL,
-    id_lot integer NOT NULL
+    id_lot character varying NOT NULL
 );
 
 
@@ -233,7 +199,7 @@ ALTER SEQUENCE public.commande_lot_id_commande_lot_seq OWNED BY public.commande_
 --
 
 CREATE TABLE public.consultation (
-    id_consultation bigint NOT NULL,
+    id_consultation character varying NOT NULL,
     id_utilisateur bigint NOT NULL,
     date_creation date NOT NULL,
     nombre_des_lots bigint,
@@ -252,7 +218,7 @@ ALTER TABLE public.consultation OWNER TO postgres;
 --
 
 CREATE TABLE public.consultation_da (
-    id_consultation bigint NOT NULL,
+    id_consultation character varying NOT NULL,
     id_da character varying NOT NULL
 );
 
@@ -286,7 +252,7 @@ ALTER SEQUENCE public.consultation_id_consultation_seq OWNED BY public.consultat
 
 CREATE TABLE public.decision (
     id_decision bigint NOT NULL,
-    id_lot bigint NOT NULL,
+    id_lot character varying NOT NULL,
     id_offre bigint NOT NULL,
     id_fournisseur bigint NOT NULL,
     id_eval bigint NOT NULL,
@@ -370,7 +336,7 @@ CREATE TABLE public.evaluation (
     date date,
     chemin_document character varying,
     id_fournisseur bigint,
-    id_consultation integer NOT NULL
+    id_consultation character varying NOT NULL
 );
 
 
@@ -443,7 +409,7 @@ ALTER SEQUENCE public.evaluation_id_eval_seq OWNED BY public.evaluation.id_eval;
 CREATE TABLE public.evaluation_lot (
     id_evaluation_lot integer NOT NULL,
     id_eval integer NOT NULL,
-    id_lot integer NOT NULL,
+    id_lot character varying NOT NULL,
     id_offre integer NOT NULL,
     conformite character varying(20) NOT NULL,
     CONSTRAINT evaluation_lot_conformite_check CHECK (((conformite)::text = ANY ((ARRAY['Conforme'::character varying, 'Non Conforme'::character varying])::text[])))
@@ -514,9 +480,8 @@ ALTER SEQUENCE public.fournisseur_id_fournisseur_seq OWNED BY public.fournisseur
 --
 
 CREATE TABLE public.lot (
-    id_lot bigint NOT NULL,
-    id_da character varying NOT NULL,
-    id_consultation integer NOT NULL
+    id_lot character varying NOT NULL,
+    id_consultation character varying NOT NULL
 );
 
 
@@ -552,7 +517,7 @@ CREATE TABLE public.offre (
     id_fournisseur bigint NOT NULL,
     date_offre date NOT NULL,
     chemin_document character varying,
-    id_consultation bigint
+    id_consultation character varying
 );
 
 
@@ -599,7 +564,7 @@ ALTER SEQUENCE public.offre_id_offre_seq OWNED BY public.offre.id_offre;
 
 CREATE TABLE public.offre_lot (
     id_offre bigint NOT NULL,
-    id_lot bigint NOT NULL,
+    id_lot character varying NOT NULL,
     montant numeric(12,3) DEFAULT 0 NOT NULL
 );
 
@@ -611,9 +576,9 @@ ALTER TABLE public.offre_lot OWNER TO postgres;
 --
 
 CREATE TABLE public.reception (
-    id_reception bigint NOT NULL,
+    id_reception character varying NOT NULL,
     date date NOT NULL,
-    id_commande bigint,
+    id_commande character varying,
     type character varying
 );
 
@@ -625,7 +590,7 @@ ALTER TABLE public.reception OWNER TO postgres;
 --
 
 CREATE TABLE public.reception_article (
-    id_reception bigint NOT NULL,
+    id_reception character varying NOT NULL,
     id_commande_article bigint NOT NULL,
     quantite_recue numeric NOT NULL,
     CONSTRAINT reception_article_quantite_recue_check CHECK ((quantite_recue >= (0)::numeric))
@@ -660,8 +625,8 @@ ALTER SEQUENCE public.reception_id_reception_seq OWNED BY public.reception.id_re
 --
 
 CREATE TABLE public.reception_lot (
-    id_reception bigint NOT NULL,
-    id_commande_lot bigint NOT NULL,
+    id_reception character varying NOT NULL,
+    id_commande_lot character varying NOT NULL,
     recu boolean DEFAULT false NOT NULL
 );
 
@@ -709,13 +674,6 @@ ALTER SEQUENCE public.utilisateur_id_utilisateur_seq OWNED BY public.utilisateur
 --
 
 ALTER TABLE ONLY public.article ALTER COLUMN id_article SET DEFAULT nextval('public.article_id_article_seq'::regclass);
-
-
---
--- Name: bon_sortie id_bon_sortie; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.bon_sortie ALTER COLUMN id_bon_sortie SET DEFAULT nextval('public.bon_sortie_id_bon_sortie_seq'::regclass);
 
 
 --
@@ -820,125 +778,79 @@ ALTER TABLE ONLY public.utilisateur ALTER COLUMN id_utilisateur SET DEFAULT next
 -- Data for Name: article; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.article VALUES (223637, 'AN091260', NULL, 'ADAPTATEUR HDMI VERS VGA', '', 15, 10);
-INSERT INTO public.article VALUES (223636, 'AN091260', NULL, 'ADAPTATEUR VGA VERS HDMI', '', 40, 6);
-INSERT INTO public.article VALUES (213920, 'AN091260', NULL, 'TONER ADAPTABLE POUR IMPRIMANTE SAMSUNG M2070F', '', 31, 3);
-INSERT INTO public.article VALUES (213922, 'AN091260', NULL, 'TONER ADAPTABLE BROTHER MFC 7360N', '', 25, 3);
-INSERT INTO public.article VALUES (213921, 'AN091260', NULL, 'TONER ADAPTABLE POUR IMPRIMANTE BROTHER MFC - 1810', '', 20, 3);
-INSERT INTO public.article VALUES (217906, 'AN091260', NULL, 'TAMBOUR POUR IMP EPSON ACULASER M2300', '', 1200, 2);
-INSERT INTO public.article VALUES (174500, 'AN091260', NULL, 'CONTACT CLEANER WD-40', '', 20, 10);
-INSERT INTO public.article VALUES (223587, 'AN091260', NULL, 'CONTACT CLEAR GD-20', '', 12, 10);
-INSERT INTO public.article VALUES (223634, 'AN091260', NULL, 'HUB USB 3.0 4 PORTS', '', 20, 5);
-INSERT INTO public.article VALUES (175452, 'AN091260', NULL, 'DISQUE DUR SSD Disque dur interne SSD.2.5" ,240 Go(min)SATA III,6GB/s. Marque: ADATA,PNY, ADDLINK', '', 200, 20);
-INSERT INTO public.article VALUES (220595, 'AN091260', NULL, 'FLACON 101 ECOTANK CYAN REF: C13T03V24A', 'd''origine', 26, 3);
-INSERT INTO public.article VALUES (220594, 'AN091260', NULL, 'FLACON 101 ECOTANK NOIR REF: C13T03V14A', 'd''origine', 26, 3);
-INSERT INTO public.article VALUES (220596, 'AN091260', NULL, 'FLACON 101 ECOTANK MAGENTA REF: C13T03V34A', 'd''origine', 26, 3);
-INSERT INTO public.article VALUES (220597, 'AN091260', NULL, 'FLACON 101 ECOTANK YELLOW REF: C13T03V44A', 'd''origine', 26, 3);
-INSERT INTO public.article VALUES (220598, 'AN091260', NULL, 'FLACON D''ORIGINE NOIR POUR IMP.EPSON L120', '', 25, 15);
-INSERT INTO public.article VALUES (220599, 'AN091260', NULL, 'FLACON D''ORIGINE ROUGE POUR IMP.EPSON L120', '', 25, 15);
-INSERT INTO public.article VALUES (220600, 'AN091260', NULL, 'FLACON D''ORIGINE JAUNE POUR IMP.EPSON L120', '', 25, 15);
-INSERT INTO public.article VALUES (220601, 'AN091260', NULL, 'FLACON D''ORIGINE BLEU POUR IMP.EPSON L120', '', 25, 15);
-INSERT INTO public.article VALUES (205968, 'AN091260', NULL, 'CARTOUCHE ADAPTABLE POUR IMPRIMANTE EPSON AL-1400', '', 19.5, 20);
-INSERT INTO public.article VALUES (51677, 'AN091260', NULL, 'VENTILATEUR', 'LGA 1150', 20, 15);
-INSERT INTO public.article VALUES (188423, 'AN091260', NULL, 'CARTE MERE H81', 'LGA 1150', 175, 15);
-INSERT INTO public.article VALUES (164068, 'AN091260', NULL, 'BARETTE DE MEMOIRE DDR3  4GO', '', 68, 50);
-INSERT INTO public.article VALUES (121838, 'AN091260', NULL, 'SOURIS OPTIQUE USB', 'HP 1000', 18, 100);
-INSERT INTO public.article VALUES (171254, 'AN091260', NULL, 'CLAVIER  USB', 'Azerty 104 touches arabe-francais', 25, 100);
-INSERT INTO public.article VALUES (210204, 'AN091260', NULL, 'TONER ADAPTABLE  POUR IMP. KYOCERA P2040DN REF:TK-1160', '', 70, 80);
-INSERT INTO public.article VALUES (216609, 'AN091260', NULL, 'TONER POUR IMP. KYOCERA ECOSYS P3260DN RÉF TK-3190', 'd''origine', 550, 5);
-INSERT INTO public.article VALUES (217824, 'AN091260', NULL, 'MICROPROCESSEUR I3 LGA 1150', '', 350, 15);
-INSERT INTO public.article VALUES (206002, 'AN091260', NULL, 'RUBAN POUR IMPRIMANTE MATRICIELLE LQ 350- 300', '', 8, 15);
-INSERT INTO public.article VALUES (213267, 'AN091260', NULL, 'TONER LEXMARK C2425 NOIR', 'd''origine réf C2350 Ko', 250, 2);
-INSERT INTO public.article VALUES (216612, 'AN091260', NULL, 'TONER D ORIGINE LEXMARK C2425 YELLOW REF C2350YO', '', 250, 2);
-INSERT INTO public.article VALUES (216613, 'AN091260', NULL, 'TONER D ORIGINE MAGENTA LEXMARK C2425 REF C2350MO', '', 250, 2);
-INSERT INTO public.article VALUES (216614, 'AN091260', NULL, 'TONER D ORIGINE CYAN  LEXMARK C2425 REF C2350CO', '', 250, 2);
-INSERT INTO public.article VALUES (216615, 'AN091260', NULL, 'TONER D ORIGINE LEXMARK MB 2236', 'Ref: B225000', 200, 3);
-INSERT INTO public.article VALUES (205633, 'AN091260', NULL, 'TONER  ADAPTABLE  POUR IMPRIMANTE EPSON ACULASER M2300', '', 21, 25);
-INSERT INTO public.article VALUES (135971, 'AN091260', NULL, 'CARTOUCHE BROTHER HL 5040 REF TN7600', 'adaptable', 80, 10);
-INSERT INTO public.article VALUES (59228, 'AN091260', NULL, 'CARTOUCHE NOIR D ORIGINE POUR IMP. HP DESKJET F2280 REF C9351A(21)', '', 85, 2);
-INSERT INTO public.article VALUES (59229, 'AN091260', NULL, 'CARTOUCHE COULEUR D ORIGINE POUR IMP. HP DESKJET F2280 REF. 09352A(22)', '', 85, 2);
-INSERT INTO public.article VALUES (214041, 'AN103360', NULL, 'CABLE HDMI LONGUEUR 5M', '', 14, 5);
-INSERT INTO public.article VALUES (214042, 'AN103360', NULL, 'CABLE HDMI LONGUEUR 15M', '', 35, 5);
-INSERT INTO public.article VALUES (225960, 'AN103360', NULL, 'ADAPTATEUR HDMI TO VGA', '', 19.9, 10);
-INSERT INTO public.article VALUES (248577, 'AN103360', NULL, 'PHOTOCONDUCTEUR POUR IMPRIMANTE KYOCERA 3260DN', '', 220, 5);
-INSERT INTO public.article VALUES (238344, 'AN103360', NULL, 'BOUTEILLE EPSON 110 (C13T03P14A)', '', 80, 30);
-INSERT INTO public.article VALUES (206011, 'AN103360', NULL, 'TONER NOIR ADAPTABLE POUR IMP.EPSON WORKFORCE AL-M300/AL-MX300', '', 60, 30);
-INSERT INTO public.article VALUES (195760, 'AN103360', NULL, 'CLAVIER USB clavier dell azerty francais/arabe 104 touches filiare Interface USB 2.0 couleur noir', '', 45, 20);
-INSERT INTO public.article VALUES (121838, 'AN103360', NULL, 'SOURIS OPTIQUE USB SOURIS FILAIRE HP usb , 3 boutons , couleur noir', '', 25, 50);
-INSERT INTO public.article VALUES (248579, 'AN103360', NULL, 'SPRAY MULTIFONCTION PLATINET PFSP40 ANTIROUILLE - PROTECTION - NETTOYAGE / 400ML', '', 20, 4);
-INSERT INTO public.article VALUES (248581, 'AN103360', NULL, 'GUIDE DE CORDONS 19" 2U METALLIQUE 5 ANNEAUX', '', 30, 5);
-INSERT INTO public.article VALUES (248580, 'AN103360', NULL, 'PLATINET LABEL REMOVER SPRAY/400ML (POUR IMPRIMANTES)', '', 20, 6);
-INSERT INTO public.article VALUES (248590, 'AN103360', NULL, 'MODULE HPE X120 1G SFP LC SX TRANSCEIVER PN: JD118B', '', 880, 12);
-INSERT INTO public.article VALUES (248583, 'AN103360', NULL, 'SERRURE POUR ARMOIRE INFORMATIQUE (METALLIQUE) AVEC CLES', '', 18, 5);
-INSERT INTO public.article VALUES (248589, 'AN103360', NULL, 'KIT DE NETTOYAGE A FIBRE OPTIQUE pour Connecteurs FC SC ST LC MU, Cassette, Stylos, Écouvillons, Lingettes, Bouteille de Pompe, Sac de Transport, 550+ Utilisations', '', 300, 1);
-INSERT INTO public.article VALUES (248591, 'AN103360', NULL, 'CABLES ETHERNET "CAT6 UTP" LONGUEUR: 5 METRES', '', 4.5, 70);
-INSERT INTO public.article VALUES (175434, 'AN103360', NULL, 'FLASH DISQUE 16 G', 'ADATA', 15, 10);
-INSERT INTO public.article VALUES (248614, 'AN103360', NULL, 'TOURET CABLE ETHERNET CERTIFIE  CAT6A S/FTP LSZH DE 500 METRES', '', 1500, 1);
-INSERT INTO public.article VALUES (248603, 'AN103360', NULL, 'CABLE ETHERNET CAT 6 UTP LONGUEUR 3M', '', 3, 100);
-INSERT INTO public.article VALUES (248601, 'AN103360', NULL, 'TELEVISEUR LED 32" HD', 'NON SMART,PAS de récepteur intégré ,ports HDMI, ports USB,', 500, 6);
-INSERT INTO public.article VALUES (248608, 'AN103360', NULL, 'MODULE WI-FI POUR VIDEOPROJECTEURS EPSON', 'compatible avec EB-E20', 800, 2);
-INSERT INTO public.article VALUES (248611, 'AN103360', NULL, 'DISQUE DUR SSD 512GO', '2.5" Vitesse 530mbps(Lecture),430 mbps(Ecriture)', 100, 50);
-INSERT INTO public.article VALUES (248609, 'AN103360', NULL, 'CABLE JACK 3,5 MM (AUDIO) LONGUEUR 2 METRES', '', 10, 2);
-INSERT INTO public.article VALUES (248610, 'AN103360', NULL, 'CABLE RCA (JAUNE, ROUGE, BLANC) LONGUEUR 2 METRES', '', 10, 2);
-INSERT INTO public.article VALUES (248599, 'AN103360', NULL, 'TONER POUR IMPRIMANTE KYOCERA PA5500X 3410', 'd''origine 15000 pages.', 500, 20);
-INSERT INTO public.article VALUES (214040, 'AN103360', NULL, 'CABLE HDMI LONGUEUR 3M', '', 7, 5);
-INSERT INTO public.article VALUES (223636, 'AN103360', NULL, 'ADAPTATEUR VGA VERS HDMI', '', 50, 5);
-INSERT INTO public.article VALUES (225230, 'AN103360', NULL, 'PHOTOCONDUCTEUR  ORIGINE POUR IMPRIMANTE EPSON M300', '', 250, 5);
-INSERT INTO public.article VALUES (235816, 'AN103360', NULL, 'PHOTOCONDUCTEUR POUR IMPRIMANTE KYOCERA 2040', '', 250, 8);
-INSERT INTO public.article VALUES (248604, 'AN103360', NULL, 'DAP3711', '', 950, 2);
 INSERT INTO public.article VALUES (173980, 'AN105426', NULL, 'REPARATION PHOTOCOPIEUR XEROX WC 5325', '', 2600, 1);
-INSERT INTO public.article VALUES (244418, 'AN101056', NULL, 'SERVEUR DE STOCKAGE EN RESEAU NAS', '', 15000, 1);
-
-
---
--- Data for Name: bon_sortie; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
+INSERT INTO public.article VALUES (244418, 'AN101056', '555551', 'SERVEUR DE STOCKAGE EN RESEAU NAS', '', 15000, 1);
+INSERT INTO public.article VALUES (248614, 'AN103360', '10021', 'TOURET CABLE ETHERNET CERTIFIE  CAT6A S/FTP LSZH DE 500 METRES', '', 1500, 1);
+INSERT INTO public.article VALUES (248611, 'AN103360', '10023', 'DISQUE DUR SSD 512GO', '2.5" Vitesse 530mbps(Lecture),430 mbps(Ecriture)', 100, 50);
+INSERT INTO public.article VALUES (248610, 'AN103360', '10022', 'CABLE RCA (JAUNE, ROUGE, BLANC) LONGUEUR 2 METRES', '', 10, 2);
+INSERT INTO public.article VALUES (248609, 'AN103360', '10023', 'CABLE JACK 3,5 MM (AUDIO) LONGUEUR 2 METRES', '', 10, 2);
+INSERT INTO public.article VALUES (248608, 'AN103360', '10024', 'MODULE WI-FI POUR VIDEOPROJECTEURS EPSON', 'compatible avec EB-E20', 800, 2);
+INSERT INTO public.article VALUES (248604, 'AN103360', '10023', 'DAP3711', '', 950, 2);
+INSERT INTO public.article VALUES (248603, 'AN103360', '10021', 'CABLE ETHERNET CAT 6 UTP LONGUEUR 3M', '', 3, 100);
+INSERT INTO public.article VALUES (248601, 'AN103360', '10022', 'TELEVISEUR LED 32" HD', 'NON SMART,PAS de récepteur intégré ,ports HDMI, ports USB,', 500, 6);
+INSERT INTO public.article VALUES (248599, 'AN103360', '10021', 'TONER POUR IMPRIMANTE KYOCERA PA5500X 3410', 'd''origine 15000 pages.', 500, 20);
+INSERT INTO public.article VALUES (248591, 'AN103360', '10021', 'CABLES ETHERNET "CAT6 UTP" LONGUEUR: 5 METRES', '', 4.5, 70);
+INSERT INTO public.article VALUES (248590, 'AN103360', '10021', 'MODULE HPE X120 1G SFP LC SX TRANSCEIVER PN: JD118B', '', 880, 12);
+INSERT INTO public.article VALUES (248589, 'AN103360', '10023', 'KIT DE NETTOYAGE A FIBRE OPTIQUE pour Connecteurs FC SC ST LC MU, Cassette, Stylos, Écouvillons, Lingettes, Bouteille de Pompe, Sac de Transport, 550+ Utilisations', '', 300, 1);
+INSERT INTO public.article VALUES (248583, 'AN103360', '10023', 'SERRURE POUR ARMOIRE INFORMATIQUE (METALLIQUE) AVEC CLES', '', 18, 5);
+INSERT INTO public.article VALUES (248581, 'AN103360', '10024', 'GUIDE DE CORDONS 19" 2U METALLIQUE 5 ANNEAUX', '', 30, 5);
+INSERT INTO public.article VALUES (248580, 'AN103360', '10021', 'PLATINET LABEL REMOVER SPRAY/400ML (POUR IMPRIMANTES)', '', 20, 6);
+INSERT INTO public.article VALUES (248579, 'AN103360', '10022', 'SPRAY MULTIFONCTION PLATINET PFSP40 ANTIROUILLE - PROTECTION - NETTOYAGE / 400ML', '', 20, 4);
+INSERT INTO public.article VALUES (248577, 'AN103360', '10021', 'PHOTOCONDUCTEUR POUR IMPRIMANTE KYOCERA 3260DN', '', 220, 5);
+INSERT INTO public.article VALUES (238344, 'AN103360', '10021', 'BOUTEILLE EPSON 110 (C13T03P14A)', '', 80, 30);
+INSERT INTO public.article VALUES (235816, 'AN103360', '10022', 'PHOTOCONDUCTEUR POUR IMPRIMANTE KYOCERA 2040', '', 250, 8);
+INSERT INTO public.article VALUES (225960, 'AN103360', '10022', 'ADAPTATEUR HDMI TO VGA', '', 19.9, 10);
+INSERT INTO public.article VALUES (225230, 'AN103360', '10024', 'PHOTOCONDUCTEUR  ORIGINE POUR IMPRIMANTE EPSON M300', '', 250, 5);
+INSERT INTO public.article VALUES (223636, 'AN103360', '10022', 'ADAPTATEUR VGA VERS HDMI', '', 50, 5);
+INSERT INTO public.article VALUES (214042, 'AN103360', '10022', 'CABLE HDMI LONGUEUR 15M', '', 35, 5);
+INSERT INTO public.article VALUES (214041, 'AN103360', '10023', 'CABLE HDMI LONGUEUR 5M', '', 14, 5);
+INSERT INTO public.article VALUES (214040, 'AN103360', '10023', 'CABLE HDMI LONGUEUR 3M', '', 7, 5);
+INSERT INTO public.article VALUES (206011, 'AN103360', '10023', 'TONER NOIR ADAPTABLE POUR IMP.EPSON WORKFORCE AL-M300/AL-MX300', '', 60, 30);
+INSERT INTO public.article VALUES (195760, 'AN103360', '10021', 'CLAVIER USB clavier dell azerty francais/arabe 104 touches filiare Interface USB 2.0 couleur noir', '', 45, 20);
+INSERT INTO public.article VALUES (175434, 'AN103360', '10021', 'FLASH DISQUE 16 G', 'ADATA', 15, 10);
+INSERT INTO public.article VALUES (121838, 'AN103360', '10022', 'SOURIS OPTIQUE USB SOURIS FILAIRE HP usb , 3 boutons , couleur noir', '', 25, 50);
 
 
 --
 -- Data for Name: commande; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.commande VALUES (88, '2025-08-24', 'livree', 3, 1000, 'consommable');
+INSERT INTO public.commande VALUES ('90', '2025-08-27', 'livree', 2, '1002', 'equipement');
+INSERT INTO public.commande VALUES ('91', '2025-08-27', 'livree', 5, '55555', 'equipement');
+INSERT INTO public.commande VALUES ('ddd11', '2025-08-27', 'livree', 4, 'fff44', 'consommable');
 
 
 --
 -- Data for Name: commande_article; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.commande_article VALUES (133, 88, 88, 223637, 'AN091260');
-INSERT INTO public.commande_article VALUES (134, 88, 88, 223636, 'AN091260');
-INSERT INTO public.commande_article VALUES (135, 88, 88, 213920, 'AN091260');
-INSERT INTO public.commande_article VALUES (136, 88, 88, 213922, 'AN091260');
-INSERT INTO public.commande_article VALUES (137, 88, 88, 174500, 'AN091260');
-INSERT INTO public.commande_article VALUES (138, 88, 88, 223587, 'AN091260');
-INSERT INTO public.commande_article VALUES (139, 88, 88, 223634, 'AN091260');
-INSERT INTO public.commande_article VALUES (140, 88, 88, 121838, 'AN091260');
-INSERT INTO public.commande_article VALUES (141, 88, 88, 121838, 'AN103360');
+INSERT INTO public.commande_article VALUES (142, 'ddd11', 115, 173980, 'AN105426');
 
 
 --
 -- Data for Name: commande_lot; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO public.commande_lot VALUES (45, '90', 113, '10021');
+INSERT INTO public.commande_lot VALUES (46, '90', 113, '10022');
+INSERT INTO public.commande_lot VALUES (47, '90', 113, '10023');
+INSERT INTO public.commande_lot VALUES (48, '91', 114, '555551');
 
 
 --
 -- Data for Name: consultation; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.consultation VALUES (1000, 2, '2025-08-23', 0, 'consommable', 'offre totale', 'évalué');
-INSERT INTO public.consultation VALUES (1002, 2, '2025-08-23', 1, 'equipement', 'offre totale', 'évalué');
+INSERT INTO public.consultation VALUES ('1002', 2, '2025-08-27', 4, 'equipement', 'offre totale', 'évalué');
+INSERT INTO public.consultation VALUES ('55555', 2, '2025-08-27', 1, 'equipement', 'offre totale', 'évalué');
+INSERT INTO public.consultation VALUES ('fff44', 2, '2025-08-27', 0, 'consommable', 'offre totale', 'évalué');
 
 
 --
 -- Data for Name: consultation_da; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.consultation_da VALUES (1000, 'AN105426');
-INSERT INTO public.consultation_da VALUES (1000, 'AN103360');
-INSERT INTO public.consultation_da VALUES (1000, 'AN091260');
+INSERT INTO public.consultation_da VALUES ('fff44', 'AN105426');
 
 
 --
@@ -951,40 +863,36 @@ INSERT INTO public.consultation_da VALUES (1000, 'AN091260');
 -- Data for Name: demande_d_achat; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.demande_d_achat VALUES ('AN105426', 2, 'ENTRETIEN POUR MACHINE PHOTOPIEUSE', '2025-07-09', 'HAJJEJ RADHIA', 'Traitée', 2600, 'Exploitation', NULL, NULL, '/Demande d''achat/Requisition_Demandedachatnumrique.pdf');
-INSERT INTO public.demande_d_achat VALUES ('AN103360', 2, 'Demande Achat pour la Division Informatique', '2024-12-02', 'TRABELSI HANA', 'Traitée', 46534, 'Exploitation', NULL, NULL, '/Demande d''achat/DA AN103360.pdf');
-INSERT INTO public.demande_d_achat VALUES ('AN091260', 2, 'Achat cinq (05) lots consommable informatique', '2021-09-08', 'TRABELSI HANA', 'Traitée', 38250, 'Exploitation', NULL, NULL, '/Demande d''achat/DA 091260.pdf');
-INSERT INTO public.demande_d_achat VALUES ('AN101056', 2, 'Serveur de stockage en réseau NAS', '2024-04-16', 'TRABELSI HANA', 'Non Traitée', 15000, 'Investissement', 'Acquisition et rénouvellement d''équipements micro-informatiques,Div. Informatique à Gabés du GCT', '3.80.2024.421', '/Demande d''achat/DA Serveur de stockage NAS.pdf');
+INSERT INTO public.demande_d_achat VALUES ('AN103360', 2, 'Demande Achat pour la Division Informatique', '2024-12-02', 'TRABELSI HANA', 'Traitée', 46534, 'Investissement', NULL, NULL, 'Demande d''achat/DA AN103360.pdf');
+INSERT INTO public.demande_d_achat VALUES ('AN101056', 2, 'Serveur de stockage en réseau NAS', '2024-04-16', 'TRABELSI HANA', 'Traitée', 15000, 'Investissement', 'Acquisition et rénouvellement d''équipements micro-informatiques,Div. Informatique à Gabés du GCT', '3.80.2024.421', 'Demande d''achat/DA Serveur de stockage NAS.pdf');
+INSERT INTO public.demande_d_achat VALUES ('AN105426', 2, 'ENTRETIEN POUR MACHINE PHOTOPIEUSE', '2025-07-09', 'HAJJEJ RADHIA', 'Traitée', 2600, 'Exploitation', NULL, NULL, 'Demande d''achat/Requisition_Demandedachatnumrique.pdf');
 
 
 --
 -- Data for Name: evaluation; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.evaluation VALUES (75, '2025-08-24', 'fffff', NULL, 1000);
-INSERT INTO public.evaluation VALUES (84, '2025-08-24', '/Evaluation/1002/DA AN100862 (2).pdf', NULL, 1002);
+INSERT INTO public.evaluation VALUES (87, '2025-08-27', '/Evaluation/1002/DA Serveur de stockage NAS.pdf', NULL, '1002');
+INSERT INTO public.evaluation VALUES (88, '2025-08-27', '/Evaluation/55555/Requisition_Demandedachatnumrique.pdf', NULL, '55555');
+INSERT INTO public.evaluation VALUES (89, '2025-08-27', '/Evaluation/fff44/Requisition_Demandedachatnumrique.pdf', NULL, 'fff44');
 
 
 --
 -- Data for Name: evaluation_article; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.evaluation_article VALUES (108, 75, 223637, 'AN091260', 88, 'Conforme');
-INSERT INTO public.evaluation_article VALUES (109, 75, 223637, 'AN091260', 89, 'Non Conforme');
-INSERT INTO public.evaluation_article VALUES (110, 75, 223636, 'AN091260', 88, 'Conforme');
-INSERT INTO public.evaluation_article VALUES (111, 75, 213920, 'AN091260', 88, 'Conforme');
-INSERT INTO public.evaluation_article VALUES (112, 75, 213922, 'AN091260', 88, 'Conforme');
-INSERT INTO public.evaluation_article VALUES (113, 75, 174500, 'AN091260', 88, 'Conforme');
-INSERT INTO public.evaluation_article VALUES (114, 75, 223587, 'AN091260', 88, 'Conforme');
-INSERT INTO public.evaluation_article VALUES (115, 75, 223634, 'AN091260', 88, 'Conforme');
-INSERT INTO public.evaluation_article VALUES (116, 75, 121838, 'AN091260', 88, 'Conforme');
-INSERT INTO public.evaluation_article VALUES (117, 75, 121838, 'AN103360', 88, 'Conforme');
+INSERT INTO public.evaluation_article VALUES (118, 89, 173980, 'AN105426', 115, 'Conforme');
 
 
 --
 -- Data for Name: evaluation_lot; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO public.evaluation_lot VALUES (74, 87, '10021', 113, 'Conforme');
+INSERT INTO public.evaluation_lot VALUES (75, 87, '10022', 113, 'Conforme');
+INSERT INTO public.evaluation_lot VALUES (76, 87, '10023', 113, 'Conforme');
+INSERT INTO public.evaluation_lot VALUES (77, 87, '10024', 113, 'Non Conforme');
+INSERT INTO public.evaluation_lot VALUES (78, 88, '555551', 114, 'Conforme');
 
 
 --
@@ -1009,78 +917,64 @@ INSERT INTO public.fournisseur VALUES (12, 'nassim', 'nader.bensalah@ensi-uma.tn
 -- Data for Name: lot; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO public.lot VALUES ('555551', '55555');
+INSERT INTO public.lot VALUES ('10021', '1002');
+INSERT INTO public.lot VALUES ('10022', '1002');
+INSERT INTO public.lot VALUES ('10023', '1002');
+INSERT INTO public.lot VALUES ('10024', '1002');
 
 
 --
 -- Data for Name: offre; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.offre VALUES (107, 2, '2025-08-24', 'Offre/1002/Beta_Supplies/107.pdf', 1002);
-INSERT INTO public.offre VALUES (88, 3, '2025-08-23', 'Offre/1000/Gamma_Solutions/88.pdf', 1000);
-INSERT INTO public.offre VALUES (89, 10, '2025-08-23', 'Offre/1000/Kappa_Commerce/89.pdf', 1000);
-INSERT INTO public.offre VALUES (90, 10, '2025-08-23', 'Offre/1002/Kappa_Commerce/90.pdf', 1002);
-INSERT INTO public.offre VALUES (91, 2, '2025-08-23', 'Offre/1002/Beta_Supplies/91.pdf', 1002);
-INSERT INTO public.offre VALUES (92, 1, '2025-08-23', 'Offre/1002/Alpha_Industries/92.pdf', 1002);
+INSERT INTO public.offre VALUES (113, 2, '2025-08-27', 'Offre/1002/Beta_Supplies/113.pdf', '1002');
+INSERT INTO public.offre VALUES (114, 5, '2025-08-27', 'Offre/55555/Epsilon_Services/114.pdf', '55555');
+INSERT INTO public.offre VALUES (115, 4, '2025-08-27', 'Offre/fff44/Delta_Corp/115.pdf', 'fff44');
 
 
 --
 -- Data for Name: offre_article; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.offre_article VALUES (88, 223637, 'AN091260', 20.000);
-INSERT INTO public.offre_article VALUES (88, 223636, 'AN091260', 20.000);
-INSERT INTO public.offre_article VALUES (88, 213920, 'AN091260', 10.000);
-INSERT INTO public.offre_article VALUES (88, 213922, 'AN091260', 20.000);
-INSERT INTO public.offre_article VALUES (88, 174500, 'AN091260', 20.000);
-INSERT INTO public.offre_article VALUES (88, 223587, 'AN091260', 20.000);
-INSERT INTO public.offre_article VALUES (88, 223634, 'AN091260', 20.000);
-INSERT INTO public.offre_article VALUES (88, 121838, 'AN091260', 30.000);
-INSERT INTO public.offre_article VALUES (88, 121838, 'AN103360', 50.000);
-INSERT INTO public.offre_article VALUES (89, 223637, 'AN091260', 1.000);
+INSERT INTO public.offre_article VALUES (115, 173980, 'AN105426', 2000.000);
 
 
 --
 -- Data for Name: offre_lot; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO public.offre_lot VALUES (113, '10021', 2000.000);
+INSERT INTO public.offre_lot VALUES (113, '10024', 2000.000);
+INSERT INTO public.offre_lot VALUES (113, '10023', 2000.000);
+INSERT INTO public.offre_lot VALUES (113, '10022', 2000.000);
+INSERT INTO public.offre_lot VALUES (114, '555551', 5999.000);
 
 
 --
 -- Data for Name: reception; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.reception VALUES (36, '2025-08-24', 88, 'consommable');
-INSERT INTO public.reception VALUES (40, '2025-08-24', 88, 'consommable');
+INSERT INTO public.reception VALUES ('42', '2025-08-27', '90', 'equipement');
+INSERT INTO public.reception VALUES ('43', '2025-08-27', '91', 'equipement');
+INSERT INTO public.reception VALUES ('ffff55', '2025-08-27', 'ddd11', 'consommable');
 
 
 --
 -- Data for Name: reception_article; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.reception_article VALUES (36, 133, 10);
-INSERT INTO public.reception_article VALUES (36, 134, 6);
-INSERT INTO public.reception_article VALUES (36, 135, 3);
-INSERT INTO public.reception_article VALUES (36, 136, 3);
-INSERT INTO public.reception_article VALUES (36, 137, 10);
-INSERT INTO public.reception_article VALUES (36, 138, 10);
-INSERT INTO public.reception_article VALUES (36, 139, 5);
-INSERT INTO public.reception_article VALUES (36, 140, 100);
-INSERT INTO public.reception_article VALUES (36, 141, 50);
-INSERT INTO public.reception_article VALUES (40, 133, 0);
-INSERT INTO public.reception_article VALUES (40, 134, 0);
-INSERT INTO public.reception_article VALUES (40, 135, 0);
-INSERT INTO public.reception_article VALUES (40, 136, 0);
-INSERT INTO public.reception_article VALUES (40, 137, 0);
-INSERT INTO public.reception_article VALUES (40, 138, 0);
-INSERT INTO public.reception_article VALUES (40, 139, 0);
-INSERT INTO public.reception_article VALUES (40, 140, 0);
-INSERT INTO public.reception_article VALUES (40, 141, 0);
+INSERT INTO public.reception_article VALUES ('ffff55', 142, 1);
 
 
 --
 -- Data for Name: reception_lot; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO public.reception_lot VALUES ('42', '45', true);
+INSERT INTO public.reception_lot VALUES ('42', '46', true);
+INSERT INTO public.reception_lot VALUES ('42', '47', true);
+INSERT INTO public.reception_lot VALUES ('43', '48', true);
 
 
 --
@@ -1100,31 +994,24 @@ SELECT pg_catalog.setval('public.article_id_article_seq', 1, false);
 
 
 --
--- Name: bon_sortie_id_bon_sortie_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.bon_sortie_id_bon_sortie_seq', 1, false);
-
-
---
 -- Name: commande_article_id_commande_article_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.commande_article_id_commande_article_seq', 141, true);
+SELECT pg_catalog.setval('public.commande_article_id_commande_article_seq', 142, true);
 
 
 --
 -- Name: commande_id_commande_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.commande_id_commande_seq', 88, true);
+SELECT pg_catalog.setval('public.commande_id_commande_seq', 91, true);
 
 
 --
 -- Name: commande_lot_id_commande_lot_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.commande_lot_id_commande_lot_seq', 43, true);
+SELECT pg_catalog.setval('public.commande_lot_id_commande_lot_seq', 48, true);
 
 
 --
@@ -1152,21 +1039,21 @@ SELECT pg_catalog.setval('public.demande_d_achat_id_da_seq', 1, false);
 -- Name: evaluation_article_id_evaluation_article_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.evaluation_article_id_evaluation_article_seq', 117, true);
+SELECT pg_catalog.setval('public.evaluation_article_id_evaluation_article_seq', 118, true);
 
 
 --
 -- Name: evaluation_id_eval_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.evaluation_id_eval_seq', 84, true);
+SELECT pg_catalog.setval('public.evaluation_id_eval_seq', 89, true);
 
 
 --
 -- Name: evaluation_lot_id_evaluation_lot_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.evaluation_lot_id_evaluation_lot_seq', 71, true);
+SELECT pg_catalog.setval('public.evaluation_lot_id_evaluation_lot_seq', 78, true);
 
 
 --
@@ -1187,14 +1074,14 @@ SELECT pg_catalog.setval('public.lot_id_lot_seq', 1, false);
 -- Name: offre_id_offre_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.offre_id_offre_seq', 111, true);
+SELECT pg_catalog.setval('public.offre_id_offre_seq', 115, true);
 
 
 --
 -- Name: reception_id_reception_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.reception_id_reception_seq', 40, true);
+SELECT pg_catalog.setval('public.reception_id_reception_seq', 43, true);
 
 
 --
@@ -1210,14 +1097,6 @@ SELECT pg_catalog.setval('public.utilisateur_id_utilisateur_seq', 4, true);
 
 ALTER TABLE ONLY public.article
     ADD CONSTRAINT article_pkey PRIMARY KEY (id_article, id_da);
-
-
---
--- Name: bon_sortie bon_sortie_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.bon_sortie
-    ADD CONSTRAINT bon_sortie_pkey PRIMARY KEY (id_bon_sortie);
 
 
 --
@@ -1449,19 +1328,19 @@ ALTER TABLE ONLY public.article
 
 
 --
--- Name: article article_id_lot_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.article
-    ADD CONSTRAINT article_id_lot_fkey FOREIGN KEY (id_lot) REFERENCES public.lot(id_lot);
-
-
---
 -- Name: commande_article commande_article_id_commande_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.commande_article
-    ADD CONSTRAINT commande_article_id_commande_fkey FOREIGN KEY (id_commande) REFERENCES public.commande(id_commande) ON DELETE CASCADE;
+    ADD CONSTRAINT commande_article_id_commande_fkey FOREIGN KEY (id_commande) REFERENCES public.commande(id_commande);
+
+
+--
+-- Name: commande commande_id_consultation; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.commande
+    ADD CONSTRAINT commande_id_consultation FOREIGN KEY (id_consultation) REFERENCES public.consultation(id_consultation);
 
 
 --
@@ -1469,7 +1348,7 @@ ALTER TABLE ONLY public.commande_article
 --
 
 ALTER TABLE ONLY public.commande_lot
-    ADD CONSTRAINT commande_lot_id_commande_fkey FOREIGN KEY (id_commande) REFERENCES public.commande(id_commande) ON DELETE CASCADE;
+    ADD CONSTRAINT commande_lot_id_commande_fkey FOREIGN KEY (id_commande) REFERENCES public.commande(id_commande);
 
 
 --
@@ -1477,15 +1356,15 @@ ALTER TABLE ONLY public.commande_lot
 --
 
 ALTER TABLE ONLY public.commande_lot
-    ADD CONSTRAINT commande_lot_id_offre_id_lot_fkey FOREIGN KEY (id_offre, id_lot) REFERENCES public.offre_lot(id_offre, id_lot) ON DELETE CASCADE;
+    ADD CONSTRAINT commande_lot_id_offre_id_lot_fkey FOREIGN KEY (id_lot, id_offre) REFERENCES public.offre_lot(id_lot, id_offre);
 
 
 --
--- Name: consultation_da consultation_da_id_consultation_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: consultation_da consultation_da_id_consultation; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.consultation_da
-    ADD CONSTRAINT consultation_da_id_consultation_fkey FOREIGN KEY (id_consultation) REFERENCES public.consultation(id_consultation) ON DELETE CASCADE;
+    ADD CONSTRAINT consultation_da_id_consultation FOREIGN KEY (id_consultation) REFERENCES public.consultation(id_consultation);
 
 
 --
@@ -1518,14 +1397,6 @@ ALTER TABLE ONLY public.decision
 
 ALTER TABLE ONLY public.decision
     ADD CONSTRAINT decision_id_fournisseur_fkey FOREIGN KEY (id_fournisseur) REFERENCES public.fournisseur(id_fournisseur);
-
-
---
--- Name: decision decision_id_lot_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.decision
-    ADD CONSTRAINT decision_id_lot_fkey FOREIGN KEY (id_lot) REFERENCES public.lot(id_lot);
 
 
 --
@@ -1569,6 +1440,14 @@ ALTER TABLE ONLY public.evaluation_article
 
 
 --
+-- Name: evaluation evaluation_id_consultation; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.evaluation
+    ADD CONSTRAINT evaluation_id_consultation FOREIGN KEY (id_consultation) REFERENCES public.consultation(id_consultation);
+
+
+--
 -- Name: evaluation_lot evaluation_lot_id_eval_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1577,35 +1456,11 @@ ALTER TABLE ONLY public.evaluation_lot
 
 
 --
--- Name: evaluation_lot evaluation_lot_id_lot_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.evaluation_lot
-    ADD CONSTRAINT evaluation_lot_id_lot_fkey FOREIGN KEY (id_lot) REFERENCES public.lot(id_lot) ON DELETE CASCADE;
-
-
---
 -- Name: evaluation_lot evaluation_lot_id_offre_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.evaluation_lot
     ADD CONSTRAINT evaluation_lot_id_offre_fkey FOREIGN KEY (id_offre) REFERENCES public.offre(id_offre) ON DELETE CASCADE;
-
-
---
--- Name: bon_sortie fk_bon_sortie_reception; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.bon_sortie
-    ADD CONSTRAINT fk_bon_sortie_reception FOREIGN KEY (id_reception) REFERENCES public.reception(id_reception) ON DELETE CASCADE;
-
-
---
--- Name: commande fk_commande_consultation; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.commande
-    ADD CONSTRAINT fk_commande_consultation FOREIGN KEY (id_consultation) REFERENCES public.consultation(id_consultation) ON DELETE CASCADE;
 
 
 --
@@ -1625,27 +1480,11 @@ ALTER TABLE ONLY public.commande_article
 
 
 --
--- Name: evaluation fk_evaluation_consultation; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.evaluation
-    ADD CONSTRAINT fk_evaluation_consultation FOREIGN KEY (id_consultation) REFERENCES public.consultation(id_consultation) ON DELETE CASCADE;
-
-
---
 -- Name: evaluation fk_evaluation_fournisseur; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.evaluation
     ADD CONSTRAINT fk_evaluation_fournisseur FOREIGN KEY (id_fournisseur) REFERENCES public.fournisseur(id_fournisseur) ON UPDATE CASCADE ON DELETE SET NULL;
-
-
---
--- Name: lot fk_lot_consultation; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.lot
-    ADD CONSTRAINT fk_lot_consultation FOREIGN KEY (id_consultation) REFERENCES public.consultation(id_consultation) ON DELETE CASCADE;
 
 
 --
@@ -1657,27 +1496,11 @@ ALTER TABLE ONLY public.offre_article
 
 
 --
--- Name: offre fk_offre_consultation; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.offre
-    ADD CONSTRAINT fk_offre_consultation FOREIGN KEY (id_consultation) REFERENCES public.consultation(id_consultation) ON UPDATE CASCADE ON DELETE SET NULL;
-
-
---
 -- Name: reception fk_reception_commande; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.reception
-    ADD CONSTRAINT fk_reception_commande FOREIGN KEY (id_commande) REFERENCES public.commande(id_commande) ON DELETE CASCADE;
-
-
---
--- Name: lot lot_id_da_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.lot
-    ADD CONSTRAINT lot_id_da_fkey FOREIGN KEY (id_da) REFERENCES public.demande_d_achat(id_da);
+    ADD CONSTRAINT fk_reception_commande FOREIGN KEY (id_commande) REFERENCES public.commande(id_commande);
 
 
 --
@@ -1689,19 +1512,19 @@ ALTER TABLE ONLY public.offre_article
 
 
 --
+-- Name: offre offre_id_consultation; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.offre
+    ADD CONSTRAINT offre_id_consultation FOREIGN KEY (id_consultation) REFERENCES public.consultation(id_consultation);
+
+
+--
 -- Name: offre offre_id_fournisseur_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.offre
     ADD CONSTRAINT offre_id_fournisseur_fkey FOREIGN KEY (id_fournisseur) REFERENCES public.fournisseur(id_fournisseur);
-
-
---
--- Name: offre_lot offre_lot_id_lot_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.offre_lot
-    ADD CONSTRAINT offre_lot_id_lot_fkey FOREIGN KEY (id_lot) REFERENCES public.lot(id_lot) ON DELETE CASCADE;
 
 
 --
@@ -1725,23 +1548,7 @@ ALTER TABLE ONLY public.reception_article
 --
 
 ALTER TABLE ONLY public.reception_article
-    ADD CONSTRAINT reception_article_id_reception_fkey FOREIGN KEY (id_reception) REFERENCES public.reception(id_reception) ON DELETE CASCADE;
-
-
---
--- Name: reception_lot reception_lot_id_commande_lot_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.reception_lot
-    ADD CONSTRAINT reception_lot_id_commande_lot_fkey FOREIGN KEY (id_commande_lot) REFERENCES public.commande_lot(id_commande_lot) ON DELETE CASCADE;
-
-
---
--- Name: reception_lot reception_lot_id_reception_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.reception_lot
-    ADD CONSTRAINT reception_lot_id_reception_fkey FOREIGN KEY (id_reception) REFERENCES public.reception(id_reception) ON DELETE CASCADE;
+    ADD CONSTRAINT reception_article_id_reception_fkey FOREIGN KEY (id_reception) REFERENCES public.reception(id_reception);
 
 
 --
